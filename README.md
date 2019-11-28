@@ -11,6 +11,4 @@ mac : `brew install pipenv`
 * type `cd server/`
 * run : `pipenv install`
 * run server : `pipenv run flask-dev`
-* run the tests : `pipenv run pytest`
-
-* exit shell pipenv : `exit`
+* run tests : `pipenv run pytest`
