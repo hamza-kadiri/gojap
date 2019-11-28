@@ -2,7 +2,6 @@ from flask import Flask, config, jsonify
 from flask_cors import CORS
 import logging
 
-
 def create_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object('config.Config')
