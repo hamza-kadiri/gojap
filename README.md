@@ -5,11 +5,11 @@ Go jap !
 ## Install back
 * install pipenv
 mac : `brew install pipenv`
+
+## Run back
+* add .env file and write `FLASK_APP=server/app.py`
 * run : `pipenv install`
-* run server : `pipenv run python server/app.py`
-* open venv shell : `pipenv shell`
-* set flask app : `export FLASK_APP=server/app.py`
-* run the app : `flask run`
-* run the tests : `pipenv run pytest server/`
+* run server : `pipenv run flask-dev`
+* run the tests : `pipenv run pytest`
 
 * exit shell pipenv : `exit`
