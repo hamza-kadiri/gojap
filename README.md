@@ -7,6 +7,7 @@ Go jap !
 mac : `brew install pipenv`
 
 ## Run back
+* type `cd server/`
 * add .env file and write `FLASK_APP=server/app.py`
 * run : `pipenv install`
 * run server : `pipenv run flask-dev`
