@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - "./server:/app"
+    ports:
+      - "8000:8000"
+  db:
+    restart: always
+    image: sameersbn/postgresql:10-2
+    ports:
+      - "5432:5432"
+    environment:
+      - DB_USER=admin
+      - DB_PASS=password
+      - DB_NAME=gojap
+    volumes:
+      - /srv/docker/postgresql:/var/lib/postgresql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
