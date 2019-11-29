@@ -17,4 +17,4 @@ pytest = "*"
 python_version = "3.7"
 
 [scripts]
-flask-dev="pipenv run gunicorn --workers=2 app --reload"
+flask-dev="pipenv run gunicorn --workers=3 --threads=3 app --reload"
