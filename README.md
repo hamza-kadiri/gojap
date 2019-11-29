@@ -40,7 +40,7 @@ It allows to generated a highly scalable, offline-first foundation with the best
 
 ### Install back
 
-- install pipenv
+- install pipenv with PYTHON 3
   mac : `brew install pipenv`
 
 ### Run back
