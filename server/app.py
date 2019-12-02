@@ -3,24 +3,34 @@
 from flask import Flask, config, jsonify
 from flask_cors import CORS
 import logging
+from flask_socketio import SocketIO
 
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 
-def create_app():
-    """Create and the app."""
-    app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object('config.Config')
-    # Set CORS
-    CORS(app)
+app = Flask(__name__)
+socketio = SocketIO(app)
 
-    with app.app_context():
-        @app.route("/", methods=['GET'])
-        def index():
-            return jsonify("Hello World")
+@app.route('/')
+def index():
+    return 'hello world'
 
-    return app
+@socketio.on('my event', namespace='/test')
+def test_message(message):
+    emit('my response', {'data': message['data']})
 
+@socketio.on('my broadcast event', namespace='/test')
+def test_message(message):
+    emit('my response', {'data': message['data']}, broadcast=True)
 
-application = create_app()
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected')
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0", port=80)
+    print("server is running on port :" + "5000")
+    socketio.run(app)

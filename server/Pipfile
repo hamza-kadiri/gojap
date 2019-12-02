@@ -11,6 +11,8 @@ pylint = "*"
 requests = "*"
 pytest = "*"
 pydocstyle = "*"
+flask-socketio = "*"
+eventlet = "*"
 
 [dev-packages]
 
@@ -18,4 +20,4 @@ pydocstyle = "*"
 python_version = "3.7"
 
 [scripts]
-flask-dev="pipenv run gunicorn --workers=3 --threads=3 app --reload"
+flask-dev="pipenv run python app.py"
