@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import Img from './Img';
-import NavBar from './NavBar';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '../IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from '../IconButton';
+import NavBar from './NavBar';
+import Img from './Img';
 
 const StyledTypography = styled(Typography)`
   flex-grow: 1;

@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
@@ -13,14 +13,19 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import Fab from 'components/FabButton';
 import makeSelectHomePage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import Fab from 'components/FabButton';
+import { loadJaps } from './actions';
 
-export function HomePage() {
+export function HomePage({ dispatch }) {
   useInjectReducer({ key: 'homePage', reducer });
   useInjectSaga({ key: 'homePage', saga });
+
+  useEffect(() => {
+    dispatch(loadJaps());
+  }, []);
 
   return (
     <div>
