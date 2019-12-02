@@ -50,3 +50,8 @@ It allows to generated a highly scalable, offline-first foundation with the best
 - run `pipenv shell` if you are asked to do it
 - run server : `pipenv run flask-dev`
 - run tests : `pipenv run pytest`
+- run check documentation : `pipenv run pydocstyle`
+
+### Run database
+- `docker-compose up`
+- mac : may be usefull to update volume url to `./docker/postgres/data:/var/lib/postgresql/data`
