@@ -47,7 +47,6 @@ app.listen(port, host, async err => {
     try {
       url = await ngrok.connect(port);
     } catch (e) {
-      console.log(e);
       return logger.error(e);
     }
     logger.appStarted(port, prettyHost, url);
