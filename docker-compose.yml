@@ -11,7 +11,7 @@ services:
       - DB_PASS=password
       - DB_NAME=gojap
     volumes:
-      - /var/lib/docker/postgresql:/var/lib/postgresql
+      - ./docker/postgresql:/var/lib/postgresql/data
   adminer:
     image: adminer
     restart: always
