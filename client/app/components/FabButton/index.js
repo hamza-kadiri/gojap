@@ -10,19 +10,13 @@ import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import FileCopyIcon from '@material-ui/icons/FileCopyOutlined';
-import SaveIcon from '@material-ui/icons/Save';
-import PrintIcon from '@material-ui/icons/Print';
-import ShareIcon from '@material-ui/icons/Share';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocalDiningIcon from '@material-ui/icons/LocalDining';
+import PeopleIcon from '@material-ui/icons/People';
 import styled from 'styled-components';
 
 const actions = [
-  { icon: <FileCopyIcon />, name: 'Copy' },
-  { icon: <SaveIcon />, name: 'Save' },
-  { icon: <PrintIcon />, name: 'Print' },
-  { icon: <ShareIcon />, name: 'Share' },
-  { icon: <FavoriteIcon />, name: 'Like' },
+  { icon: <LocalDiningIcon />, name: 'Nouveau Jap' },
+  { icon: <PeopleIcon />, name: 'Rejoindre' },
 ];
 
 const Root = styled.div`
@@ -44,7 +38,7 @@ const StyledSpeedDial = styled(({ ...rest }) => <SpeedDial {...rest} />)`
     position: unset;
   }
   .MuiSpeedDialAction-staticTooltip {
-    justify-content: space-between;
+    justify-content: flex-end;
   }
 `;
 export default function FabButton() {
@@ -68,6 +62,7 @@ export default function FabButton() {
           onClose={handleClose}
           onOpen={handleOpen}
           open={open}
+          FabProps = {{color: 'secondary'}}
         >
           {actions.map(action => (
             <SpeedDialAction
