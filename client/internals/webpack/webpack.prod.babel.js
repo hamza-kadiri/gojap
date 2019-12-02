@@ -56,7 +56,7 @@ module.exports = require('./webpack.base.babel')({
           test: /[\\/]node_modules[\\/]/,
           name(module) {
             const packageName = module.context.match(
-              /[\\/]node_modules[\\/](.*?)([\\/]|$)/,
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/
             )[1];
             return `npm.${packageName.replace('@', '')}`;
           },
@@ -126,11 +126,11 @@ module.exports = require('./webpack.base.babel')({
       start_url: '/',
       icons: [
         {
-          src: path.resolve('app/images/icon-512x512.png'),
+          src: path.resolve('app/images/gojap.png'),
           sizes: [72, 96, 128, 144, 192, 384, 512],
         },
         {
-          src: path.resolve('app/images/icon-512x512.png'),
+          src: path.resolve('app/images/gojap.png'),
           sizes: [120, 152, 167, 180],
           ios: true,
         },

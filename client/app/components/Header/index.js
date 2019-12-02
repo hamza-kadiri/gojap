@@ -1,17 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
-import Img from './Img';
-import NavBar from './NavBar';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '../IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import GoJap from 'images/gojap.png';
+import IconButton from '../IconButton';
+import NavBar from './NavBar';
+import Img from './Img';
 
-const StyledTypography = styled(Typography)`
+const Logo = styled.div`
   flex-grow: 1;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+`;
+
+const StyledTypography = styled(Typography)`
+  margin-left: 1rem;
 `;
 
 function Header() {
@@ -22,7 +31,10 @@ function Header() {
           <IconButton edge="start" color="inherit" aria-label="menu">
             <MenuIcon />
           </IconButton>
-          <StyledTypography variant="h6">Go Jap !</StyledTypography>
+          <Logo>
+            <Img src={GoJap} alt="gojap-logo" />
+            <StyledTypography variant="h6">Go Jap !</StyledTypography>
+          </Logo>
           <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>

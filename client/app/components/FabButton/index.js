@@ -37,10 +37,14 @@ const Root = styled.div`
 
 const StyledSpeedDial = styled(({ ...rest }) => <SpeedDial {...rest} />)`
   position: absolute;
+  align-items: flex-end;
   bottom: ${props => props.theme.spacing(10)}px;
   right: ${props => props.theme.spacing(2)}px;
   .MuiSpeedDialAction-staticTooltipLabel {
     position: unset;
+  }
+  .MuiSpeedDialAction-staticTooltip {
+    justify-content: space-between;
   }
 `;
 export default function FabButton() {
@@ -57,24 +61,26 @@ export default function FabButton() {
   return (
     <Root>
       <Backdrop open={open} />
-      <StyledSpeedDial
-        ariaLabel="SpeedDial tooltip example"
-        icon={<SpeedDialIcon />}
-        onClose={handleClose}
-        onOpen={handleOpen}
-        open={open}
-      >
-        {actions.map(action => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            tooltipOpen
-            tooltipPlacement="left"
-            onClick={handleClose}
-          />
-        ))}
-      </StyledSpeedDial>
+      <div>
+        <StyledSpeedDial
+          ariaLabel="SpeedDial tooltip example"
+          icon={<SpeedDialIcon />}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          open={open}
+        >
+          {actions.map(action => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              tooltipOpen
+              tooltipPlacement="left"
+              onClick={handleClose}
+            />
+          ))}
+        </StyledSpeedDial>
+      </div>
     </Root>
   );
 }

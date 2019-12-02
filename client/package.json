@@ -1,16 +1,15 @@
 {
-  "name": "react-boilerplate",
-  "version": "4.0.0",
-  "description": "A highly scalable, offline-first foundation with the best DX and a focus on performance and best practices",
+  "name": "gojap",
+  "version": "0.1.0",
+  "description": "Go Jap",
   "repository": {
     "type": "git",
-    "url": "git://github.com/react-boilerplate/react-boilerplate.git"
+    "url": "git@gitlab-student.centralesupelec.fr:2016loussouab/dev2019_go_jap.git"
   },
   "engines": {
     "npm": ">=5",
     "node": ">=8.15.1"
   },
-  "author": "Max Stoiber",
   "license": "MIT",
   "scripts": {
     "analyze:clean": "rimraf stats.json",
@@ -165,7 +164,6 @@
     "webpack-dev-middleware": "3.6.2",
     "webpack-hot-middleware": "2.24.3",
     "webpack-pwa-manifest": "4.0.0",
-    "whatwg-fetch": "3.0.0",
-    "workbox-webpack-plugin": "^4.3.1"
+    "whatwg-fetch": "3.0.0"
   }
 }
