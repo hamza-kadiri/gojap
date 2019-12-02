@@ -11,6 +11,7 @@ pylint = "*"
 requests = "*"
 pytest = "*"
 pydocstyle = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
