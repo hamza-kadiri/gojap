@@ -16,6 +16,7 @@ import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectHomePage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
+import Menu from 'components/Menu';
 import Fab from 'components/FabButton';
 
 export function HomePage() {
@@ -28,7 +29,7 @@ export function HomePage() {
         <title>Home</title>
         <meta name="description" content="Description of HomePage" />
       </Helmet>
-      <h1>Home Page</h1>
+      <Menu/>
       <Fab />
     </div>
   );

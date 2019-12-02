@@ -45,7 +45,7 @@ export default function App() {
               <meta name="description" content="Go jap !" />
             </Helmet>
             <Header />
-            <SwitchWrapper>
+            <SwitchWrapper style={{padding: '0', margin: '0'}}>
               <Switch>
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
