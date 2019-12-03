@@ -28,8 +28,8 @@ const Root = styled.div`
   position: fixed;
   height: 100%;
   width: 100%;
-  top: 0;
-  left: 0;
+  bottom: 0;
+  right: 0;
   flex-grow: 1;
   transform: translateZ(0px);
 `;
@@ -58,28 +58,28 @@ export default function FabButton() {
   };
 
   return (
-    <Root>
-      <Backdrop open={open} />
-      <div>
-        <StyledSpeedDial
-          ariaLabel="SpeedDial tooltip example"
-          icon={<SpeedDialIcon />}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          open={open}
-        >
-          {actions.map(action => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              tooltipOpen
-              tooltipPlacement="left"
-              onClick={handleClose}
-            />
-          ))}
-        </StyledSpeedDial>
-      </div>
-    </Root>
+    <React.Fragment>
+      <Root>
+        <Backdrop open={open} />
+      </Root>
+      <StyledSpeedDial
+        ariaLabel="SpeedDial tooltip example"
+        icon={<SpeedDialIcon />}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        open={open}
+      >
+        {actions.map(action => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            tooltipOpen
+            tooltipPlacement="left"
+            onClick={handleClose}
+          />
+        ))}
+      </StyledSpeedDial>
+    </React.Fragment>
   );
 }
