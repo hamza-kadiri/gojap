@@ -18,21 +18,21 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 
+import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
-import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
   display: flex;
-  min-height: 100%;
   flex-direction: column;
+  height: 100vh;
 `;
 
 const SwitchWrapper = styled.div`
-  max-width: calc(768px + 16px * 2);
-  margin: 0 auto;
   padding: 0 16px;
+  flex: 1 1 auto;
+  display: flex;
 `;
 
 export default function App() {

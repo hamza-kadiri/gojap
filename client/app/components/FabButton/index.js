@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Backdrop from '@material-ui/core/Backdrop';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -26,7 +25,7 @@ const actions = [
 ];
 
 const Root = styled.div`
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   top: 0;
@@ -38,7 +37,7 @@ const Root = styled.div`
 const StyledSpeedDial = styled(({ ...rest }) => <SpeedDial {...rest} />)`
   position: absolute;
   align-items: flex-end;
-  bottom: ${props => props.theme.spacing(10)}px;
+  bottom: ${props => props.theme.spacing(8)}px;
   right: ${props => props.theme.spacing(2)}px;
   .MuiSpeedDialAction-staticTooltipLabel {
     position: unset;

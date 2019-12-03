@@ -18,8 +18,31 @@ const selectHomePageDomain = state => state.homePage || initialState;
 const makeSelectHomePage = () =>
   createSelector(
     selectHomePageDomain,
-    substate => substate,
+    substate => substate
+  );
+
+const makeSelectLoading = () =>
+  createSelector(
+    selectHomePageDomain,
+    globalState => globalState.loading
+  );
+
+const makeSelectError = () =>
+  createSelector(
+    selectHomePageDomain,
+    globalState => globalState.error
+  );
+
+const makeSelectJaps = () =>
+  createSelector(
+    selectHomePageDomain,
+    globalState => globalState.japs
   );
 
 export default makeSelectHomePage;
-export { selectHomePageDomain };
+export {
+  selectHomePageDomain,
+  makeSelectLoading,
+  makeSelectError,
+  makeSelectJaps,
+};
