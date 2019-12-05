@@ -13,15 +13,14 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import Fab from 'components/FabButton';
 import makeSelectHomePage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import Fab from 'components/FabButton';
 
 export function HomePage() {
   useInjectReducer({ key: 'homePage', reducer });
   useInjectSaga({ key: 'homePage', saga });
-
   return (
     <div>
       <Helmet>
@@ -50,7 +49,7 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 );
 
 export default compose(withConnect)(HomePage);

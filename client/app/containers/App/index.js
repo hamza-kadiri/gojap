@@ -18,9 +18,10 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 
+import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
-import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
+import socketClient from '../../socket/socket';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -36,6 +37,7 @@ const SwitchWrapper = styled.div`
 `;
 
 export default function App() {
+  const socket = socketClient;
   return (
     <StylesProvider injectFirst>
       <MuiThemeProvider theme={theme}>
