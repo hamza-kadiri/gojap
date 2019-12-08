@@ -21,7 +21,7 @@ import Footer from 'components/Footer';
 import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
-import socketClient from '../../socket/socket';
+import { SocketTest } from '../SocketTest';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -37,7 +37,6 @@ const SwitchWrapper = styled.div`
 `;
 
 export default function App() {
-  const socket = socketClient;
   return (
     <StylesProvider injectFirst>
       <MuiThemeProvider theme={theme}>
@@ -52,6 +51,7 @@ export default function App() {
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <Route exact path="/profile" component={ProfilePage} />
+                <Route exact path="/socket" component={SocketTest} />
                 <Route path="" component={NotFoundPage} />
               </Switch>
             </SwitchWrapper>

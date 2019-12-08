@@ -1,7 +1,7 @@
 import React, { Children } from 'react';
 import { FormattedMessage } from 'react-intl';
-import StyledNavigation from './StyledNavigation';
 import A from 'components/A';
+import StyledNavigation from './StyledNavigation';
 import Wrapper from './Wrapper';
 import messages from './messages';
 
