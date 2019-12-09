@@ -12,17 +12,17 @@ db = SQLAlchemy()
 def create_app():
     """Create and the app."""
     app = Flask(__name__, instance_relative_config=False)
-    db.init_app(app)
-    app.config.from_object('server.config.Config')
+
+    app.config.from_object('config.Config')
     # Set CORS
     # CORS(app)
 
     with app.app_context():
+        db.init_app(app)
         db.create_all()
         #@app.route("/", methods=['GET'])
         #def index():
         #    return jsonify("Hello World")
-
         return app
 
 
