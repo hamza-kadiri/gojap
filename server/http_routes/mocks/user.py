@@ -1,3 +1,5 @@
+"""Mocks for users."""
+
 users = [{
     "username": "lotus",
     "id": 123
