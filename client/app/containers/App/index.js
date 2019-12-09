@@ -22,6 +22,7 @@ import Footer from 'components/Footer';
 import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
 import JapScreen from 'containers/JapScreen';
 import { connect } from 'react-redux';
+import SocketTest from 'containers/SocketTest';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
 import { makeSelectLocation } from './selectors';
@@ -64,6 +65,7 @@ function App({ router, dispatch }) {
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <Route exact path="/profile" component={ProfilePage} />
+                <Route exact path="/socket" component={SocketTest} />
                 <Route exact path="/jap" component={JapScreen} />
                 <Route exact path="/orders" component={OrdersList} />
                 <Route path="" component={NotFoundPage} />
