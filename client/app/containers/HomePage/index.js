@@ -13,17 +13,17 @@ import { compose } from 'redux';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import Fab from 'components/FabButton';
+import saga from './saga';
 import JapListItem from 'components/JapListItem';
 import ListWrapper from 'components/ListWrapper';
 import styled from 'styled-components';
 import H1 from 'components/H1';
+import reducer from './reducer';
 import makeSelectHomePage, {
   makeSelectJaps,
   makeSelectError,
   makeSelectLoading,
 } from './selectors';
-import reducer from './reducer';
-import saga from './saga';
 import { loadJaps } from './actions';
 
 const Wrapper = styled.div`
