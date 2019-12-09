@@ -6,5 +6,9 @@ base_blueprint = Blueprint('base_blueprint', __name__, url_prefix='/')
 
 @base_blueprint.route('', methods=['GET'])
 def hello_world():
-    """Random http route."""
+    """Random http route.
+
+    Returns :
+        "Hello world"
+    """
     return 'Hello world'
