@@ -37,7 +37,6 @@ const AppWrapper = styled.div`
 `;
 
 const SwitchWrapper = styled.div`
-  padding: 0 16px;
   flex: 1 1 auto;
   display: flex;
 `;
