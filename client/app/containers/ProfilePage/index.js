@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-
+import H1 from 'components/H1';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectProfilePage from './selectors';
@@ -27,7 +27,7 @@ export function ProfilePage() {
         <title>Profile</title>
         <meta name="description" content="Description of ProfilePage" />
       </Helmet>
-      <h1>Profile Page</h1>
+      <H1>Profile Page</H1>
     </div>
   );
 }
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 );
 
 export default compose(withConnect)(ProfilePage);

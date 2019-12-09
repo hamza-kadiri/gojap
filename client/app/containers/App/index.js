@@ -7,35 +7,50 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import styled, { ThemeProvider } from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
-
+import { createStructuredSelector } from 'reselect';
+import { compose } from 'redux';
 import HomePage from 'containers/HomePage/Loadable';
 import DashboardPage from 'containers/DashboardPage/Loadable';
 import ProfilePage from 'containers/ProfilePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
-
+import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
+import JapScreen from 'containers/JapScreen';
+import { connect } from 'react-redux';
+import SocketTest from 'containers/SocketTest';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
-import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
+import { makeSelectLocation } from './selectors';
+import OrdersList from '../OrdersList';
+import { toggleRecap } from '../JapScreen/actions';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
   display: flex;
-  min-height: 100%;
   flex-direction: column;
+  height: 100vh;
 `;
 
 const SwitchWrapper = styled.div`
-  max-width: calc(768px + 16px * 2);
-  margin: 0 auto;
   padding: 0 16px;
+  flex: 1 1 auto;
+  display: flex;
 `;
 
-export default function App() {
+function App({ router, dispatch }) {
+  const handleOpenDrawer = () => {
+    switch (router.pathname) {
+      case '/jap':
+        return () => dispatch(toggleRecap(true));
+      default:
+        return null;
+    }
+  };
   return (
     <StylesProvider injectFirst>
       <MuiThemeProvider theme={theme}>
@@ -44,16 +59,21 @@ export default function App() {
             <Helmet titleTemplate="%s - Go jap !" defaultTitle="Go jap !">
               <meta name="description" content="Go jap !" />
             </Helmet>
-            <Header />
+            <Header handleOpenDrawer={handleOpenDrawer} />
             <SwitchWrapper>
               <Switch>
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/dashboard" component={DashboardPage} />
                 <Route exact path="/profile" component={ProfilePage} />
+                <Route exact path="/socket" component={SocketTest} />
+                <Route exact path="/jap" component={JapScreen} />
+                <Route exact path="/orders" component={OrdersList} />
                 <Route path="" component={NotFoundPage} />
               </Switch>
             </SwitchWrapper>
-            <Footer />
+            {['/', '/dashboard', '/profile'].includes(router.pathname) && (
+              <Footer />
+            )}
             <GlobalStyle />
           </AppWrapper>
         </ThemeProvider>
@@ -61,3 +81,21 @@ export default function App() {
     </StylesProvider>
   );
 }
+
+App.propTypes = {
+  router: PropTypes.object,
+};
+const mapStateToProps = createStructuredSelector({
+  router: makeSelectLocation(),
+});
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+  };
+}
+const withConnect = connect(
+  mapStateToProps,
+  mapDispatchToProps
+);
+
+export default compose(withConnect)(App);

@@ -11,7 +11,9 @@ pylint = "*"
 requests = "*"
 pytest = "*"
 pydocstyle = "*"
-psycopg2 = "*"
+psycopg2 = "~=2.7.5"
+flask-socketio = "*"
+eventlet = "*"
 
 [dev-packages]
 
@@ -19,4 +21,4 @@ psycopg2 = "*"
 python_version = "3.7"
 
 [scripts]
-flask-dev="pipenv run gunicorn --workers=3 --threads=3 app --reload"
+flask-dev="gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --reload --log-level DEBUG"
