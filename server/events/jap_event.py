@@ -1,7 +1,7 @@
 import uuid
 
 
-class JapEvent:
+class JapEvent(db.Models):
 
     def __init__(self, name, description, date):
         self.__name = name
@@ -20,3 +20,5 @@ class JapEvent:
 jap1 = JapEvent('anniv de smok', 'jap pour l\'anniv de smok', '01/01/2020')
 print(jap1.name)
 print(jap1)
+
+
