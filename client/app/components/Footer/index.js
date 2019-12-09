@@ -1,37 +1,26 @@
 import React, { Children } from 'react';
-import { FormattedMessage } from 'react-intl';
+import PropTypes from 'prop-types';
+import { BrowserView, MobileView } from 'react-device-detect';
 import StyledNavigation from './StyledNavigation';
-import A from 'components/A';
 import Wrapper from './Wrapper';
-import messages from './messages';
 
-function MobileFooter(props) {
-  return (
-    <StyledNavigation>{Children.toArray(props.children)}</StyledNavigation>
-  );
+function MobileFooter({ children }) {
+  return <StyledNavigation>{Children.toArray(children)}</StyledNavigation>;
 }
 
-function DesktopFooter() {
-  return (
-    <Wrapper>
-      <section>
-        <FormattedMessage {...messages.licenseMessage} />
-      </section>
-      <section>
-        <FormattedMessage
-          {...messages.authorMessage}
-          values={{
-            author: <A href="https://twitter.com/mxstbr">Max Stoiber</A>,
-          }}
-        />
-      </section>
-    </Wrapper>
-  );
-}
+MobileFooter.propTypes = {
+  children: PropTypes.element,
+};
+
 function Footer() {
   return (
     <Wrapper>
-      <MobileFooter />
+      <MobileView>
+        <MobileFooter />
+      </MobileView>
+      <BrowserView>
+        <MobileFooter />
+      </BrowserView>
     </Wrapper>
   );
 }
