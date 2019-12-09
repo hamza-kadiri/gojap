@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
 import GoJap from 'images/gojap.png';
+import history from 'utils/history';
 import IconButton from '../IconButton';
 import NavBar from './NavBar';
 import Img from './Img';
@@ -17,21 +18,31 @@ const Logo = styled.div`
   justify-content: center;
   align-items: center;
   height: 30px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const StyledTypography = styled(Typography)`
   margin-left: 1rem;
 `;
 
-function Header() {
+function Header({ handleOpenDrawer }) {
   return (
     <NavBar>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-          <Logo>
+          {handleOpenDrawer() != null && (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleOpenDrawer()}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Logo onClick={() => history.push('/')}>
             <Img src={GoJap} alt="gojap-logo" />
             <StyledTypography variant="h6">Go Jap !</StyledTypography>
           </Logo>

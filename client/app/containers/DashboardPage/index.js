@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-
+import H1 from 'components/H1';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectDashboardPage from './selectors';
@@ -27,7 +27,7 @@ export function DashboardPage() {
         <title>Statistiques</title>
         <meta name="description" content="Description of DashboardPage" />
       </Helmet>
-      <h1>Dashboard Page</h1>
+      <H1>Dashboard Page</H1>
     </div>
   );
 }
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 );
 
 export default compose(withConnect)(DashboardPage);
