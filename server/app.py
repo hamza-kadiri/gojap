@@ -4,20 +4,30 @@ from flask import Flask, config, jsonify
 from flask_cors import CORS
 import logging
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
+
 from socket_module.socket_messages import socket_messages
-from socket_module.socket_services import join_jap_service, leave_jap_service, join_table_service, start_command_service, end_command_service, next_item_service, choose_item_service
+from socket_module.socket_services import \
+    join_jap_service,\
+    leave_jap_service,\
+    join_table_service, \
+    start_command_service,\
+    end_command_service,\
+    next_item_service,\
+    choose_item_service
+from http_routes import base_blueprint, auth_blueprint, user_blueprint
 
 app = Flask(__name__)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
-app.logger.debug('this will show in the log')
+app.logger.debug('This will show in the logs')
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-@app.route('/')
-def index():
-    """Random http route."""
-    return 'hello world'
+# Register all the blueprints (AKA the routes)
+app.register_blueprint(base_blueprint)
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(user_blueprint)
+
 
 @socketio.on('connect')
 def connect():
@@ -25,10 +35,12 @@ def connect():
     app.logger.info("Connection establish in socket with a client")
     emit('my response', {'data': 'Connected'})
 
+
 @socketio.on('disconnect')
 def disconnect():
     """Call when a connection socket is lost with a client."""
     app.logger.info("Connection socket lost with a client")
+
 
 @socketio.on(socket_messages['JOIN_JAP'])
 def join_jap(data):
@@ -65,6 +77,7 @@ def leave_jap(data):
     if 'table_id' in data :
         leave_room(data['table_id'])
 
+
 @socketio.on(socket_messages['JOIN_TABLE'])
 def join_table(data):
     """Call on message JOIN_TABLE.
@@ -80,6 +93,7 @@ def join_table(data):
     data = join_table_service(data)
     join_room(data['table_id'])
     emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
+
 
 @socketio.on(socket_messages['START_COMMAND'])
 def start_command(data):
@@ -97,6 +111,7 @@ def start_command(data):
         data = start_command_service(data)
         emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
 
+
 @socketio.on(socket_messages['END_COMMAND'])
 def end_command(data):
     """Call on message END_COMMAND.
@@ -113,6 +128,7 @@ def end_command(data):
         data = end_command_service(data)
         emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
 
+
 @socketio.on(socket_messages['NEXT_ITEM'])
 def next_item(data):
     """Call on message NEXT_ITEM.
@@ -128,6 +144,7 @@ def next_item(data):
         data = next_item_service(data)
         emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
 
+
 @socketio.on(socket_messages['CHOOSE_ITEM'])
 def choose_item(data):
     """Call on message CHOOSE_ITEM.
@@ -141,6 +158,7 @@ def choose_item(data):
     app.logger.info("New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from "+ data['pseudo'])
     data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
+
 
 if __name__ == "__main__":
     print("server is running on port :" + "5000")
