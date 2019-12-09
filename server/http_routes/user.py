@@ -9,7 +9,7 @@ user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
 
 @user_blueprint.route('', methods=['GET'])
 def get_user():
-    """ Find a given user.
+    """Find a given user.
 
     Returns :
         {username, id}
