@@ -1,3 +1,5 @@
+"""Dict of possible messages."""
+
 socket_messages = {
     #   CLIENTS ---> SERVER
   # master -> table users

@@ -1,3 +1,5 @@
+"""Fake data before BDD is up."""
+
 japs = {
     "oki":[],
     "sushi antony":[]

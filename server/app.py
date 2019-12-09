@@ -16,19 +16,29 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 
 @app.route('/')
 def index():
+    """Random http route."""
     return 'hello world'
 
 @socketio.on('connect')
 def connect():
+    """Call when a connection socket is set with a client."""
     app.logger.info("Connection establish in socket with a client")
     emit('my response', {'data': 'Connected'})
 
 @socketio.on('disconnect')
 def disconnect():
+    """Call when a connection socket is lost with a client."""
     app.logger.info("Connection socket lost with a client")
 
 @socketio.on(socket_messages['JOIN_JAP'])
 def join_jap(data):
+    """Call on message JOIN_JAP.
+    
+    Emit USER_JOINED_JAP in the room 'jap_id'.
+
+    Args :
+        data = {pseudo, jap_id} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Join " + data['jap_id'] + " received from "+ data['pseudo'])
     data = join_jap_service(data)
@@ -39,10 +49,17 @@ def join_jap(data):
 
 @socketio.on(socket_messages['LEAVE_JAP'])
 def leave_jap(data):
+    """Call on message LEAVE_JAP.
+    
+    Emit USER_LEFT_JAP in the room 'jap_id'.
+    Leave the room jap_id and table_id if a table id is present.
+
+    Args :
+        data = {pseudo, jap_id, ?table_id} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Leave jap " + data['jap_id'] + " received from "+ data['pseudo'])
     data = leave_jap_service(data)
-    # app.logger.debug(data)
     emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
     leave_room(data['jap_id'])
     if 'table_id' in data :
@@ -50,31 +67,61 @@ def leave_jap(data):
 
 @socketio.on(socket_messages['JOIN_TABLE'])
 def join_table(data):
+    """Call on message JOIN_TABLE.
+    
+    Emit USER_JOINED_TABLE in the room 'table_id'.
+
+    Args :
+        data = {pseudo, jap_id, table_id} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Join table " + data['table_id'] + " received from "+ data['pseudo'])
+    
     data = join_table_service(data)
     join_room(data['table_id'])
-    app.logger.debug(data)
     emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
 
 @socketio.on(socket_messages['START_COMMAND'])
 def start_command(data):
+    """Call on message START_COMMAND.
+    
+    Emit COMMAND_STARTED in the room 'table_id'.
+
+    Args :
+        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Command started on table " + data['table_id'] + " received from "+ data['pseudo'])
+    
     if 'is_jap_master' in data and data['is_jap_master']:
         data = start_command_service(data)
         emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
 
 @socketio.on(socket_messages['END_COMMAND'])
 def end_command(data):
+    """Call on message END_COMMAND.
+    
+    Emit COMMAND_ENDED in the room 'table_id'.
+
+    Args :
+        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Command ended on table " + data['table_id'] + " received from "+ data['pseudo'])
+    
     if 'is_jap_master' in data and data['is_jap_master']:
         data = end_command_service(data)
         emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
 
 @socketio.on(socket_messages['NEXT_ITEM'])
 def next_item(data):
+    """Call on message NEXT_ITEM.
+    
+    Emit ITEM_CHANGED in the room 'table_id'.
+
+    Args :
+        data = {pseudo, jap_id, table_id, is_jap_master, item_id} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("Next item on table " + data['table_id'] + " received from "+ data['pseudo'])
     if 'is_jap_master' in data and data['is_jap_master']:
@@ -83,6 +130,13 @@ def next_item(data):
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])
 def choose_item(data):
+    """Call on message CHOOSE_ITEM.
+    
+    Emit ITEM_CHOSEN in the room 'table_id'.
+
+    Args :
+        data = {pseudo, jap_id, table_id, item_id} // later user_id
+    """
     app.logger.debug(data)
     app.logger.info("New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from "+ data['pseudo'])
     data = choose_item_service(data)
