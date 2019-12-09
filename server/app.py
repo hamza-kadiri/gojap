@@ -14,7 +14,7 @@ from socket_module.socket_services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint
 
 app = Flask(__name__)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
@@ -25,6 +25,8 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(user_blueprint)
 
 
 @socketio.on('connect')
