@@ -1,5 +1,8 @@
-import uuid
-from . import db
+"""User Model."""
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class User(db.Model):
