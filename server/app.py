@@ -5,30 +5,36 @@ from flask_cors import CORS
 import logging
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
-
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
-from server.socket_module.socket_messages import socket_messages
-from server.socket_module.socket_services import join_jap_service, leave_jap_service, join_table_service, \
-    start_command_service, end_command_service, next_item_service, choose_item_service
 from server.models.model import db
+from server.socket_module.socket_messages import socket_messages
+from server.socket_module.socket_services import \
+    join_jap_service,\
+    leave_jap_service,\
+    join_table_service, \
+    start_command_service,\
+    end_command_service,\
+    next_item_service,\
+    choose_item_service
+from server.http_routes import base_blueprint, auth_blueprint, user_blueprint
+
 
 app = Flask(__name__)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
-app.logger.debug('this will show in the log')
+
+
 app.config.from_object('config.Config')
 app.app_context().push()
 db.init_app(app)
 db.create_all()
-
+app.logger.debug('This will show in the logs')
 socketio = SocketIO(app, cors_allowed_origins='*')
-
-
-@app.route('/')
-def index():
-    """Random http route."""
-    return 'hello world'
+# Register all the blueprints (AKA the routes)
+app.register_blueprint(base_blueprint)
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(user_blueprint)
 
 
 @socketio.on('connect')
