@@ -18,6 +18,7 @@ import reducer from './reducer';
 import saga from './saga';
 import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
+import ContainerWrapper from 'components/ContainerWrapper';
 
 export function SocketTest() {
   const [pseudo, setPseudo] = useState('');
@@ -288,7 +289,7 @@ export function SocketTest() {
   }
 
   return (
-    <div>
+    <ContainerWrapper>
       <Helmet>
         <title>SocketTest</title>
         <meta name="description" content="Description of SocketTest" />
@@ -351,7 +352,7 @@ export function SocketTest() {
           </button>
         </div>
       )}
-    </div>
+    </ContainerWrapper>
   );
 }
 
