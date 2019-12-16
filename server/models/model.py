@@ -1,5 +1,7 @@
 import uuid
-from . import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -14,3 +16,5 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.pseudo
+
+class
