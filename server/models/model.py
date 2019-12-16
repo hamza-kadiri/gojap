@@ -1,10 +1,13 @@
-import uuid
+"""User Model."""
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
 
 class User(db.Model):
+    """User Model for DB interactions."""
+
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(80), unique=True, nullable=False)
@@ -15,6 +18,5 @@ class User(db.Model):
     calorie = db.Column(db.Integer, unique=False, nullable=False)
 
     def __repr__(self):
+        """Representation method."""
         return '<User %r>' % self.pseudo
-
-class

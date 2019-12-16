@@ -1,14 +1,12 @@
 """App."""
 
-from flask import Flask, config, jsonify
-from flask_cors import CORS
 import logging
-from flask_sqlalchemy import SQLAlchemy
-import psycopg2
+
+from flask import Flask
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
-from server.models.model import db
-from server.socket_module.socket_messages import socket_messages
-from server.socket_module.socket_services import \
+from models.model import db
+from socket_module.socket_messages import socket_messages
+from socket_module.socket_services import \
     join_jap_service,\
     leave_jap_service,\
     join_table_service, \
@@ -16,7 +14,7 @@ from server.socket_module.socket_services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from server.http_routes import base_blueprint, auth_blueprint, user_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint
 
 
 app = Flask(__name__)
