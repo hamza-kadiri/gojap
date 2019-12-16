@@ -3,10 +3,12 @@
 from flask import Flask, config, jsonify
 from flask_cors import CORS
 import logging
+from flask_sqlalchemy import SQLAlchemy
+import psycopg2
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
-
-from socket_module.socket_messages import socket_messages
-from socket_module.socket_services import \
+from server.models.model import db
+from server.socket_module.socket_messages import socket_messages
+from server.socket_module.socket_services import \
     join_jap_service,\
     leave_jap_service,\
     join_table_service, \
@@ -14,15 +16,21 @@ from socket_module.socket_services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint
+from server.http_routes import base_blueprint, auth_blueprint, user_blueprint
+
 
 app = Flask(__name__)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
+
+
+app.config.from_object('config.Config')
+app.app_context().push()
+db.init_app(app)
+db.create_all()
 app.logger.debug('This will show in the logs')
 socketio = SocketIO(app, cors_allowed_origins='*')
-
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
@@ -52,7 +60,7 @@ def join_jap(data):
         data = {pseudo, jap_id} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Join " + data['jap_id'] + " received from "+ data['pseudo'])
+    app.logger.info("Join " + data['jap_id'] + " received from " + data['pseudo'])
     data = join_jap_service(data)
     join_room(data['jap_id'])
     app.logger.debug(data)
@@ -70,11 +78,11 @@ def leave_jap(data):
         data = {pseudo, jap_id, ?table_id} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Leave jap " + data['jap_id'] + " received from "+ data['pseudo'])
+    app.logger.info("Leave jap " + data['jap_id'] + " received from " + data['pseudo'])
     data = leave_jap_service(data)
     emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
     leave_room(data['jap_id'])
-    if 'table_id' in data :
+    if 'table_id' in data:
         leave_room(data['table_id'])
 
 
@@ -88,8 +96,8 @@ def join_table(data):
         data = {pseudo, jap_id, table_id} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Join table " + data['table_id'] + " received from "+ data['pseudo'])
-    
+    app.logger.info("Join table " + data['table_id'] + " received from " + data['pseudo'])
+
     data = join_table_service(data)
     join_room(data['table_id'])
     emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
@@ -105,8 +113,8 @@ def start_command(data):
         data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Command started on table " + data['table_id'] + " received from "+ data['pseudo'])
-    
+    app.logger.info("Command started on table " + data['table_id'] + " received from " + data['pseudo'])
+
     if 'is_jap_master' in data and data['is_jap_master']:
         data = start_command_service(data)
         emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
@@ -122,8 +130,8 @@ def end_command(data):
         data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Command ended on table " + data['table_id'] + " received from "+ data['pseudo'])
-    
+    app.logger.info("Command ended on table " + data['table_id'] + " received from " + data['pseudo'])
+
     if 'is_jap_master' in data and data['is_jap_master']:
         data = end_command_service(data)
         emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
@@ -139,7 +147,7 @@ def next_item(data):
         data = {pseudo, jap_id, table_id, is_jap_master, item_id} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("Next item on table " + data['table_id'] + " received from "+ data['pseudo'])
+    app.logger.info("Next item on table " + data['table_id'] + " received from " + data['pseudo'])
     if 'is_jap_master' in data and data['is_jap_master']:
         data = next_item_service(data)
         emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
@@ -155,7 +163,8 @@ def choose_item(data):
         data = {pseudo, jap_id, table_id, item_id} // later user_id
     """
     app.logger.debug(data)
-    app.logger.info("New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from "+ data['pseudo'])
+    app.logger.info(
+        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['pseudo'])
     data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 
@@ -163,4 +172,3 @@ def choose_item(data):
 if __name__ == "__main__":
     print("server is running on port :" + "5000")
     socketio.run(app)
-
