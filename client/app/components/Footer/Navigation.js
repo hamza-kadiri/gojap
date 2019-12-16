@@ -5,11 +5,20 @@ import ListIcon from '@material-ui/icons/List';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import PersonIcon from '@material-ui/icons/Person';
 import history from 'utils/history';
+import styled from 'styled-components';
+
 export default function Navigation(props) {
   const [value, setValue] = React.useState(0);
 
+  const StyledBottomNavigation = styled(({ ...rest }) => <BottomNavigation {...rest} />)`
+  background-color: #455366;
+  .MuiBottomNavigationAction-root {
+    color: #fff;
+  }
+`;
+
   return (
-    <BottomNavigation
+    <StyledBottomNavigation
       className={props.className}
       value={value}
       onChange={(event, newValue) => {
@@ -37,6 +46,6 @@ export default function Navigation(props) {
         onClick={() => history.push('/socket')}
         icon={<PersonIcon />}
       />
-    </BottomNavigation>
+    </StyledBottomNavigation>
   );
 }
