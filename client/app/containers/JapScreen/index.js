@@ -23,13 +23,7 @@ import makeSelectJapScreen, { makeSelectRecapOpen } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import { toggleRecap } from './actions';
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-`;
+import ContainerWrapper from 'components/ContainerWrapper';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -74,7 +68,7 @@ function JapScreen({ dispatch, recapOpen }) {
   };
 
   return (
-    <Wrapper>
+    <ContainerWrapper>
       <Helmet>
         <title>JapScreen</title>
         <meta name="description" content="Description of JapScreen" />
@@ -93,7 +87,7 @@ function JapScreen({ dispatch, recapOpen }) {
       </CenteredDiv>
       <Numbers handleSelect={selectedNumber => setNumber(selectedNumber)} />
       <Drawer {...drawerProps} />
-    </Wrapper>
+    </ContainerWrapper>
   );
 }
 

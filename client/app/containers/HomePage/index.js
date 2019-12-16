@@ -12,7 +12,6 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
-import Menu from 'components/Menu';
 import Fab from 'components/FabButton';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -20,7 +19,6 @@ import saga from './saga';
 import JapListItem from 'components/JapListItem';
 import ListWrapper from 'components/ListWrapper';
 import styled from 'styled-components';
-import H1 from 'components/H1';
 import reducer from './reducer';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -39,11 +37,11 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const StyledAppBar = styled(({ ...rest }) => <AppBar {...rest} />)`
+const StyledAppBar = styled(AppBar)`
   position: static;
 `;
 
-const StyledTab = styled(({ ...rest }) => <Tab {...rest} />)`
+const StyledTab = styled(Tab)`
   margin: 0 5%;
 `;
 
@@ -76,13 +74,13 @@ export function HomePage({ dispatch, loading, error, japs }) {
       </Helmet>
       <Fab />
       <StyledAppBar>
-        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered>
+        <Tabs value={value} onChange={handleChange} centered>
           <StyledTab label="Prochains Japs" />
           <StyledTab label="Take me back" />
         </Tabs>
       </StyledAppBar>
       <SubPage value={value} index={0}>
-          <ListWrapper {...japsListProps} />
+        <ListWrapper {...japsListProps} />
       </SubPage>
       <SubPage value={value} index={1}>
         Take me Back
