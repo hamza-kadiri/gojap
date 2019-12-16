@@ -120,7 +120,7 @@ module.exports = require('./webpack.base.babel')({
       short_name: 'Go jap !',
       description: 'Facilite ton jap.',
       background_color: '#fafafa',
-      theme_color: '#b1624d',
+      theme_color: '#455366',
       inject: true,
       ios: true,
       start_url: '/',
