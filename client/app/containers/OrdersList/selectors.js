@@ -21,5 +21,10 @@ const makeSelectOrdersList = () =>
     substate => substate
   );
 
+const makeSelectOrders = () =>
+  createSelector(
+    selectOrdersListDomain,
+    globalState => globalState.orders
+  );
 export default makeSelectOrdersList;
-export { selectOrdersListDomain };
+export { selectOrdersListDomain, makeSelectOrders };

@@ -14,8 +14,8 @@ export function* getOrders() {
 
   try {
     // Call our request helper (see 'utils/request')
-    const japs = yield call(request, requestUrl, {});
-    yield put(ordersLoaded(japs));
+    const orders = yield call(request, requestUrl, {});
+    yield put(ordersLoaded(orders));
   } catch (err) {
     yield put(ordersLoadingError(err));
   }
