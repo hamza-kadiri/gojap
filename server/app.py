@@ -3,7 +3,7 @@
 import logging
 
 from flask import Flask
-from flask_socketio import SocketIO, emit, join_room, send, leave_room
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
 from socket_module.socket_services import \
@@ -22,12 +22,12 @@ gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
 
-
 app.config.from_object('config.Config')
 app.app_context().push()
+
 db.init_app(app)
 db.create_all()
-app.logger.debug('This will show in the logs')
+
 socketio = SocketIO(app, cors_allowed_origins='*')
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
