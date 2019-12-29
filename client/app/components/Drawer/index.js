@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   width: 300px;
 `;
 
-function Drawer({ toggleDrawer, open, component }) {
+function Drawer({ toggleDrawer, open, component, onClickItem }) {
   const Content = component;
   return (
     <SwipeableDrawer
@@ -22,7 +22,12 @@ function Drawer({ toggleDrawer, open, component }) {
       onOpen={() => toggleDrawer(true)}
     >
       <Wrapper>
-        <Content />
+        <Content
+          onClickItem={item => {
+            toggleDrawer(false);
+            return onClickItem(item);
+          }}
+        />
       </Wrapper>
     </SwipeableDrawer>
   );
@@ -31,6 +36,8 @@ function Drawer({ toggleDrawer, open, component }) {
 Drawer.propTypes = {
   toggleDrawer: PropTypes.func,
   open: PropTypes.bool,
+  component: PropTypes.object,
+  onClickItem: PropTypes.func,
 };
 
 export default Drawer;

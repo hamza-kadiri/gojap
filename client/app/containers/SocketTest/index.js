@@ -13,14 +13,16 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import ContainerWrapper from 'components/ContainerWrapper';
 import makeSelectSocketTest from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import socketClient from '../../socket/socket';
+import SocketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
-import ContainerWrapper from 'components/ContainerWrapper';
 
 export function SocketTest() {
+  const socketClient = new SocketClient();
+
   const [pseudo, setPseudo] = useState('');
   const [currentJap, setCurrentJap] = useState(null);
   const [currentJapMembers, setCurrentJapMembers] = useState([]);
@@ -314,7 +316,7 @@ export function SocketTest() {
         type="button"
         onClick={() => handleJoinJap('sushi antony')}
       >
-        Join Join Sushi Antony
+        Join Sushi Antony
       </button>
       <p>{`Your current jap is ${currentJap}`}</p>
       <p>{`${currentJap} members are : ${currentJapMembers}`}</p>

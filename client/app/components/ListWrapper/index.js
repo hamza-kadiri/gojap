@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import List from 'components/List';
 import LoadingIndicator from 'components/LoadingIndicator';
 
-function ListWrapper({ loading, error, items, component, multiline }) {
+function ListWrapper({ loading, error, items, component, multiline, ...rest }) {
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -17,7 +17,14 @@ function ListWrapper({ loading, error, items, component, multiline }) {
   }
 
   if (items && items.length > 0) {
-    return <List items={items} multiline={multiline} component={component} />;
+    return (
+      <List
+        items={items}
+        multiline={multiline}
+        component={component}
+        {...rest}
+      />
+    );
   }
 
   return null;
@@ -29,6 +36,7 @@ ListWrapper.propTypes = {
   items: PropTypes.any,
   component: PropTypes.func,
   multiline: PropTypes.bool,
+  onClickItem: PropTypes.func,
 };
 
 export default ListWrapper;

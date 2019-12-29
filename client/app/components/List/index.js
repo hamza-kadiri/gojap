@@ -5,12 +5,17 @@ import AutoSizerWrapper from './AutoSizerWrapper';
 
 function List(props) {
   const ComponentToRender = props.component;
-
+  const { onClickItem } = props;
   function rowRenderer({ key, index, style }) {
     if (props.items) {
+      const item = props.items[index];
       return (
         <div key={key} style={style}>
-          <ComponentToRender item={props.items[index]} />
+          <ComponentToRender
+            item={item}
+            index={index}
+            onClickItem={onClickItem}
+          />
         </div>
       );
     }
@@ -44,6 +49,7 @@ List.propTypes = {
   component: PropTypes.elementType.isRequired,
   items: PropTypes.array,
   multiline: PropTypes.bool,
+  onClickItem: PropTypes.func,
 };
 
 export default List;

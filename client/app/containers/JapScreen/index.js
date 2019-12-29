@@ -86,6 +86,7 @@ function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
 
   const drawerProps = {
     toggleDrawer: bool => dispatch(toggleRecap(bool)),
+    onClickItem: index => dispatch(changeCurrentItem(index)),
     open: recapOpen,
     component: OrdersList,
   };
@@ -99,7 +100,7 @@ function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
       {orders.length > 0 ? (
         <React.Fragment>
           <H1>Commande : {orders[currentItem].id}</H1>
-          <CenteredDiv flex="2 1 auto">
+          <CenteredDiv flex="2 1 0">
             {orders[currentItem + 1] && <OffsetDiv />}
             <CurrentJapaneseItemIcon src={orders[currentItem].urls.regular} />
             {orders[currentItem + 1] && (

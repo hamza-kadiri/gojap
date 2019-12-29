@@ -10,7 +10,7 @@ export function* getJaps() {
   // Select username from store
 
   const requestURL =
-    'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=japonais a volonté&locale=fr_FR&latitude=48.754190&longitude=2.301974&radius=5000&categories=japanese&sort_by=distance';
+    'https://api.yelp.com/v3/businesses/search?term=japonais a volonté&locale=fr_FR&latitude=48.754190&longitude=2.301974&radius=5000&categories=japanese&sort_by=distance';
 
   try {
     // Call our request helper (see 'utils/request')
