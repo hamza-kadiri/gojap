@@ -17,12 +17,10 @@ import ContainerWrapper from 'components/ContainerWrapper';
 import makeSelectSocketTest from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import SocketClient from '../../socket/socket';
+import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
 
 export function SocketTest() {
-  const socketClient = new SocketClient();
-
   const [pseudo, setPseudo] = useState('');
   const [currentJap, setCurrentJap] = useState(null);
   const [currentJapMembers, setCurrentJapMembers] = useState([]);
@@ -316,7 +314,7 @@ export function SocketTest() {
         type="button"
         onClick={() => handleJoinJap('sushi antony')}
       >
-        Join Sushi Antony
+        Join Join Sushi Antony
       </button>
       <p>{`Your current jap is ${currentJap}`}</p>
       <p>{`${currentJap} members are : ${currentJapMembers}`}</p>

@@ -153,4 +153,5 @@ class SocketClient {
     // console.log(`Component [${subscriber}] unsubscribed to ${eventName}.`);
   };
 }
-export default SocketClient;
+const socketClient = new SocketClient();
+export default socketClient;
