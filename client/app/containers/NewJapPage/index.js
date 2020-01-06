@@ -18,7 +18,6 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import H1 from 'components/H1';
 import StyledButton from 'components/Button';
-import styled from 'styled-components';
 
 export function NewJapPage() {
   const [date, setDate] = React.useState(Date.now());
@@ -39,7 +38,7 @@ export function NewJapPage() {
       <TextField
         label="Nom de l'évènement"
         value={name}
-        onChange={name => setName(event.target.value)}
+        onChange={event => setName(event.target.value)}
       />
       <TextField
         label="Description"
@@ -54,14 +53,14 @@ export function NewJapPage() {
           margin="normal"
           variant="inline"
           value={date}
-          onChange={date => setDate(date)}
+          onChange={newdate => setDate(newdate)}
         />
         <KeyboardTimePicker
           label="Horaire"
           variant="inline"
           ampm={false}
           value={time}
-          onChange={time => setTime(time)}
+          onChange={newtime => setTime(newtime)}
         />
       </MuiPickersUtilsProvider>
       <StyledButton onClick={handleClick}>Créer le jap</StyledButton>
