@@ -18,8 +18,6 @@ class User(db.Model):
     pseudo = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
     phone = db.Column(db.String(12), unique=True, nullable=False)
-    # jap_event = db.Column(db.String(120), unique=True, nullable=False)
-    # achievements = db.Column(db.String(120), unique=True, nullable=False)
     calorie = db.Column(db.Integer, unique=False, nullable=True)
     command_user_ids = db.relationship('CommandUser', backref='user', lazy=True)
     achievements = db.relationship('Achievement', secondary=user_achievements, lazy='subquery',
