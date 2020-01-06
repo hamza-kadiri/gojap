@@ -38,7 +38,6 @@ def get_orders():
     Returns :
         Orders list
     """
-
     url = 'https://api.unsplash.com/search/photos'
     params = {'query': 'sushi', 'per_page': '30',
               'client_id': app.config['UNSPLASH_CLIENT_ID']}
