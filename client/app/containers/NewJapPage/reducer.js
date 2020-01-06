@@ -4,15 +4,27 @@
  *
  */
 import produce from 'immer';
-import { DEFAULT_ACTION } from './constants';
+import {
+  POST_JAP_EVENT_REQUEST,
+  POST_JAP_EVENT_SUCCESS,
+  POST_JAP_EVENT_ERROR,
+} from './constants';
 
-export const initialState = {};
+export const initialState = {
+  error: false,
+};
 
 /* eslint-disable default-case, no-param-reassign */
 const newJapPageReducer = (state = initialState, action) =>
-  produce(state, (/* draft */) => {
+  produce(state, draft => {
     switch (action.type) {
-      case DEFAULT_ACTION:
+      case POST_JAP_EVENT_REQUEST:
+        draft.error = false;
+        break;
+      case POST_JAP_EVENT_SUCCESS:
+        break;
+      case POST_JAP_EVENT_ERROR:
+        draft.error = action.payload;
         break;
     }
   });
