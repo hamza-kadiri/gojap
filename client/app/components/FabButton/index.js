@@ -12,11 +12,7 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import LocalDiningIcon from '@material-ui/icons/LocalDining';
 import PeopleIcon from '@material-ui/icons/People';
 import styled from 'styled-components';
-
-const actions = [
-  { icon: <LocalDiningIcon />, name: 'Nouveau Jap' },
-  { icon: <PeopleIcon />, name: 'Rejoindre' },
-];
+import history from 'utils/history';
 
 const Root = styled.div`
   position: fixed;
@@ -47,9 +43,24 @@ export default function FabButton() {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClose = action => () => {
+    console.log('in handle close', action);
+    setOpen(true);
   };
+
+  const handleClickNewJap = () => {
+    console.log('in handle click');
+    history.push('/newjap');
+  };
+
+  const actions = [
+    {
+      icon: <LocalDiningIcon />,
+      name: 'Nouveau Jap',
+      handleClick: handleClickNewJap,
+    },
+    { icon: <PeopleIcon />, name: 'Rejoindre', handleClick: handleClose },
+  ];
 
   return (
     <React.Fragment>
@@ -62,7 +73,7 @@ export default function FabButton() {
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
-        FabProps = {{color: 'secondary'}}
+        FabProps={{ color: 'secondary' }}
       >
         {actions.map(action => (
           <SpeedDialAction
@@ -71,7 +82,7 @@ export default function FabButton() {
             tooltipTitle={action.name}
             tooltipOpen
             tooltipPlacement="left"
-            onClick={handleClose}
+            onClick={action.handleClick}
           />
         ))}
       </StyledSpeedDial>
