@@ -4,18 +4,24 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+user_achievements = db.Table('user_achievements',
+                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+                             db.Column('achievement_id', db.Integer, db.ForeignKey('achievement.id'), primary_key=True)
+                             )
+
 
 class User(db.Model):
     """User Model for DB interactions."""
 
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
     phone = db.Column(db.String(12), unique=True, nullable=False)
-    # jap_event = db.Column(db.String(120), unique=True, nullable=False)
-    # achievements = db.Column(db.String(120), unique=True, nullable=False)
-    calorie = db.Column(db.Integer, unique=False, nullable=False)
+    calorie = db.Column(db.Integer, unique=False, nullable=True)
+    command_user_ids = db.relationship('CommandUser', backref='user', lazy=True)
+    achievements = db.relationship('Achievement', secondary=user_achievements, lazy='subquery',
+                                   backref=db.backref('user', lazy=True))
 
     def __repr__(self):
         """Representation method."""
@@ -23,4 +29,136 @@ class User(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) for c in self.__table}
+
+
+jap_event_users = db.Table('jap_event_users',
+                           db.Column('jap_event_id', db.Integer, db.ForeignKey('jap_event.id'), primary_key=True),
+                           db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                           )
+
+
+class JapEvent(db.Model):
+    __tablename__ = 'jap_event'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(80), unique=False, nullable=False)
+    description = db.Column(db.String(200), unique=False, nullable=True)
+    date = db.Column(db.DateTime(), unique=False, nullable=False)
+    jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
+                             nullable=False)
+    photo_ids = db.relationship('Photo', backref='jap_event', lazy=True)
+    event_ids = db.relationship('Event', backref='jap_event', lazy=True)
+    table_ids = db.relationship('Table', backref='jap_event', lazy=True)
+    users = db.relationship('User', secondary=jap_event_users, lazy='subquery',
+                            backref=db.backref('jap_events', lazy=True))
+
+    def __repr__(self):
+        return '<JapEvent %r>' % self.nom
+
+
+event_users = db.Table('event_users',
+                       db.Column('event_id', db.Integer, db.ForeignKey('event.id'), primary_key=True),
+                       db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                       )
+
+
+class Achievement(db.Model):
+    __tablename__ = 'achievement'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=True)
+    image = db.Column(db.String(120), unique=False, nullable=True)
+    condition = db.Column(db.String(120), unique=False, nullable=True)
+
+    def __repr__(self):
+        return '<Achievement %r>' % self.name
+
+
+class Event(db.Model):
+    __tablename__ = 'event'
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(200), unique=False, nullable=True)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+    users = db.relationship('User', secondary=event_users, lazy='subquery',
+                            backref=db.backref('events', lazy=True))
+
+    def __repr__(self):
+        return '<Event %r>' % self.id
+
+
+class JapPlace(db.Model):
+    __tablename__ = 'jap_place'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(80), unique=False, nullable=False)
+    adresse = db.Column(db.String(200), unique=False, nullable=False)
+    telephone = db.Column(db.String(80), unique=False, nullable=True)
+    horaires = db.Column(db.String(80), unique=False, nullable=True)
+    jap_event_ids = db.relationship('JapEvent', backref='jap_place', lazy=True)
+    menu_id = db.Column(db.Integer, db.ForeignKey('menu.id'), nullable=False)
+
+    def __repr__(self):
+        return '<JapPlace %r>' % self.nom
+
+
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    id = db.Column(db.Integer, primary_key=True)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+
+
+class Icon(db.Model):
+    _tablename_ = 'icon'
+    id = db.Column(db.Integer, primary_key=True)
+    item_associated = db.relationship('Item', backref='icons', uselist=False)
+
+
+class Item(db.Model):
+    _tablename_ = 'item'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    points_amount = db.Column(db.Integer, nullable=False)
+    icon_id = db.Column(db.Integer, db.ForeignKey('icon.id'), nullable=False)
+
+
+item_commands = db.Table('item_commands',
+                         db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
+                         db.Column('command_id', db.Integer, db.ForeignKey('command_user.id'), primary_key=True)
+                         )
+
+
+class CommandUser(db.Model):
+    _tablename_ = 'command_user'
+    id = db.Column(db.Integer, primary_key=True)
+    items = db.relationship('Item', secondary=item_commands, lazy='subquery',
+                            backref=db.backref('command_users', lazy=True))
+    table_id = db.Column(db.Integer, db.ForeignKey('table.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+item_menus = db.Table('item_menus',
+                      db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
+                      db.Column('menu_id', db.Integer, db.ForeignKey('menu.id'), primary_key=True)
+                      )
+
+
+class Menu(db.Model):
+    _tablename_ = 'menu'
+    id = db.Column(db.Integer, primary_key=True)
+    items = db.relationship('Item', secondary=item_menus, lazy='subquery',
+                            backref=db.backref('menus', lazy=True))
+    jap_place = db.relationship("JapPlace", uselist=False, backref='menu')
+
+
+table_users = db.Table('table_users',
+                       db.Column('table_id', db.Integer, db.ForeignKey('table.id'), primary_key=True),
+                       db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                       )
+
+
+class Table(db.Model):
+    _tablename_ = 'table'
+    id = db.Column(db.Integer, primary_key=True)
+    emperor = db.Column(db.String(120), nullable=False)
+    command_user_id = db.relationship('CommandUser', backref='table', lazy=True)
+    users = db.relationship('User', secondary=table_users, lazy='subquery',
+                            backref=db.backref('table', lazy=True))
+    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
