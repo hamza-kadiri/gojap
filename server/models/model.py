@@ -100,7 +100,7 @@ class JapPlace(db.Model):
 class Photo(db.Model):
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
-    jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
 
 
 class Icon(db.Model):
