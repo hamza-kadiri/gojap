@@ -3,6 +3,7 @@
 import logging
 
 from flask import Flask
+from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
@@ -18,6 +19,7 @@ from http_routes import base_blueprint, auth_blueprint, user_blueprint
 
 
 app = Flask(__name__)
+CORS(app)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
@@ -155,7 +157,7 @@ def next_item(data):
     print(data)
     if 'is_jap_master' in data and data['is_jap_master']:
         data = next_item_service(data)
-        emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
+        emit(socket_messages['ITEM_CHANGED'], data)
 
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])

@@ -1,3 +1,9 @@
+import ky from 'ky';
+
+const extendedKy = ky.extend({
+  prefixUrl: process.env.SERVER_URL,
+});
+
 /**
  * Parses the JSON returned by a network request
  *
@@ -38,7 +44,7 @@ function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
-  return fetch(url, options)
+  return extendedKy(url, options)
     .then(checkStatus)
     .then(parseJSON);
 }

@@ -9,18 +9,11 @@ import { japsLoaded, japLoadingError } from './actions';
 export function* getJaps() {
   // Select username from store
 
-  const requestURL =
-    'https://api.yelp.com/v3/businesses/search?term=japonais a volonté&locale=fr_FR&latitude=48.754190&longitude=2.301974&radius=5000&categories=japanese&sort_by=distance';
+  const requestURL = 'japs';
 
   try {
     // Call our request helper (see 'utils/request')
-    const japs = yield call(request, requestURL, {
-      headers: new Headers({
-        Authorization:
-          'Bearer 9QUr4h4dpmNRs42nScaTD3bRZMnVvSV9oMqQ5moZZ3deAcpHC2ccuwhEdQnxTwBeby9ezCADeZEYV7tsCmTxZm3csDIM5NFisjxizCr8k36hJCi2xJGKXnCTjzvkXXYx',
-        'Access-Control-Allow-Origin': '*',
-      }),
-    });
+    const japs = yield call(request, requestURL);
     yield put(japsLoaded(japs));
   } catch (err) {
     yield put(japLoadingError(err));
