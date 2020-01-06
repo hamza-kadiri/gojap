@@ -1,4 +1,4 @@
-"""User Model."""
+"""Database Model."""
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,7 +11,12 @@ user_achievements = db.Table('user_achievements',
 
 
 class User(db.Model):
-    """User Model for DB interactions."""
+    """
+    Defines a new user in the database.
+
+    Defined variables :
+        {id, pseudo, email, phone, calorie, command_user_ids, achievments}
+    """
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -39,6 +44,13 @@ jap_event_users = db.Table('jap_event_users',
 
 
 class JapEvent(db.Model):
+    """
+    Defines a new JapEvent in the database.
+
+    Defined variables :
+        {id, nom, description, date, jap_place_id, photo_ids, event_ids,table_ids, users}
+    """
+
     __tablename__ = 'jap_event'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), unique=False, nullable=False)
@@ -53,6 +65,7 @@ class JapEvent(db.Model):
                             backref=db.backref('jap_events', lazy=True))
 
     def __repr__(self):
+        """Representation method."""
         return '<JapEvent %r>' % self.nom
 
 
@@ -63,6 +76,13 @@ event_users = db.Table('event_users',
 
 
 class Achievement(db.Model):
+    """
+    Defines a new Achievment in the database.
+
+    Defined variables :
+        {id, name, image, condition}
+    """
+
     __tablename__ = 'achievement'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=True)
@@ -70,10 +90,18 @@ class Achievement(db.Model):
     condition = db.Column(db.String(120), unique=False, nullable=True)
 
     def __repr__(self):
+        """Representation method."""
         return '<Achievement %r>' % self.name
 
 
 class Event(db.Model):
+    """
+    Defines a new Event in the database.
+
+    Defined variables :
+        {id, description, jap_event_id, users}
+    """
+
     __tablename__ = 'event'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200), unique=False, nullable=True)
@@ -82,10 +110,18 @@ class Event(db.Model):
                             backref=db.backref('events', lazy=True))
 
     def __repr__(self):
+        """Representation method."""
         return '<Event %r>' % self.id
 
 
 class JapPlace(db.Model):
+    """
+    Defines a new JapPlace in the database.
+
+    Defined variables :
+        {id, nom, addresse, telephone, horaires, jap_event_ids, menu_id}
+    """
+
     __tablename__ = 'jap_place'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), unique=False, nullable=False)
@@ -96,22 +132,44 @@ class JapPlace(db.Model):
     menu_id = db.Column(db.Integer, db.ForeignKey('menu.id'), nullable=False)
 
     def __repr__(self):
+        """Representation method."""
         return '<JapPlace %r>' % self.nom
 
 
 class Photo(db.Model):
+    """
+    Defines a new Photo in the database.
+
+    Defined variables :
+        {id, jap_event_id}
+    """
+
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
     jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
 
 
 class Icon(db.Model):
+    """
+    Defines a new Icon in the database.
+
+    Defined variables :
+        {id, item_associated}
+    """
+
     _tablename_ = 'icon'
     id = db.Column(db.Integer, primary_key=True)
     item_associated = db.relationship('Item', backref='icons', uselist=False)
 
 
 class Item(db.Model):
+    """
+    Defines a new Item in the database.
+
+    Defined variables :
+        {id, name, points_amount, icon_id}
+    """
+
     _tablename_ = 'item'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -126,6 +184,13 @@ item_commands = db.Table('item_commands',
 
 
 class CommandUser(db.Model):
+    """
+    Defines a new CommandUser in the database.
+
+    Defined variables :
+        {id, items, table_id, user_id}
+    """
+
     _tablename_ = 'command_user'
     id = db.Column(db.Integer, primary_key=True)
     items = db.relationship('Item', secondary=item_commands, lazy='subquery',
@@ -141,6 +206,13 @@ item_menus = db.Table('item_menus',
 
 
 class Menu(db.Model):
+    """
+    Defines a new Menu in the database.
+
+    Defined variables :
+        {id, items, jap_place}
+    """
+
     _tablename_ = 'menu'
     id = db.Column(db.Integer, primary_key=True)
     items = db.relationship('Item', secondary=item_menus, lazy='subquery',
@@ -155,6 +227,13 @@ table_users = db.Table('table_users',
 
 
 class Table(db.Model):
+    """
+    Defines a new Table in the database.
+
+    Defined variables :
+        {id, emperor, command_user_id, users, jap_event_id}
+    """
+
     _tablename_ = 'table'
     id = db.Column(db.Integer, primary_key=True)
     emperor = db.Column(db.String(120), nullable=False)
