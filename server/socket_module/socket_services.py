@@ -1,6 +1,7 @@
 """Socket entry point for front end messages."""
 from .fake_data import japs, jap_tables
 
+
 def join_jap_service(data):
     """Process join jap request.
 
@@ -16,6 +17,7 @@ def join_jap_service(data):
     data['jap_tables'] = jap_tables[data['jap_id']]
     data["jap_members"] = japs[data['jap_id']]
     return data
+
 
 def join_table_service(data):
     """Process join table request.
@@ -35,6 +37,7 @@ def join_table_service(data):
     data["jap_members"] = japs[jap_id]
     return data
 
+
 def leave_table_service(data):
     """Process leave table request.
 
@@ -47,11 +50,12 @@ def leave_table_service(data):
             {pseudo, jap_id}
     """
     jap_id = data['jap_id']
-    if 'table_id' in data :
+    if 'table_id' in data:
         table_id = data['table_id']
         jap_tables[jap_id][table_id].remove(data['pseudo'])
         data['jap_tables'] = jap_tables[jap_id]
     return data
+
 
 def leave_jap_service(data):
     """Process leave jap request.
@@ -69,6 +73,7 @@ def leave_jap_service(data):
     data['jap_members'] = japs[data['jap_id']]
     return data
 
+
 def start_command_service(data):
     """Process start command request.
 
@@ -81,6 +86,7 @@ def start_command_service(data):
         {pseudo, jap_id, table_id, is_jap_master}
     """
     return data
+
 
 def end_command_service(data):
     """Process end command request.
@@ -95,6 +101,7 @@ def end_command_service(data):
     """
     return data
 
+
 def choose_item_service(data):
     """Process start command request.
 
@@ -107,6 +114,7 @@ def choose_item_service(data):
         {pseudo, jap_id, table_id, item_id}
     """
     return data
+
 
 def next_item_service(data):
     """Process next item request.

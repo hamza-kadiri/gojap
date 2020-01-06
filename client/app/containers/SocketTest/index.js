@@ -13,12 +13,12 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import ContainerWrapper from 'components/ContainerWrapper';
 import makeSelectSocketTest from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
-import ContainerWrapper from 'components/ContainerWrapper';
 
 export function SocketTest() {
   const [pseudo, setPseudo] = useState('');

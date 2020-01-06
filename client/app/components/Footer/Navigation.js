@@ -10,12 +10,12 @@ import styled from 'styled-components';
 export default function Navigation(props) {
   const [value, setValue] = React.useState(0);
 
-  const StyledBottomNavigation = styled(({ ...rest }) => <BottomNavigation {...rest} />)`
-  background-color: #455366;
-  .MuiBottomNavigationAction-root {
-    color: #fff;
-  }
-`;
+  const StyledBottomNavigation = styled(BottomNavigation)`
+    background-color: #455366;
+    .MuiBottomNavigationAction-root {
+      color: #fff;
+    }
+  `;
 
   return (
     <StyledBottomNavigation
@@ -27,7 +27,7 @@ export default function Navigation(props) {
       showLabels
     >
       <BottomNavigationAction
-        label="Liste des japs"
+        label="Japs"
         onClick={() => history.push('/')}
         icon={<ListIcon />}
       />

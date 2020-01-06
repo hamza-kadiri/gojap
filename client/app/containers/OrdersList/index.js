@@ -20,7 +20,7 @@ import reducer from './reducer';
 import saga from './saga';
 import { loadOrders } from './actions';
 
-export function OrdersList({ dispatch, ordersList }) {
+export function OrdersList({ dispatch, ordersList, onClickItem }) {
   useInjectReducer({ key: 'ordersList', reducer });
   useInjectSaga({ key: 'ordersList', saga });
   const Wrapper = styled.div`
@@ -39,6 +39,7 @@ export function OrdersList({ dispatch, ordersList }) {
     items: ordersList.orders,
     component: OrderListItem,
     multiline: true,
+    onClickItem,
   };
   return (
     <Wrapper>
@@ -50,6 +51,7 @@ export function OrdersList({ dispatch, ordersList }) {
 OrdersList.propTypes = {
   dispatch: PropTypes.func.isRequired,
   ordersList: PropTypes.object,
+  onClickItem: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
