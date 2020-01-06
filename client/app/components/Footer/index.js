@@ -1,6 +1,7 @@
 import React, { Children } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserView, MobileView } from 'react-device-detect';
+import styled from 'styled-components';
 import StyledNavigation from './StyledNavigation';
 import Wrapper from './Wrapper';
 

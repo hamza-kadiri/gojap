@@ -14,13 +14,17 @@ import MediumAvatar from 'components/MediumAvatar';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 function OrderListItem(props) {
-  const { item } = props;
+  const { item, index, onClickItem } = props;
 
   // Put together the content of the Jap
   // Render the content into a list item
   return (
     item.alt_description != null && (
-      <ListItem divider button>
+      <ListItem
+        divider
+        button
+        onClick={() => (onClickItem ? onClickItem(index) : null)}
+      >
         <Grid container justify="space-evenly">
           <Grid item>
             <ListItemAvatar>

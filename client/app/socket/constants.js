@@ -27,4 +27,4 @@ export const MESSAGES = {
   USER_JOINED_JAP: 'User Joined Jap',
 };
 
-export const SOCKET_URL = 'http://localhost:5000/';
+export const SOCKET_URL = process.env.SERVER_URL;

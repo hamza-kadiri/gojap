@@ -16,6 +16,7 @@ flask-socketio = "*"
 eventlet = "*"
 flask_sqlalchemy = "*"
 pydash = "*"
+pyOpenSSL = "*"
 
 [dev-packages]
 

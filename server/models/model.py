@@ -27,6 +27,10 @@ class User(db.Model):
         """Representation method."""
         return '<User %r>' % self.pseudo
 
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table}
+
 
 jap_event_users = db.Table('jap_event_users',
                            db.Column('jap_event_id', db.Integer, db.ForeignKey('jap_event.id'), primary_key=True),

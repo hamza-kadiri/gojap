@@ -33,8 +33,8 @@ It allows to generated a highly scalable, offline-first foundation with the best
 
 ### Installation :
 
-- `npm install` To install npm dependencies
-- `npm run start`To run the client. The default port used is 3000.
+- `yarn` To install npm dependencies
+- `yarn start`To run the client. The default port used is 3000.
 
 ## Backend
 

@@ -13,6 +13,7 @@ import { compose } from 'redux';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import ContainerWrapper from 'components/ContainerWrapper';
 import makeSelectSocketTest from './selectors';
 import reducer from './reducer';
 import saga from './saga';
@@ -288,7 +289,7 @@ export function SocketTest() {
   }
 
   return (
-    <div>
+    <ContainerWrapper>
       <Helmet>
         <title>SocketTest</title>
         <meta name="description" content="Description of SocketTest" />
@@ -351,7 +352,7 @@ export function SocketTest() {
           </button>
         </div>
       )}
-    </div>
+    </ContainerWrapper>
   );
 }
 

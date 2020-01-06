@@ -16,19 +16,20 @@ import { useInjectReducer } from 'utils/injectReducer';
 import makeSelectDashboardPage from './selectors';
 import reducer from './reducer';
 import saga from './saga';
+import ContainerWrapper from 'components/ContainerWrapper';
 
 export function DashboardPage() {
   useInjectReducer({ key: 'dashboardPage', reducer });
   useInjectSaga({ key: 'dashboardPage', saga });
 
   return (
-    <div>
+    <ContainerWrapper>
       <Helmet>
         <title>Statistiques</title>
         <meta name="description" content="Description of DashboardPage" />
       </Helmet>
       <H1>Dashboard Page</H1>
-    </div>
+    </ContainerWrapper>
   );
 }
 
