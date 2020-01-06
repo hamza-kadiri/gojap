@@ -13,20 +13,13 @@ import PropTypes from 'prop-types';
 const StyledBox = styled(({ ...rest }) => <Box {...rest} />)`
   height: 100%;
   margin: 0 10px;
-  .AutoSizerWrapper-t619rn-0.dwWydR {
-    height: 100%;
-  }
+  display: flex;
+  flex-direction: column;
 `;
 
 function SubPage(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-      <StyledBox
-        hidden={index !== value}>
-          {children}
-      </StyledBox>
-  );
+  const { children, value, index } = props;
+  return index === value && <StyledBox>{children}</StyledBox>;
 }
 
 SubPage.propTypes = {

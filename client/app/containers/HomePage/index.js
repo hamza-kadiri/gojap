@@ -15,14 +15,14 @@ import { useInjectReducer } from 'utils/injectReducer';
 import Fab from 'components/FabButton';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import saga from './saga';
 import JapListItem from 'components/JapListItem';
 import ListWrapper from 'components/ListWrapper';
 import styled from 'styled-components';
-import reducer from './reducer';
 
 import AppBar from '@material-ui/core/AppBar';
 import SubPage from 'components/SubPage';
+import reducer from './reducer';
+import saga from './saga';
 
 import makeSelectHomePage, {
   makeSelectJaps,
