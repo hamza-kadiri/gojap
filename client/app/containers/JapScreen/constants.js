@@ -5,7 +5,9 @@
  */
 
 export const TOGGLE_RECAP = 'app/JapScreen/TOGGLE_RECAP';
-export const CHANGE_CURRENT_ITEM = 'app/JapScreen/CHANGE_CURRENT_ITEM';
+export const START_ORDER = 'app/JapScreen/START_ORDER';
+export const CHANGE_CURRENT_ITEM_SUCCESS =
+  'app/JapScreen/CHANGE_CURRENT_ITEM_SUCCESS';
 
 export const MESSAGES = {
   //   CLIENTS ---> SERVER

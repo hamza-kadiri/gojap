@@ -4,9 +4,9 @@
  *
  */
 import produce from 'immer';
-import { TOGGLE_RECAP, CHANGE_CURRENT_ITEM } from './constants';
+import { TOGGLE_RECAP, CHANGE_CURRENT_ITEM_SUCCESS } from './constants';
 
-export const initialState = { recapOpen: false, currentItem: 0 };
+export const initialState = { recapOpen: false, currentItem: { index: 0 } };
 
 /* eslint-disable default-case, no-param-reassign */
 const japScreenReducer = (state = initialState, action) =>
@@ -15,8 +15,8 @@ const japScreenReducer = (state = initialState, action) =>
       case TOGGLE_RECAP:
         draft.recapOpen = action.payload;
         break;
-      case CHANGE_CURRENT_ITEM:
-        draft.currentItem = action.payload;
+      case CHANGE_CURRENT_ITEM_SUCCESS:
+        draft.currentItem = { index: action.payload };
         break;
     }
   });

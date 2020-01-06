@@ -30,8 +30,7 @@ import reducer from './reducer';
 import saga from './saga';
 import ordersReducer from '../OrdersList/reducer';
 import ordersSaga from '../OrdersList/saga';
-import { toggleRecap, changeCurrentItem } from './actions';
-import { loadOrders } from '../OrdersList/actions';
+import { toggleRecap, changeCurrentItem, startOrder } from './actions';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -70,19 +69,23 @@ function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
   const [number, setNumber] = useState(null);
   const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
+  // useEffect(() => {
+  //   dispatch(loadOrders());
+  //   setTimeout(() => disappearOrder(array), 1500);
+  // }, []);
+
+  // const disappearOrder = arr => {
+  //   const newArray = arr.slice(1);
+  //   setArray(newArray);
+
+  //   if (newArray.length > 0) {
+  //     setTimeout(() => disappearOrder(newArray), 1500);
+  //   }
+  // };
+
   useEffect(() => {
-    dispatch(loadOrders());
-    setTimeout(() => disappearOrder(array), 1500);
+    dispatch(startOrder());
   }, []);
-
-  const disappearOrder = arr => {
-    const newArray = arr.slice(1);
-    setArray(newArray);
-
-    if (newArray.length > 0) {
-      setTimeout(() => disappearOrder(newArray), 1500);
-    }
-  };
 
   const drawerProps = {
     toggleDrawer: bool => dispatch(toggleRecap(bool)),
@@ -99,16 +102,20 @@ function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
       </Helmet>
       {orders.length > 0 ? (
         <React.Fragment>
-          <H1>Commande : {orders[currentItem].id}</H1>
+          <H1>Commande : {orders[currentItem.index].id}</H1>
           <CenteredDiv flex="2 1 0">
-            {orders[currentItem + 1] && <OffsetDiv />}
-            <CurrentJapaneseItemIcon src={orders[currentItem].urls.regular} />
-            {orders[currentItem + 1] && (
+            {orders[currentItem.index + 1] && <OffsetDiv />}
+            <CurrentJapaneseItemIcon
+              src={orders[currentItem.index].urls.regular}
+            />
+            {orders[currentItem.index + 1] && (
               <NextJapaneseItemIcon
                 size="medium"
-                src={orders[currentItem + 1].urls.regular}
+                src={orders[currentItem.index + 1].urls.regular}
                 onClick={() =>
-                  dispatch(changeCurrentItem((currentItem + 1) % orders.length))
+                  dispatch(
+                    changeCurrentItem((currentItem.index + 1) % orders.length)
+                  )
                 }
               />
             )}
@@ -136,7 +143,7 @@ JapScreen.propTypes = {
   dispatch: PropTypes.func.isRequired,
   recapOpen: PropTypes.bool,
   orders: PropTypes.array,
-  currentItem: PropTypes.number,
+  currentItem: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({

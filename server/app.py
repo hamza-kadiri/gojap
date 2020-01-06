@@ -154,9 +154,10 @@ def next_item(data):
     app.logger.debug(data)
     app.logger.info("Next item on table " +
                     data['table_id'] + " received from " + data['pseudo'])
-    print(data)
     if 'is_jap_master' in data and data['is_jap_master']:
         data = next_item_service(data)
+        print(data)
+        # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
         emit(socket_messages['ITEM_CHANGED'], data)
 
 

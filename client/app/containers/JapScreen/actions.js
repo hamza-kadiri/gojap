@@ -4,7 +4,12 @@
  *
  */
 
-import { TOGGLE_RECAP, CHANGE_CURRENT_ITEM } from './constants';
+import {
+  TOGGLE_RECAP,
+  START_ORDER,
+  MESSAGES,
+  CHANGE_CURRENT_ITEM_SUCCESS,
+} from './constants';
 
 export function toggleRecap(boolean) {
   return {
@@ -13,9 +18,23 @@ export function toggleRecap(boolean) {
   };
 }
 
-export function changeCurrentItem(itemIndex) {
+export function changeCurrentItem(item) {
   return {
-    type: CHANGE_CURRENT_ITEM,
-    payload: itemIndex,
+    type: MESSAGES.NEXT_ITEM,
+    payload: item,
+  };
+}
+
+export function changedCurrentItem(item) {
+  return {
+    type: CHANGE_CURRENT_ITEM_SUCCESS,
+    payload: item,
+  };
+}
+
+export function startOrder(bool) {
+  return {
+    type: START_ORDER,
+    payload: bool,
   };
 }
