@@ -1,4 +1,7 @@
 """Config file."""
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class Config(object):
@@ -17,10 +20,10 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     """
 
-    DB_SERVER = '0.0.0.0'
-    DB_USER = 'admin'
-    DB_PASSWORD = 'password'
-    DB_NAME = 'gojap'
+    DB_SERVER = os.getenv("DB_SERVER") if os.getenv("DB_SERVER") else '0.0.0.0'
+    DB_USER = os.getenv("DB_USER") if os.getenv("DB_USER") else 'admin'
+    DB_PASSWORD = os.getenv("DB_PASSWORD") if os.getenv("DB_PASSWORD") else 'password'
+    DB_NAME = os.getenv("DB_NAME") if os.getenv("DB_NAME") else 'gojap'
     SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(
         DB_USER, DB_PASSWORD, DB_SERVER, DB_NAME)
     SQLALCHEMY_TRACK_MODIFICATIONS = True
