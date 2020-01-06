@@ -69,23 +69,19 @@ function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
   const [number, setNumber] = useState(null);
   const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
-  // useEffect(() => {
-  //   dispatch(loadOrders());
-  //   setTimeout(() => disappearOrder(array), 1500);
-  // }, []);
-
-  // const disappearOrder = arr => {
-  //   const newArray = arr.slice(1);
-  //   setArray(newArray);
-
-  //   if (newArray.length > 0) {
-  //     setTimeout(() => disappearOrder(newArray), 1500);
-  //   }
-  // };
-
   useEffect(() => {
     dispatch(startOrder());
+    setTimeout(() => disappearOrder(array), 1500);
   }, []);
+
+  const disappearOrder = arr => {
+    const newArray = arr.slice(1);
+    setArray(newArray);
+
+    if (newArray.length > 0) {
+      setTimeout(() => disappearOrder(newArray), 1500);
+    }
+  };
 
   const drawerProps = {
     toggleDrawer: bool => dispatch(toggleRecap(bool)),

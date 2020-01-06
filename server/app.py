@@ -158,7 +158,7 @@ def next_item(data):
         data = next_item_service(data)
         print(data)
         # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
-        emit(socket_messages['ITEM_CHANGED'], data)
+        emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
 
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])
