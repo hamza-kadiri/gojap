@@ -14,6 +14,7 @@ import { Switch, Route } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import HomePage from 'containers/HomePage/Loadable';
+import NewJapPage from 'containers/NewJapPage';
 import DashboardPage from 'containers/DashboardPage/Loadable';
 import ProfilePage from 'containers/ProfilePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
@@ -67,6 +68,7 @@ function App({ router, dispatch }) {
                 <Route exact path="/socket" component={SocketTest} />
                 <Route exact path="/jap" component={JapScreen} />
                 <Route exact path="/orders" component={OrdersList} />
+                <Route exact path="/newjap" component={NewJapPage} />
                 <Route path="" component={NotFoundPage} />
               </Switch>
             </SwitchWrapper>
