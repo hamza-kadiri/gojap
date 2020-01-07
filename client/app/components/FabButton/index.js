@@ -14,18 +14,13 @@ import PeopleIcon from '@material-ui/icons/People';
 import styled from 'styled-components';
 import history from 'utils/history';
 
-const Root = styled.div`
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  bottom: 0;
-  right: 0;
-  flex-grow: 1;
-  transform: translateZ(0px);
+const StyledBackdrop = styled(Backdrop)`
+  z-index: 1200;
 `;
 
-const StyledSpeedDial = styled(({ ...rest }) => <SpeedDial {...rest} />)`
+const StyledSpeedDial = styled(SpeedDial)`
   position: absolute;
+  z-index: 1300;
   align-items: flex-end;
   bottom: ${props => props.theme.spacing(8)}px;
   right: ${props => props.theme.spacing(2)}px;
@@ -64,9 +59,7 @@ export default function FabButton() {
 
   return (
     <React.Fragment>
-      <Root>
-        <Backdrop open={open} />
-      </Root>
+      <StyledBackdrop open={open} />
       <StyledSpeedDial
         ariaLabel="SpeedDial tooltip example"
         icon={<SpeedDialIcon />}
