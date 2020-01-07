@@ -7,7 +7,7 @@ export const MESSAGES = {
   // user -> table
   CHOOSE_ITEM: 'Choose Item',
   // user -> jap
-  JOIN_JAP: 'Join Jap',
+  JOIN_JAP: 'join_jap',
   LEAVE_JAP: 'Leave Jap',
   SEND_EVENT: 'Send Event',
   JOIN_TABLE: 'Join Table',

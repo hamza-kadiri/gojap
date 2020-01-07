@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, send, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
+from socket_module.socket_server import SocketServer
 from socket_module.socket_services import \
     join_jap_service,\
     leave_jap_service,\
@@ -37,17 +38,19 @@ app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 
 
-@socketio.on('connect')
-def connect():
-    """Call when a connection socket is set with a client."""
-    app.logger.info("Connection establish in socket with a client")
-    emit('my response', {'data': 'Connected'})
+# @socketio.on('connect')
+# def connect():
+#     """Call when a connection socket is set with a client."""
+#     app.logger.info("Connection establish in socket with a client")
+#     emit('my response', {'data': 'Connected'})
+
+socketio.on_namespace(SocketServer())
 
 
-@socketio.on('disconnect')
-def disconnect():
-    """Call when a connection socket is lost with a client."""
-    app.logger.info("Connection socket lost with a client")
+# @socketio.on('disconnect')
+# def disconnect():
+#     """Call when a connection socket is lost with a client."""
+#     app.logger.info("Connection socket lost with a client")
 
 
 @socketio.on(socket_messages['JOIN_JAP'])
