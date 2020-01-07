@@ -4,19 +4,19 @@ import logging
 
 from flask import Flask
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit, join_room, send, leave_room
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
 from socket_module.socket_server import SocketServer
-from socket_module.socket_services import \
-    join_jap_service,\
+from services.services import \
+    join_jap_event_service,\
     leave_jap_service,\
     join_table_service, \
     start_command_service,\
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
 
 
 app = Flask(__name__)
@@ -36,6 +36,7 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(jap_event_blueprint)
 
 
 # @socketio.on('connect')
@@ -65,7 +66,7 @@ def join_jap(data):
     app.logger.debug(data)
     app.logger.info("Join " + data['jap_id'] +
                     " received from " + data['pseudo'])
-    data = join_jap_service(data)
+    data = join_jap_event_service(data)
     join_room(data['jap_id'])
     app.logger.debug(data)
     emit(socket_messages['USER_JOINED_JAP'], data, room=data['jap_id'])

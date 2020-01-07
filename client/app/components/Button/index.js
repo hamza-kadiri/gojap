@@ -5,13 +5,13 @@
  */
 
 import React, { Children } from 'react';
-import StyledButton from './StyledButton';
+import Button from '@material-ui/core/Button';
 // import PropTypes from 'prop-types';
 
-function Button(props) {
-  return <StyledButton>{Children.toArray(props.children)}</StyledButton>;
+function StyledButton(props) {
+  return <Button style={{"margin": "40px"}} variant="outlined" color="primary" {...props}>{Children.toArray(props.children)}</Button>;
 }
 
-Button.propTypes = {};
+StyledButton.propTypes = {};
 
-export default Button;
+export default StyledButton;
