@@ -2,7 +2,7 @@ import { takeLatest, call, put } from 'redux-saga/effects';
 import request from 'utils/request';
 import { LOAD_ORDERS } from './constants';
 import { ordersLoaded, ordersLoadingError } from './actions';
-import { START_ORDER } from '../JapScreen/constants';
+import { START_ORDER } from '../OrderScreen/constants';
 
 /**
  * Orders request/response handler

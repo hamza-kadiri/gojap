@@ -4,19 +4,15 @@
  *
  */
 import produce from 'immer';
-import { TOGGLE_RECAP, CHANGE_CURRENT_ITEM_SUCCESS } from './constants';
+import { DEFAULT_ACTION } from './constants';
 
-export const initialState = { recapOpen: false, currentItem: { index: 0 } };
+export const initialState = {};
 
 /* eslint-disable default-case, no-param-reassign */
 const japScreenReducer = (state = initialState, action) =>
-  produce(state, draft => {
+  produce(state, (/* draft */) => {
     switch (action.type) {
-      case TOGGLE_RECAP:
-        draft.recapOpen = action.payload;
-        break;
-      case CHANGE_CURRENT_ITEM_SUCCESS:
-        draft.currentItem = { index: action.payload };
+      case DEFAULT_ACTION:
         break;
     }
   });
