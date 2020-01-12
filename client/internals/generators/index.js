@@ -25,7 +25,7 @@ module.exports = plop => {
     try {
       fs.accessSync(
         path.join(__dirname, `../../app/containers/${comp}`),
-        fs.F_OK,
+        fs.F_OK
       );
       return `containers/${comp}`;
     } catch (e) {
@@ -40,7 +40,7 @@ module.exports = plop => {
       config.path,
       plop.getHelper('properCase')(answers.name),
       '**',
-      '**.js',
+      '**.js'
     )}`;
 
     try {
@@ -57,14 +57,14 @@ module.exports = plop => {
         path.join(
           __dirname,
           config.path,
-          `${config.file}.${BACKUPFILE_EXTENSION}`,
+          `${config.file}.${BACKUPFILE_EXTENSION}`
         ),
-        'utf8',
+        'utf8'
       );
       return path.join(
         __dirname,
         config.path,
-        `${config.file}.${BACKUPFILE_EXTENSION}`,
+        `${config.file}.${BACKUPFILE_EXTENSION}`
       );
     } catch (err) {
       throw err;

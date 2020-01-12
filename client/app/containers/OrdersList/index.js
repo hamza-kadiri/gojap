@@ -4,7 +4,7 @@
  *
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -20,33 +20,37 @@ import reducer from './reducer';
 import saga from './saga';
 import { loadOrders } from './actions';
 
-export function OrdersList({ dispatch, ordersList, onClickItem }) {
-  useInjectReducer({ key: 'ordersList', reducer });
-  useInjectSaga({ key: 'ordersList', saga });
-  const Wrapper = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  `;
+const OrdersList = memo(
+  function OrdersList({ dispatch, ordersList, onClickItem }) {
+    useInjectReducer({ key: 'ordersList', reducer });
+    useInjectSaga({ key: 'ordersList', saga });
+    const Wrapper = styled.div`
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    `;
 
-  useEffect(() => {
-    dispatch(loadOrders());
-  }, []);
+    useEffect(() => {
+      dispatch(loadOrders());
+    }, []);
 
-  const ordersListProps = {
-    ...ordersList,
-    items: ordersList.orders,
-    component: OrderListItem,
-    multiline: true,
-    onClickItem,
-  };
-  return (
-    <Wrapper>
-      <ListWrapper {...ordersListProps} />
-    </Wrapper>
-  );
-}
+    const ordersListProps = {
+      ...ordersList,
+      items: ordersList.orders,
+      component: OrderListItem,
+      multiline: true,
+      onClickItem,
+    };
+
+    return (
+      <Wrapper>
+        <ListWrapper {...ordersListProps} />
+      </Wrapper>
+    );
+  },
+  (prevProps, nextProps) => prevProps.ordersList === nextProps.ordersList
+);
 
 OrdersList.propTypes = {
   dispatch: PropTypes.func.isRequired,

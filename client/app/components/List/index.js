@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { List as VList, AutoSizer } from 'react-virtualized';
 import AutoSizerWrapper from './AutoSizerWrapper';
 
-function List(props) {
+const List = memo(function List(props) {
   const ComponentToRender = props.component;
   const { onClickItem } = props;
   function rowRenderer({ key, index, style }) {
@@ -43,7 +43,7 @@ function List(props) {
       </AutoSizer>
     </AutoSizerWrapper>
   );
-}
+});
 
 List.propTypes = {
   component: PropTypes.elementType.isRequired,

@@ -21,7 +21,9 @@ export function JapListItem(props) {
     <ListItem
       divider
       button
-      onClick={() => history.push(`/order/${item.alias}`)}
+      onClick={() => {
+        history.push(`/order/${item.alias}`);
+      }}
     >
       {item.name ? (
         <Grid container justify="space-between">

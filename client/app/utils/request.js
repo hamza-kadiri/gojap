@@ -2,6 +2,7 @@ import ky from 'ky';
 
 const extendedKy = ky.extend({
   prefixUrl: process.env.SERVER_URL,
+  retry: 5,
 });
 
 /**

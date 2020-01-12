@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
 import List from 'components/List';
 import LoadingIndicator from 'components/LoadingIndicator';
 
-function ListWrapper({ loading, error, items, component, multiline, ...rest }) {
+const ListWrapper = memo(function ListWrapper({
+  loading,
+  error,
+  items,
+  component,
+  multiline,
+  ...rest
+}) {
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -28,7 +35,7 @@ function ListWrapper({ loading, error, items, component, multiline, ...rest }) {
   }
 
   return null;
-}
+});
 
 ListWrapper.propTypes = {
   loading: PropTypes.bool,
