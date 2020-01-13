@@ -1,3 +1,4 @@
+"""Entry point for socket messages."""
 from flask_socketio import Namespace, emit, join_room, send, leave_room
 from flask import current_app as app
 from services.services import \
@@ -12,7 +13,7 @@ from .socket_messages import socket_messages
 
 class SocketServer(Namespace):
     """Socket server class to use flask io Namespace.
-    
+
     Deals with thiose messages :
         - connect
         - disconnect
@@ -21,7 +22,9 @@ class SocketServer(Namespace):
         - join_table
         - start_command
         - end_command
+
     """
+    
     def on_connect(self):
         """Call when a connection socket is set with a client."""
         app.logger.info("Connection establish in socket with a client")
