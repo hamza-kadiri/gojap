@@ -1,30 +1,30 @@
 export const MESSAGES = {
   //   CLIENTS ---> SERVER
   // master -> table users
-  'START_COMMAND': 'start_command',
-  'END_COMMAND': 'end_command',
-  'NEXT_ITEM': 'next_item',
+  START_COMMAND: 'Start Command',
+  END_COMMAND: 'End Command',
+  NEXT_ITEM: 'Next Item',
   // user -> table
-  'CHOOSE_ITEM': 'choose_item',
+  CHOOSE_ITEM: 'Choose Item',
   // user -> jap
-  'JOIN_JAP': 'join_jap',
-  'LEAVE_JAP': 'leave_jap',
-  'SEND_EVENT': 'send_event',
-  'JOIN_TABLE': 'join_table',
+  JOIN_JAP: 'Join Jap',
+  LEAVE_JAP: 'Leave Jap',
+  SEND_EVENT: 'Send Event',
+  JOIN_TABLE: 'Join Table',
 
   //   CLIENTS <---> SERVER
 
   //   SERVER ---> CLIENTS
   // specific table
-  'COMMAND_STARTED': 'command_started',
-  'ITEM_CHANGED': 'item_changed',
-  'COMMAND_ENDED': 'command_ended',
-  'ITEM_CHOSEN': 'item_chosen',
+  COMMAND_STARTED: 'Command Started',
+  ITEM_CHANGED: 'Item changed',
+  COMMAND_ENDED: 'Command Ended',
+  ITEM_CHOSEN: 'Item Chosen',
   // all jap members
-  'USER_LEFT_JAP': 'user_left_jap',
-  'NEW_EVENT': 'new_event',
-  'USER_JOINED_TABLE': 'user_joined_table',
-  'USER_JOINED_JAP': 'user_joined_jap',
+  USER_LEFT_JAP: 'User Left Jap',
+  NEW_EVENT: 'New Event',
+  USER_JOINED_TABLE: 'User Joined Table',
+  USER_JOINED_JAP: 'User Joined Jap',
 };
 
 export const SOCKET_URL = process.env.SERVER_URL;
