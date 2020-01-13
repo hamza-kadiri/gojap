@@ -8,6 +8,7 @@ import OrdersList from 'containers/OrdersList';
 import NewJapPage from 'containers/NewJapPage';
 import MembersList from 'containers/MembersList';
 import JoinJapPage from 'components/JoinJapPage';
+import AddMembersPage from 'containers/AddMembersPage';
 
 const routes = [
   { path: '/', name: 'HomePage', Component: HomePage },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/newjap', name: 'NewJapPage', Component: NewJapPage },
   { path: '/members', name: 'MembersList', Component: MembersList },
   { path: '/joinjap', name: 'JoinJapPage', Component: JoinJapPage },
+  { path: '/addmembers', name: 'AddMembersPage', Component: AddMembersPage },
 ];
 
 export default routes;
