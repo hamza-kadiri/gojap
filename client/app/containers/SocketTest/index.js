@@ -21,7 +21,7 @@ import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
 
 export function SocketTest() {
-  const [pseudo, setPseudo] = useState('');
+  const [nom, setnom] = useState('');
   const [currentJap, setCurrentJap] = useState(null);
   const [currentJapMembers, setCurrentJapMembers] = useState([]);
   const [currentJapTables, setCurrentJapTables] = useState({});
@@ -31,15 +31,15 @@ export function SocketTest() {
   useInjectReducer({ key: 'socketTest', reducer });
   useInjectSaga({ key: 'socketTest', saga });
 
-  const handlePseudoChange = e => {
-    setPseudo(e.target.value);
+  const handlenomChange = e => {
+    setnom(e.target.value);
   };
 
   useEffect(() => {
     const handleUserJoinedJap = message => {
       console.log('user JOINED JAP');
       console.log(message);
-      setCurrentJap(message.jap_id);
+      setCurrentJap(message.jap_place_id);
       setCurrentJapMembers(message.jap_members);
       setCurrentJapTables(message.jap_tables);
     };
@@ -62,13 +62,13 @@ export function SocketTest() {
     const handleUserLeft = message => {
       console.log('user LEFT JAP');
       console.log(message);
-      if (message.pseudo === pseudo) {
+      if (message.nom === nom) {
         setCurrentJap(null);
         setCurrentJapMembers(null);
         setCurrentTable(null);
         setCurrentJapTables({});
       } else {
-        setCurrentJap(message.jap_id);
+        setCurrentJap(message.jap_place_id);
         setCurrentJapMembers(message.jap_members);
         if (message.table_id) {
           const tables = currentJapTables;
@@ -96,7 +96,7 @@ export function SocketTest() {
     const handleUserJoinedTable = message => {
       console.log('user Joined Table JAP');
       console.log(message);
-      if (message.pseudo === pseudo) {
+      if (message.nom === nom) {
         setCurrentJapTables(message.jap_tables);
         setCurrentTable(message.table_id);
       }
@@ -121,7 +121,7 @@ export function SocketTest() {
       console.log('Command started');
       console.log(message);
       setIsCommandStarted(true);
-      alert(`Command is started by${message.pseudo}`);
+      alert(`Command is started by${message.nom}`);
     };
 
     socketClient.subscribeToEvent(
@@ -142,7 +142,7 @@ export function SocketTest() {
     const handleItemChosen = message => {
       console.log('item chosen');
       console.log(message);
-      alert(`${message.pseudo} ordered a ${message.item_id}`);
+      alert(`${message.nom} ordered a ${message.item_id}`);
     };
 
     socketClient.subscribeToEvent(
@@ -163,7 +163,7 @@ export function SocketTest() {
     const handleItemChanged = message => {
       console.log('item changed');
       console.log(message);
-      alert(`${message.pseudo} changed the item`);
+      alert(`${message.nom} changed the item`);
     };
 
     socketClient.subscribeToEvent(
@@ -185,7 +185,7 @@ export function SocketTest() {
       console.log('command ended');
       console.log(message);
       setIsCommandStarted(false);
-      alert(`${message.pseudo} ended the command`);
+      alert(`${message.nom} ended the command`);
     };
 
     socketClient.subscribeToEvent(
@@ -204,14 +204,14 @@ export function SocketTest() {
 
   const handleJoinJap = japID => {
     console.log('handle join jap');
-    socketClient.emitMessage(MESSAGES.JOIN_JAP, { pseudo, jap_id: japID });
+    socketClient.emitMessage(MESSAGES.JOIN_JAP, { nom, jap_event_id: japID });
   };
 
   const handleLeaveJap = () => {
     console.log('handle leave jap');
     const msg = {
-      pseudo,
-      jap_id: currentJap,
+      nom,
+      jap_place_id: currentJap,
     };
     if (currentTable) {
       msg.table_id = currentTable;
@@ -222,8 +222,8 @@ export function SocketTest() {
 
   const handleJoinTable = tableID => {
     socketClient.emitMessage(MESSAGES.JOIN_TABLE, {
-      pseudo,
-      jap_id: currentJap,
+      nom,
+      jap_place_id: currentJap,
       table_id: tableID,
     });
   };
@@ -231,8 +231,8 @@ export function SocketTest() {
   const handleStartCommand = () => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.START_COMMAND, {
-        pseudo,
-        jap_id: currentJap,
+        nom,
+        jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
       });
@@ -242,8 +242,8 @@ export function SocketTest() {
   const handleEndCommand = () => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.END_COMMAND, {
-        pseudo,
-        jap_id: currentJap,
+        nom,
+        jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
       });
@@ -253,8 +253,8 @@ export function SocketTest() {
   const handleNextItem = itemID => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.NEXT_ITEM, {
-        pseudo,
-        jap_id: currentJap,
+        nom,
+        jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
         item_id: itemID,
@@ -265,8 +265,8 @@ export function SocketTest() {
   const handleChooseItem = itemID => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.CHOOSE_ITEM, {
-        pseudo,
-        jap_id: currentJap,
+        nom,
+        jap_place_id: currentJap,
         table_id: currentTable,
         item_id: itemID,
       });
@@ -295,13 +295,13 @@ export function SocketTest() {
         <meta name="description" content="Description of SocketTest" />
       </Helmet>
       <h1>Socket test Page</h1>
-      <p>Enter your pseudo</p>
+      <p>Enter your nom</p>
       <input
-        // placeholder="enter your pseudo"
-        value={pseudo}
-        onChange={handlePseudoChange}
+        // placeholder="enter your nom"
+        value={nom}
+        onChange={handlenomChange}
       />
-      <p>{`Current pseudo : ${pseudo}`}</p>
+      <p>{`Current nom : ${nom}`}</p>
       <button
         disabled={!!currentJap}
         type="button"
@@ -324,7 +324,7 @@ export function SocketTest() {
       <button disabled={!currentJap} type="button" onClick={handleLeaveJap}>
         {`Leave ${currentJap}`}
       </button>
-      {currentTable && pseudo && currentJap && (
+      {currentTable && nom && currentJap && (
         <div>
           <button type="button" onClick={handleStartCommand}>
             Start command

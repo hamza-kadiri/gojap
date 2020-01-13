@@ -20,11 +20,11 @@ socket_messages = {
   # specific table
   'COMMAND_STARTED': 'command_started',
   'ITEM_CHANGED': 'item_changed',
-  'COMMAND_ENDED': 'Command Ended',
-  'ITEM_CHOSEN': 'Item Chosen',
+  'COMMAND_ENDED': 'command_ended',
+  'ITEM_CHOSEN': 'item_chosen',
   # all jap members
-  'USER_LEFT_JAP': 'User Left Jap',
-  'NEW_EVENT': 'New Event',
-  'USER_JOINED_TABLE': 'User Joined Table',
-  'USER_JOINED_JAP': 'User Joined Jap',
+  'USER_LEFT_JAP': 'user_left_jap',
+  'NEW_EVENT': 'new_event',
+  'USER_JOINED_TABLE': 'user_joined_table',
+  'USER_JOINED_JAP': 'user_joined_jap',
 }
