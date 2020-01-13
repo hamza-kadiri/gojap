@@ -31,7 +31,7 @@ export function SocketTest() {
   useInjectReducer({ key: 'socketTest', reducer });
   useInjectSaga({ key: 'socketTest', saga });
 
-  const handlenomChange = e => {
+  const handleNomChange = e => {
     setNom(e.target.value);
   };
 
@@ -299,7 +299,7 @@ export function SocketTest() {
       <input
         // placeholder="enter your nom"
         value={nom}
-        onChange={handlenomChange}
+        onChange={handleNomChange}
       />
       <p>{`Current nom : ${nom}`}</p>
       <button
