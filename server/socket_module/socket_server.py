@@ -24,7 +24,7 @@ class SocketServer(Namespace):
         - end_command
 
     """
-    
+
     def on_connect(self):
         """Call when a connection socket is set with a client."""
         app.logger.info("Connection establish in socket with a client")
@@ -41,11 +41,11 @@ class SocketServer(Namespace):
         Emit USER_JOINED_JAP in the room 'jap_id'.
 
         Args :
-            data = {nom, jap_id} // later user_id
+            data = {userName, jap_id} // later user_id
         """
         app.logger.debug(data)
         app.logger.info("Join " + data['jap_event_id'] +
-                        " received from " + data['nom'])
+                        " received from " + data['userName'])
         data = join_jap_event_service(data)
         join_room(data['jap_id'])
         app.logger.debug(data)
@@ -58,11 +58,11 @@ class SocketServer(Namespace):
         Leave the room jap_id and table_id if a table id is present.
 
         Args :
-            data = {nom, jap_id, ?table_id} // later user_id
+            data = {userName, jap_id, ?table_id} // later user_id
         """
         app.logger.debug(data)
         app.logger.info(
-            "Leave jap " + data['jap_id'] + " received from " + data['nom'])
+            "Leave jap " + data['jap_id'] + " received from " + data['userName'])
         data = leave_jap_service(data)
         emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
         leave_room(data['jap_id'])
@@ -75,11 +75,11 @@ class SocketServer(Namespace):
         Emit USER_JOINED_TABLE in the room 'table_id'.
 
         Args :
-            data = {nom, jap_id, table_id} // later user_id
+            data = {userName, jap_id, table_id} // later user_id
         """
         app.logger.debug(data)
         app.logger.info(
-            "Join table " + data['table_id'] + " received from " + data['nom'])
+            "Join table " + data['table_id'] + " received from " + data['userName'])
 
         data = join_table_service(data)
         join_room(data['table_id'])
@@ -91,11 +91,11 @@ class SocketServer(Namespace):
         Emit COMMAND_STARTED in the room 'table_id'.
 
         Args :
-            data = {nom, jap_id, table_id, is_jap_master} // later user_id
+            data = {userName, jap_id, table_id, is_jap_master} // later user_id
         """
         app.logger.debug(data)
         app.logger.info("Command started on table " +
-                        data['table_id'] + " received from " + data['nom'])
+                        data['table_id'] + " received from " + data['userName'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
             data = start_command_service(data)
@@ -107,11 +107,11 @@ class SocketServer(Namespace):
         Emit COMMAND_ENDED in the room 'table_id'.
 
         Args :
-            data = {nom, jap_id, table_id, is_jap_master} // later user_id
+            data = {userName, jap_id, table_id, is_jap_master} // later user_id
         """
         app.logger.debug(data)
         app.logger.info("Command ended on table " +
-                        data['table_id'] + " received from " + data['nom'])
+                        data['table_id'] + " received from " + data['userName'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
             data = end_command_service(data)
@@ -123,11 +123,11 @@ class SocketServer(Namespace):
         Emit ITEM_CHANGED in the room 'table_id'.
 
         Args :
-            data = {nom, jap_id, table_id, is_jap_master, item_id} // later user_id
+            data = {userName, jap_id, table_id, is_jap_master, item_id} // later user_id
         """
         app.logger.debug(data)
         app.logger.info("Next item on table " +
-                        data['table_id'] + " received from " + data['nom'])
+                        data['table_id'] + " received from " + data['userName'])
         if 'is_jap_master' in data and data['is_jap_master']:
             data = next_item_service(data)
             print(data)
@@ -140,11 +140,11 @@ class SocketServer(Namespace):
         Emit ITEM_CHOSEN in the room 'table_id'.
 
         Args :
-            data = {nom, jap_id, table_id, item_id} // later user_id
+            data = {userName, jap_id, table_id, item_id} // later user_id
         """
         app.logger.debug(data)
         app.logger.info(
-            "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['nom'])
+            "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['userName'])
         data = choose_item_service(data)
         emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 

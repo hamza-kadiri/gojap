@@ -21,7 +21,7 @@ import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
 
 export function SocketTest() {
-  const [nom, setNom] = useState('');
+  const [userName, setUserName] = useState('');
   const [currentJap, setCurrentJap] = useState(null);
   const [currentJapMembers, setCurrentJapMembers] = useState([]);
   const [currentJapTables, setCurrentJapTables] = useState({});
@@ -32,7 +32,7 @@ export function SocketTest() {
   useInjectSaga({ key: 'socketTest', saga });
 
   const handleNomChange = e => {
-    setNom(e.target.value);
+    setUserName(e.target.value);
   };
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export function SocketTest() {
     const handleUserLeft = message => {
       console.log('user LEFT JAP');
       console.log(message);
-      if (message.nom === nom) {
+      if (message.userName === userName) {
         setCurrentJap(null);
         setCurrentJapMembers(null);
         setCurrentTable(null);
@@ -96,7 +96,7 @@ export function SocketTest() {
     const handleUserJoinedTable = message => {
       console.log('user Joined Table JAP');
       console.log(message);
-      if (message.nom === nom) {
+      if (message.userName === userName) {
         setCurrentJapTables(message.jap_tables);
         setCurrentTable(message.table_id);
       }
@@ -121,7 +121,7 @@ export function SocketTest() {
       console.log('Command started');
       console.log(message);
       setIsCommandStarted(true);
-      alert(`Command is started by${message.nom}`);
+      alert(`Command is started by${message.userName}`);
     };
 
     socketClient.subscribeToEvent(
@@ -142,7 +142,7 @@ export function SocketTest() {
     const handleItemChosen = message => {
       console.log('item chosen');
       console.log(message);
-      alert(`${message.nom} ordered a ${message.item_id}`);
+      alert(`${message.userName} ordered a ${message.item_id}`);
     };
 
     socketClient.subscribeToEvent(
@@ -163,7 +163,7 @@ export function SocketTest() {
     const handleItemChanged = message => {
       console.log('item changed');
       console.log(message);
-      alert(`${message.nom} changed the item`);
+      alert(`${message.userName} changed the item`);
     };
 
     socketClient.subscribeToEvent(
@@ -185,7 +185,7 @@ export function SocketTest() {
       console.log('command ended');
       console.log(message);
       setIsCommandStarted(false);
-      alert(`${message.nom} ended the command`);
+      alert(`${message.userName} ended the command`);
     };
 
     socketClient.subscribeToEvent(
@@ -204,13 +204,13 @@ export function SocketTest() {
 
   const handleJoinJap = japID => {
     console.log('handle join jap');
-    socketClient.emitMessage(MESSAGES.JOIN_JAP, { nom, jap_event_id: japID });
+    socketClient.emitMessage(MESSAGES.JOIN_JAP, { userName, jap_event_id: japID });
   };
 
   const handleLeaveJap = () => {
     console.log('handle leave jap');
     const msg = {
-      nom,
+      userName,
       jap_place_id: currentJap,
     };
     if (currentTable) {
@@ -222,7 +222,7 @@ export function SocketTest() {
 
   const handleJoinTable = tableID => {
     socketClient.emitMessage(MESSAGES.JOIN_TABLE, {
-      nom,
+      userName,
       jap_place_id: currentJap,
       table_id: tableID,
     });
@@ -231,7 +231,7 @@ export function SocketTest() {
   const handleStartCommand = () => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.START_COMMAND, {
-        nom,
+        userName,
         jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
@@ -242,7 +242,7 @@ export function SocketTest() {
   const handleEndCommand = () => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.END_COMMAND, {
-        nom,
+        userName,
         jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
@@ -253,7 +253,7 @@ export function SocketTest() {
   const handleNextItem = itemID => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.NEXT_ITEM, {
-        nom,
+        userName,
         jap_place_id: currentJap,
         table_id: currentTable,
         is_jap_master: true,
@@ -265,7 +265,7 @@ export function SocketTest() {
   const handleChooseItem = itemID => {
     if (currentTable) {
       socketClient.emitMessage(MESSAGES.CHOOSE_ITEM, {
-        nom,
+        userName,
         jap_place_id: currentJap,
         table_id: currentTable,
         item_id: itemID,
@@ -295,13 +295,13 @@ export function SocketTest() {
         <meta name="description" content="Description of SocketTest" />
       </Helmet>
       <h1>Socket test Page</h1>
-      <p>Enter your nom</p>
+      <p>Enter your userName</p>
       <input
-        // placeholder="enter your nom"
-        value={nom}
+        // placeholder="enter your userName"
+        value={userName}
         onChange={handleNomChange}
       />
-      <p>{`Current nom : ${nom}`}</p>
+      <p>{`Current userName : ${userName}`}</p>
       <button
         disabled={!!currentJap}
         type="button"
@@ -324,7 +324,7 @@ export function SocketTest() {
       <button disabled={!currentJap} type="button" onClick={handleLeaveJap}>
         {`Leave ${currentJap}`}
       </button>
-      {currentTable && nom && currentJap && (
+      {currentTable && userName && currentJap && (
         <div>
           <button type="button" onClick={handleStartCommand}>
             Start command
