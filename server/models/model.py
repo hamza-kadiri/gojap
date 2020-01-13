@@ -34,7 +34,7 @@ class User(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 jap_event_users = db.Table('jap_event_users',
