@@ -22,7 +22,7 @@ export function JapListItem(props) {
       divider
       button
       onClick={() => {
-        history.push(`/order/${item.alias}`);
+        history.push(`/jap/${item.alias}`);
       }}
     >
       {item.name ? (

@@ -12,24 +12,15 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import LocalDiningIcon from '@material-ui/icons/LocalDining';
 import PeopleIcon from '@material-ui/icons/People';
 import styled from 'styled-components';
+import history from 'utils/history';
 
-const actions = [
-  { icon: <LocalDiningIcon />, name: 'Nouveau Jap' },
-  { icon: <PeopleIcon />, name: 'Rejoindre' },
-];
-
-const Root = styled.div`
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  bottom: 0;
-  right: 0;
-  flex-grow: 1;
-  transform: translateZ(0px);
+const StyledBackdrop = styled(Backdrop)`
+  z-index: 1200;
 `;
 
-const StyledSpeedDial = styled(({ ...rest }) => <SpeedDial {...rest} />)`
+const StyledSpeedDial = styled(SpeedDial)`
   position: absolute;
+  z-index: 1300;
   align-items: flex-end;
   bottom: ${props => props.theme.spacing(8)}px;
   right: ${props => props.theme.spacing(2)}px;
@@ -47,22 +38,35 @@ export default function FabButton() {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClose = action => () => {
+    console.log('in handle close', action);
+    setOpen(true);
   };
+
+  const handleClickNewJap = () => {
+    console.log('in handle click');
+    history.push('/newjap');
+  };
+
+  const actions = [
+    {
+      icon: <LocalDiningIcon />,
+      name: 'Nouveau Jap',
+      handleClick: handleClickNewJap,
+    },
+    { icon: <PeopleIcon />, name: 'Rejoindre', handleClick: handleClose },
+  ];
 
   return (
     <React.Fragment>
-      <Root>
-        <Backdrop open={open} />
-      </Root>
+      <StyledBackdrop open={open} />
       <StyledSpeedDial
         ariaLabel="SpeedDial tooltip example"
         icon={<SpeedDialIcon />}
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
-        FabProps = {{color: 'secondary'}}
+        FabProps={{ color: 'secondary' }}
       >
         {actions.map(action => (
           <SpeedDialAction
@@ -71,7 +75,7 @@ export default function FabButton() {
             tooltipTitle={action.name}
             tooltipOpen
             tooltipPlacement="left"
-            onClick={handleClose}
+            onClick={action.handleClick}
           />
         ))}
       </StyledSpeedDial>

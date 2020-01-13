@@ -21,7 +21,11 @@ import JapaneseItemIcon from 'components/JapaneseItemIcon';
 import OrdersList from 'containers/OrdersList';
 import ContainerWrapper from 'components/ContainerWrapper';
 import LoadingIndicator from 'components/LoadingIndicator';
-import { changeTitle, changeMoreMenu } from 'containers/Header/actions';
+import {
+  changeTitle,
+  changeSubtitle,
+  changeMoreMenu,
+} from 'containers/Header/actions';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -73,9 +77,11 @@ function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
   const moreMenu = [
     { name: 'Commandes', onClick: () => dispatch(toggleRecap(true)) },
   ];
+  const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
 
   useEffect(() => {
     dispatch(changeTitle('Jap du jour - Table 1'));
+    dispatch(changeSubtitle(members.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder());
     const timeOut = setTimeout(() => disappearOrder(array), 1500);

@@ -43,3 +43,16 @@ def get_orders():
               'client_id': app.config['UNSPLASH_CLIENT_ID']}
     r = requests.get(url, params=params)
     return jsonify(r.json())
+
+
+@base_blueprint.route('/members', methods=['GET'])
+def get_members():
+    """Members list route.
+
+    Returns :
+        Members list
+    """
+    url = 'https://randomuser.me/api/'
+    params = {'results': '60'}
+    r = requests.get(url, params=params)
+    return jsonify(r.json())

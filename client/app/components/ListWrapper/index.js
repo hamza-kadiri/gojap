@@ -10,6 +10,7 @@ const ListWrapper = memo(function ListWrapper({
   items,
   component,
   multiline,
+  isWindowScroller,
   ...rest
 }) {
   if (loading) {
@@ -28,6 +29,7 @@ const ListWrapper = memo(function ListWrapper({
       <List
         items={items}
         multiline={multiline}
+        isWindowScroller={isWindowScroller}
         component={component}
         {...rest}
       />
@@ -43,6 +45,7 @@ ListWrapper.propTypes = {
   items: PropTypes.any,
   component: PropTypes.func,
   multiline: PropTypes.bool,
+  isWindowScroller: PropTypes.bool,
   onClickItem: PropTypes.func,
 };
 

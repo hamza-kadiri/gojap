@@ -20,11 +20,11 @@ import TitleHeader from 'components/TitleHeader';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { toggleRecap } from 'containers/OrderScreen/actions';
 import makeSelectHeader, {
   makeSelectCurrentKey,
   makeSelectTitle,
   makeSelectMoreMenu,
+  makeSelectSubTitle,
 } from './selectors';
 
 import reducer from './reducer';
@@ -37,13 +37,15 @@ const StyledIconButton = styled(IconButton)`
   color: ${props => props.theme.palette.common.white};
 `;
 
-const getSpecificHeader = title => ({
+const getSpecificHeader = () => ({
   '': <HomePageHeader />,
 });
 
-const defaultHeader = title => <TitleHeader title={title} />;
+const defaultHeader = (title, subtitle) => (
+  <TitleHeader title={title} subtitle={subtitle} />
+);
 
-export function Header({ dispatch, title, moreMenu }) {
+export function Header({ dispatch, title, subtitle, moreMenu }) {
   useInjectReducer({ key: 'header', reducer });
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -64,27 +66,29 @@ export function Header({ dispatch, title, moreMenu }) {
   return (
     <AppBar position="static">
       <StyledToolbar>
-        {getSpecificHeader(title)[title] || defaultHeader(title)}
-        <StyledIconButton aria-label="Back" onClick={handleClick}>
-          <MoreVertIcon />
-        </StyledIconButton>
+        {getSpecificHeader()[title] || defaultHeader(title, subtitle)}
         {moreMenu.length > 0 && (
-          <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            {moreMenu.map(item => (
-              <MenuItem
-                key={item.name}
-                onClick={() => handleClickOrders(item.onClick)}
-              >
-                {item.name}
-              </MenuItem>
-            ))}
-          </Menu>
+          <React.Fragment>
+            <StyledIconButton aria-label="Back" onClick={handleClick}>
+              <MoreVertIcon />
+            </StyledIconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              {moreMenu.map(item => (
+                <MenuItem
+                  key={item.name}
+                  onClick={() => handleClickOrders(item.onClick)}
+                >
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Menu>
+          </React.Fragment>
         )}
       </StyledToolbar>
     </AppBar>
@@ -93,6 +97,7 @@ export function Header({ dispatch, title, moreMenu }) {
 
 Header.propTypes = {
   title: PropTypes.string,
+  subtitle: PropTypes.string,
   dispatch: PropTypes.func,
   moreMenu: PropTypes.array,
 };
@@ -101,6 +106,7 @@ const mapStateToProps = createStructuredSelector({
   header: makeSelectHeader(),
   currentKey: makeSelectCurrentKey(),
   title: makeSelectTitle(),
+  subtitle: makeSelectSubTitle(),
   moreMenu: makeSelectMoreMenu(),
 });
 

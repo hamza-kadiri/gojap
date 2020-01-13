@@ -4,12 +4,19 @@
  *
  */
 
-import { CHANGE_TITLE, CHANGE_MORE_MENU } from './constants';
+import { CHANGE_TITLE, CHANGE_MORE_MENU, CHANGE_SUBTITLE } from './constants';
 
 export function changeTitle(title) {
   return {
     type: CHANGE_TITLE,
     payload: title,
+  };
+}
+
+export function changeSubtitle(subtitle) {
+  return {
+    type: CHANGE_SUBTITLE,
+    payload: subtitle,
   };
 }
 

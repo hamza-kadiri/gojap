@@ -1,6 +1,6 @@
 import ky from 'ky';
 
-const extendedKy = ky.extend({
+export const api = ky.extend({
   prefixUrl: process.env.SERVER_URL,
   retry: 5,
 });
@@ -44,8 +44,8 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-export default function request(url, options) {
-  return extendedKy(url, options)
+export default function request(clientWeb, url, options) {
+  return clientWeb(url, options)
     .then(checkStatus)
     .then(parseJSON);
 }

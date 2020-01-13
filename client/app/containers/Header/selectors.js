@@ -32,6 +32,11 @@ const makeSelectTitle = () =>
     selectHeaderDomain,
     substate => substate.title
   );
+const makeSelectSubTitle = () =>
+  createSelector(
+    selectHeaderDomain,
+    substate => substate.subtitle
+  );
 const makeSelectMoreMenu = () =>
   createSelector(
     selectHeaderDomain,
@@ -44,4 +49,5 @@ export {
   makeSelectCurrentKey,
   makeSelectTitle,
   makeSelectMoreMenu,
+  makeSelectSubTitle,
 };

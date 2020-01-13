@@ -26,9 +26,7 @@ const StyledIconButton = styled(IconButton)`
   color: ${props => props.theme.palette.common.white};
 `;
 
-const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
-
-function TitleHeader({ title }) {
+function TitleHeader({ title, subtitle }) {
   return (
     <React.Fragment>
       <StyledIconButton onClick={() => history.goBack()} aria-label="Back">
@@ -42,7 +40,7 @@ function TitleHeader({ title }) {
         </Title>
         <Subtitle>
           <Typography noWrap variant="body2">
-            {members.join(', ')}
+            {subtitle}
           </Typography>
         </Subtitle>
       </TitleButton>

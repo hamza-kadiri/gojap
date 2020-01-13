@@ -1,5 +1,5 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import request from 'utils/request';
+import request, { api } from 'utils/request';
 import { LOAD_JAPS } from './constants';
 import { japsLoaded, japLoadingError } from './actions';
 
@@ -13,7 +13,7 @@ export function* getJaps() {
 
   try {
     // Call our request helper (see 'utils/request')
-    const japs = yield call(request, requestURL);
+    const japs = yield call(request, api, requestURL);
     yield put(japsLoaded(japs));
   } catch (err) {
     yield put(japLoadingError(err));

@@ -1,5 +1,5 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import request from 'utils/request';
+import request, { api } from 'utils/request';
 import { LOAD_ORDERS } from './constants';
 import { ordersLoaded, ordersLoadingError } from './actions';
 import { START_ORDER } from '../OrderScreen/constants';
@@ -14,7 +14,7 @@ export function* getOrders() {
 
   try {
     // Call our request helper (see 'utils/request')
-    const orders = yield call(request, requestUrl);
+    const orders = yield call(request, api, requestUrl, {});
     yield put(ordersLoaded(orders));
   } catch (err) {
     yield put(ordersLoadingError(err));
