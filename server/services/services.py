@@ -8,7 +8,7 @@ def create_jap_event_service(data):
     Create a new jap event.
 
     Args :
-        data = {nom, description, jap_place_id, user_id, date}
+        data = {nom, description, jap_place_id, nom, date}
     """
     jap_event = JapEvent(nom=data['nom'],
                          description=data['description'],
@@ -17,7 +17,7 @@ def create_jap_event_service(data):
     db.session.add(jap_event)
     db.session.commit()
 
-    join_jap_event_service({'user_id': data['user_id'],
+    join_jap_event_service({'nom': data['nom'],
                            'jap_event_id': jap_event.id})
 
     return jap_event
@@ -29,17 +29,17 @@ def join_jap_event_service(data):
     Return update data after changing entries in flash memory or DB
 
     Args :
-        data = {user_id, jap_event_id}
+        data = {nom, jap_event_id}
 
     Returns :
-        {user_id, jap_event_id, jap_tables, jap_members}
+        {nom, jap_event_id, jap_tables, jap_members}
     """
-    japs[data['jap_event_id']].append(data['user_id'])
+    japs[data['jap_event_id']].append(data['nom'])
     data['jap_tables'] = jap_tables[data['jap_event_id']]
     data["jap_members"] = japs[data['jap_event_id']]
 
     jap_event = JapEvent.query.filter_by(id=data['jap_event_id'])
-    user = User.query.filter_by(id=data['user_id'])
+    user = User.query.filter_by(id=data['nom'])
     jap_event.users.append(user)
     db.session.add(jap_event)
     db.session.commit()
