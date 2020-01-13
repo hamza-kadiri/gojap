@@ -18,12 +18,12 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-function JoinJapPage(loading = false, error = false) {
+function JoinJapPage() {
   const japEvents = [{ name: 'Gros jap' }];
 
   const japsToJoin = {
-    loading,
-    error,
+    loading: false,
+    error: false,
     items: japEvents,
     component: JapListItem,
     multiline: true,
