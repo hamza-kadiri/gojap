@@ -21,7 +21,7 @@ import socketClient from '../../socket/socket';
 import { MESSAGES } from '../../socket/constants';
 
 export function SocketTest() {
-  const [nom, setnom] = useState('');
+  const [nom, setNom] = useState('');
   const [currentJap, setCurrentJap] = useState(null);
   const [currentJapMembers, setCurrentJapMembers] = useState([]);
   const [currentJapTables, setCurrentJapTables] = useState({});
@@ -32,7 +32,7 @@ export function SocketTest() {
   useInjectSaga({ key: 'socketTest', saga });
 
   const handlenomChange = e => {
-    setnom(e.target.value);
+    setNom(e.target.value);
   };
 
   useEffect(() => {
