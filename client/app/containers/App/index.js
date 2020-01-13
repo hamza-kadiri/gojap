@@ -13,22 +13,16 @@ import styled, { ThemeProvider } from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import HomePage from 'containers/HomePage/Loadable';
-import NewJapPage from 'containers/NewJapPage';
-import DashboardPage from 'containers/DashboardPage/Loadable';
-import ProfilePage from 'containers/ProfilePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
-import Header from 'components/Header';
+import Header from 'containers/Header';
 import Footer from 'components/Footer';
 import { StylesProvider, MuiThemeProvider } from '@material-ui/core/styles';
-import JapScreen from 'containers/JapScreen';
 import { connect } from 'react-redux';
-import SocketTest from 'containers/SocketTest';
+import routes from 'utils/routes';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
 import { makeSelectLocation } from './selectors';
-import OrdersList from '../OrdersList';
-import { toggleRecap } from '../JapScreen/actions';
+import { toggleRecap } from '../OrderScreen/actions';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -43,9 +37,10 @@ const SwitchWrapper = styled.div`
 `;
 
 function App({ router, dispatch }) {
+  const currentKey = router.pathname.split('/')[1] || '/';
   const handleOpenDrawer = () => {
-    switch (router.pathname) {
-      case '/jap':
+    switch (currentKey) {
+      case 'order':
         return () => dispatch(toggleRecap(true));
       default:
         return null;
@@ -62,13 +57,9 @@ function App({ router, dispatch }) {
             <Header handleOpenDrawer={handleOpenDrawer} />
             <SwitchWrapper>
               <Switch>
-                <Route exact path="/" component={HomePage} />
-                <Route exact path="/dashboard" component={DashboardPage} />
-                <Route exact path="/profile" component={ProfilePage} />
-                <Route exact path="/socket" component={SocketTest} />
-                <Route exact path="/jap" component={JapScreen} />
-                <Route exact path="/orders" component={OrdersList} />
-                <Route exact path="/newjap" component={NewJapPage} />
+                {routes.map(({ path, Component }) => (
+                  <Route key={path} exact path={path} component={Component} />
+                ))}
                 <Route path="" component={NotFoundPage} />
               </Switch>
             </SwitchWrapper>
@@ -85,6 +76,7 @@ function App({ router, dispatch }) {
 
 App.propTypes = {
   router: PropTypes.object,
+  dispatch: PropTypes.func,
 };
 const mapStateToProps = createStructuredSelector({
   router: makeSelectLocation(),

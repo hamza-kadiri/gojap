@@ -5,6 +5,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 module.exports = options => ({
   mode: options.mode,
@@ -116,11 +117,17 @@ module.exports = options => ({
       NODE_ENV: 'development',
     }),
     new Dotenv(),
+    new MomentLocalesPlugin({
+      localesToKeep: ['fr'],
+    }),
   ]),
   resolve: {
     modules: ['node_modules', 'app'],
     extensions: ['.js', '.jsx', '.react.js'],
     mainFields: ['browser', 'jsnext:main', 'main'],
+    alias: {
+      moment: 'moment/moment.js',
+    },
   },
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window

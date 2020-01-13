@@ -10,7 +10,7 @@ import {
   LOAD_ORDERS_ERROR,
 } from './constants';
 
-export const initialState = { orders: [], loading: false, error: false };
+export const initialState = { orders: [], loading: true, error: false };
 
 /* eslint-disable default-case, no-param-reassign */
 const ordersListReducer = (state = initialState, action) =>

@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { List as VList, AutoSizer } from 'react-virtualized';
+import { List as VList, AutoSizer, WindowScroller } from 'react-virtualized';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AutoSizerWrapper from './AutoSizerWrapper';
 
-function List(props) {
+const MoreResults = ({ items, setShowMore }) => (
+  <ListItem button onClick={() => setShowMore(true)}>
+    <ListItemIcon>
+      <ExpandMoreIcon />
+    </ListItemIcon>
+    <ListItemText primary={`${items.length - 6} de plus`} secondary="" />
+  </ListItem>
+);
+
+const List = memo(function List(props) {
   const ComponentToRender = props.component;
-  const { onClickItem } = props;
+  const { onClickItem, isWindowScroller } = props;
+  const [showMore, setShowMore] = useState(false);
   function rowRenderer({ key, index, style }) {
     if (props.items) {
       const item = props.items[index];
@@ -27,23 +41,45 @@ function List(props) {
     index: PropTypes.number,
     style: PropTypes.object,
   };
-
   return (
     <AutoSizerWrapper>
-      <AutoSizer>
-        {({ height, width }) => (
-          <VList
-            width={width}
-            height={height}
-            rowCount={props.items.length}
-            rowHeight={props.multiline ? 72 : 49}
-            rowRenderer={rowRenderer}
-          />
-        )}
-      </AutoSizer>
+      {isWindowScroller ? (
+        <WindowScroller>
+          {({ height, width, isScrolling, onChildScroll, scrollTop }) => (
+            <React.Fragment>
+              <VList
+                autoHeight
+                width={width}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                scrollTop={scrollTop}
+                height={height}
+                rowCount={showMore ? props.items.length : 6}
+                rowHeight={props.multiline ? 72 : 49}
+                rowRenderer={rowRenderer}
+              />
+              {!showMore && (
+                <MoreResults items={props.items} setShowMore={setShowMore} />
+              )}
+            </React.Fragment>
+          )}
+        </WindowScroller>
+      ) : (
+        <AutoSizer>
+          {({ height, width }) => (
+            <VList
+              width={width}
+              height={height}
+              rowCount={props.items.length}
+              rowHeight={props.multiline ? 72 : 49}
+              rowRenderer={rowRenderer}
+            />
+          )}
+        </AutoSizer>
+      )}
     </AutoSizerWrapper>
   );
-}
+});
 
 List.propTypes = {
   component: PropTypes.elementType.isRequired,

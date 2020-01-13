@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -18,13 +18,19 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import H1 from 'components/H1';
 import StyledButton from 'components/Button';
+import { changeMoreMenu, changeTitle } from 'containers/Header/actions';
 
-export function NewJapPage() {
+export function NewJapPage({ dispatch }) {
   const [date, setDate] = React.useState(Date.now());
   const [time, setTime] = React.useState(0);
   const [name, setName] = React.useState();
   const [description, setDescription] = React.useState();
   const [hasBeenCreated, setHasBeenCreated] = React.useState(false);
+
+  useEffect(() => {
+    dispatch(changeTitle('Créer un nouveau Jap'));
+    dispatch(changeMoreMenu([]));
+  }, []);
 
   const handleClick = () => {
     // Call back to create jap

@@ -4,36 +4,4 @@
  *
  */
 
-export const TOGGLE_RECAP = 'app/JapScreen/TOGGLE_RECAP';
-export const START_ORDER = 'app/JapScreen/START_ORDER';
-export const CHANGE_CURRENT_ITEM_SUCCESS =
-  'app/JapScreen/CHANGE_CURRENT_ITEM_SUCCESS';
-
-export const MESSAGES = {
-  //   CLIENTS ---> SERVER
-  // master -> table users
-  START_COMMAND: 'Start Command',
-  END_COMMAND: 'End Command',
-  NEXT_ITEM: 'Next Item',
-  // user -> table
-  CHOOSE_ITEM: 'Choose Item',
-  // user -> jap
-  JOIN_JAP: 'Join Jap',
-  LEAVE_JAP: 'Leave Jap',
-  SEND_EVENT: 'Send Event',
-  JOIN_TABLE: 'Join Table',
-
-  //   CLIENTS <---> SERVER
-
-  //   SERVER ---> CLIENTS
-  // specific table
-  COMMAND_STARTED: 'Command Started',
-  ITEM_CHANGED: 'Item changed',
-  COMMAND_ENDED: 'Command Ended',
-  ITEM_CHOSEN: 'Item Chosen',
-  // all jap members
-  USER_LEFT_JAP: 'User Left Jap',
-  NEW_EVENT: 'New Event',
-  USER_JOINED_TABLE: 'User Joined Table',
-  USER_JOINED_JAP: 'User Joined Jap',
-};
+export const DEFAULT_ACTION = 'app/JapScreen/DEFAULT_ACTION';
