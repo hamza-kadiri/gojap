@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import Flask
+from flask import Flask, session
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
@@ -15,7 +15,9 @@ from services.services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, construct_oauth_blueprint
+from authlib.integrations.flask_client import OAuth
+from werkzeug import security
 
 
 app = Flask(__name__)
@@ -24,17 +26,33 @@ gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
 
+
 app.config.from_object('config.Config')
 app.app_context().push()
 
 db.init_app(app)
 db.create_all()
 
+oauth = OAuth(app)
+
+viarezo = oauth.register(
+    'viarezo',
+    client_id=app.config['VIAREZO_CLIENT_ID'],
+    client_secret=app.config['VIAREZO_CLIENT_SECRET'],
+    request_token_params={'scope': 'default',
+                          'state': lambda: security.gen_salt(10)},
+    api_base_url=app.config['VIAREZO_BASE_URL'],
+    access_token_method='POST',
+    access_token_url=app.config['VIAREZO_TOKEN_URL'],
+    authorize_url=app.config['VIAREZO_AUTH_URL']
+)
+
 socketio = SocketIO(app, cors_allowed_origins='*')
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(construct_oauth_blueprint(viarezo))
 app.register_blueprint(jap_event_blueprint)
 
 

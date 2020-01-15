@@ -18,8 +18,9 @@ flask_sqlalchemy = "*"
 pydash = "*"
 pyOpenSSL = "*"
 python-dotenv = "*"
-
-[dev-packages]
+flask_jwt_extended = "*"
+authlib = "*"
+[dev-ackages]
 
 [requires]
 python_version = "3.7"
