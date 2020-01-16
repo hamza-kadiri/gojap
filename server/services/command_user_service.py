@@ -19,7 +19,7 @@ def create_command_user_service(data):
 
 def get_command_user_service(data):
     """
-    Create a new command for a user.
+    Get command for a user.
 
     Args :
         data = {command_id}
