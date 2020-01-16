@@ -14,7 +14,7 @@ import { isBrowser } from 'react-device-detect';
 import history from 'utils/history';
 
 export function JapListItem(props) {
-  const { item } = props;
+  const { item, onClickItem } = props;
   // Put together the content of the Jap
   // Render the content into a list item
   return (
@@ -22,7 +22,7 @@ export function JapListItem(props) {
       divider
       button
       onClick={() => {
-        history.push(`/jap/${item.alias}`);
+        onClickItem(item.alias);
       }}
     >
       {item.name ? (

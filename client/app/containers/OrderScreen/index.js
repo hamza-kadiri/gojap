@@ -26,6 +26,7 @@ import {
   changeSubtitle,
   changeMoreMenu,
 } from 'containers/Header/actions';
+import { makeSelectTableId } from 'containers/User/selectors';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -64,7 +65,13 @@ const CurrentJapaneseItemIcon = styled(JapaneseItemIcon)`
   border: ${props => `3px solid ${props.theme.palette.primary.main}`};
 `;
 
-function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
+function OrderScreen({
+  dispatch,
+  recapOpen,
+  ordersList,
+  currentItem,
+  tableId,
+}) {
   useInjectReducer({ key: 'orderScreen', reducer });
   useInjectSaga({ key: 'orderScreen', saga });
   useInjectSaga({ key: 'ordersList', saga: ordersSaga });
@@ -80,7 +87,7 @@ function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
   const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
 
   useEffect(() => {
-    dispatch(changeTitle('Jap du jour - Table 1'));
+    dispatch(changeTitle(tableId));
     dispatch(changeSubtitle(members.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder());
@@ -160,6 +167,7 @@ const mapStateToProps = createStructuredSelector({
   recapOpen: makeSelectRecapOpen(),
   ordersList: makeSelectOrdersList(),
   currentItem: makeSelectCurrentItem(),
+  tableId: makeSelectTableId(),
 });
 
 function mapDispatchToProps(dispatch) {

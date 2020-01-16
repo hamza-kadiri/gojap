@@ -18,7 +18,7 @@ def create_jap_event_service(data):
     db.session.commit()
 
     join_jap_event_service({'user_id': data['user_id'],
-                           'jap_event_id': jap_event.id})
+                            'jap_event_id': jap_event.id})
 
     return jap_event
 
@@ -60,9 +60,9 @@ def join_table_service(data):
     """
     jap_id = data['jap_id']
     table_id = data['table_id']
-    jap_tables[jap_id][table_id].append(data['pseudo'])
-    data['jap_tables'] = jap_tables[jap_id]
-    data["jap_members"] = japs[jap_id]
+    jap_tables.setdefault(table_id, []).append(data['pseudo'])
+    data['jap_tables'] = jap_id
+    data["jap_members"] = table_id
     return data
 
 

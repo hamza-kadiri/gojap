@@ -1,13 +1,24 @@
-import { take, call, put, fork } from 'redux-saga/effects';
+import { take, takeEvery, call, put, fork, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import io from 'socket.io-client';
+import {
+  makeSelectJapId,
+  makeSelectUsername,
+  makeSelectTableId,
+} from 'containers/User/selectors';
 import { START_ORDER, MESSAGES } from './constants';
 import { changedCurrentItem } from './actions';
 
-function connect() {
+function connect(username, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
   return new Promise(resolve => {
     socket.on('connect', () => {
+      socket.emit(MESSAGES.JOIN_TABLE, {
+        pseudo: username,
+        jap_id: japId,
+        table_id: tableId,
+        is_jap_master: true,
+      });
       resolve(socket);
     });
   });
@@ -24,10 +35,13 @@ function* read(socket) {
 export function* write(socket) {
   while (true) {
     const { payload } = yield take(MESSAGES.NEXT_ITEM);
+    const username = yield select(makeSelectUsername());
+    const japId = yield select(makeSelectJapId());
+    const tableId = yield select(makeSelectTableId());
     socket.emit(MESSAGES.NEXT_ITEM, {
-      pseudo: 'smokoco',
-      jap_id: 'oki',
-      table_id: 'smoko_table',
+      pseudo: username,
+      jap_id: japId,
+      table_id: tableId,
       is_jap_master: true,
       item_id: 'pneu',
       index: payload,
@@ -43,9 +57,15 @@ export function* subscribe(socket) {
   });
 }
 // Individual exports for testing
-export default function* OrderScreenSaga() {
-  yield take(START_ORDER);
-  const socket = yield call(connect);
+export function* OrderScreenSaga() {
+  const username = yield select(makeSelectUsername());
+  const japId = yield select(makeSelectJapId());
+  const tableId = yield select(makeSelectTableId());
+  const socket = yield call(connect, username, japId, tableId);
   yield fork(read, socket);
   yield fork(write, socket);
+}
+
+export default function* watchOrderScreen() {
+  yield takeEvery(START_ORDER, OrderScreenSaga);
 }

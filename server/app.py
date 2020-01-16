@@ -176,8 +176,8 @@ def next_item(data):
     if 'is_jap_master' in data and data['is_jap_master']:
         data = next_item_service(data)
         print(data)
-        # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
-        emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
+        emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
+        #emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
 
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])
