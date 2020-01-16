@@ -86,13 +86,14 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
     <Wrapper>
       <H1>Ajouter un membre:</H1>
       <ListWrapper {...membersListProps} />
-      <StyledButton disable={membersList.length === 0} onClick={handleClickValidate}> Valider </StyledButton>
+      <StyledButton disable={membersList.length === 0 ? 'true' : 'false'} onClick={handleClickValidate}> Valider </StyledButton>
     </Wrapper>
   );
 }
 
 AddMembersPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  users: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
