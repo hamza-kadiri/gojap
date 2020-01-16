@@ -46,22 +46,22 @@ def add_item_to_command_service(data):
 
 def get_all_command_table(data):
     """
-        Get all commands for a table.
+    Get all commands for a table.
 
-        Args :
-            data = {table_id}
-        """
+    Args :
+        data = {table_id}
+    """
     command = CommandUser.query.filter_by(table_id=data['table_id']).all()
     return command
 
 
 def get_command_by_user(data):
     """
-        Get command for a user in a table.
+    Get command for a user in a table.
 
-        Args :
-            data = {user_id, table_id}
-        """
+    Args :
+        data = {user_id, table_id}
+    """
     command = CommandUser.query.filter_by(table_id=data['table_id'],
                                           user_id=data['user_id']).all()
     return command
