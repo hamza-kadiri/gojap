@@ -8,7 +8,8 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
 from socket_module.socket_server import SocketServer
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint, jap_place_blueprint
+
 
 
 app = Flask(__name__)
@@ -28,6 +29,8 @@ app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(jap_event_blueprint)
+app.register_blueprint(table_blueprint)
+app.register_blueprint(jap_place_blueprint)
 
 socketio.on_namespace(SocketServer())
 

@@ -21,17 +21,5 @@ const makeSelectJapScreen = () =>
     substate => substate
   );
 
-const makeSelectRecapOpen = () =>
-  createSelector(
-    selectJapScreenDomain,
-    globalState => globalState.recapOpen
-  );
-
-const makeSelectCurrentItem = () =>
-  createSelector(
-    selectJapScreenDomain,
-    globalState => globalState.currentItem
-  );
-
 export default makeSelectJapScreen;
-export { selectJapScreenDomain, makeSelectRecapOpen, makeSelectCurrentItem };
+export { selectJapScreenDomain };

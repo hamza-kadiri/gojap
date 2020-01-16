@@ -4,149 +4,219 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import H1 from 'components/H1';
+
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
-import Numbers from 'components/Numbers';
+import {
+  changeTitle,
+  changeSubtitle,
+  changeMoreMenu,
+} from 'containers/Header/actions';
+import moment from 'moment';
+import history from 'utils/history';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 import styled from 'styled-components';
-import Drawer from 'components/Drawer';
-import OrderCard from 'components/OrderCard';
-import JapaneseItemIcon from 'components/JapaneseItemIcon';
-import OrdersList from 'containers/OrdersList';
-import ContainerWrapper from 'components/ContainerWrapper';
-import LoadingIndicator from 'components/LoadingIndicator';
-import makeSelectJapScreen, {
-  makeSelectRecapOpen,
-  makeSelectCurrentItem,
-} from './selectors';
-import { makeSelectOrders } from '../OrdersList/selectors';
+import { Typography, Button } from '@material-ui/core';
+import LinesEllipsis from 'react-lines-ellipsis';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import GoJap from 'images/gojap.png';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import MembersList from 'containers/MembersList';
+import { makeSelectMembers } from 'containers/MembersList/selectors';
+import makeSelectJapScreen from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import ordersReducer from '../OrdersList/reducer';
-import ordersSaga from '../OrdersList/saga';
-import { toggleRecap, changeCurrentItem, startOrder } from './actions';
 
-const CenteredDiv = styled.div`
-  justify-content: center;
-  align-items: center;
+moment.locale('fr');
+
+const CardFluid = styled(Card)`
+  width: 100vw;
+  margin-bottom: 16px;
+`;
+
+const StyledCardHeader = styled(CardHeader)`
+  padding: 4px 16px;
+  .MuiCardHeader-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
+
+const FlexWrapper = styled.div`
   display: flex;
-  flex: ${props => props.flex || `1 0 0`};
 `;
 
-const NumberWrapper = styled.span`
-  font-size: 42px;
+const StyledCardContent = styled(CardContent)`
+  padding: 4px 16px;
 `;
 
-const OrdersWrapper = styled.div`
-  position: fixed;
-  right: 0;
+const StyledCardButton = styled(Button)`
+  width: 100%;
+  padding: 8px;
 `;
 
-const OffsetDiv = styled.div`
-  flex: 1;
+const StyledCardMedia = styled(CardMedia)`
+  width: 90px;
+`;
+const CardMediaGroup = styled.div`
+  display: flex;
 `;
 
-const NextJapaneseItemIcon = styled(JapaneseItemIcon)`
-  flex: 1;
-`;
-
-const CurrentJapaneseItemIcon = styled(JapaneseItemIcon)`
-  border: ${props => `3px solid ${props.theme.palette.primary.main}`};
-`;
-
-function JapScreen({ dispatch, recapOpen, orders, currentItem }) {
+const Ellipsis = ({ setIsClamped }) => (
+  <React.Fragment>
+    {`... `}
+    <ButtonBase onClick={() => setIsClamped(false)}>
+      <Typography variant="body2" color="primary">
+        Voir plus
+      </Typography>
+    </ButtonBase>
+  </React.Fragment>
+);
+export function JapScreen({ dispatch, members }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
-  useInjectReducer({ key: 'ordersList', reducer: ordersReducer });
-  useInjectSaga({ key: 'ordersList', saga: ordersSaga });
 
-  const [number, setNumber] = useState(null);
-  const [array, setArray] = useState([0, 1, 2, 3, 4]);
+  const [isDescriptionClamped, setIsDescriptionClamped] = useState(true);
 
+  const moreMenu = [
+    {
+      name: 'Modifier le jap',
+      onClick: () => console.log('add-users'),
+    },
+    {
+      name: 'Ajouter des participants',
+      onClick: () => history.push('/addmembers'),
+    },
+    {
+      name: 'Commencer la commande',
+      onClick: () => history.push('/order/test'),
+    },
+  ];
+
+  const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
-    dispatch(startOrder());
-    setTimeout(() => disappearOrder(array), 1500);
+    dispatch(changeTitle('Jap du jour'));
+    dispatch(changeSubtitle(createdBy));
+    dispatch(changeMoreMenu(moreMenu));
   }, []);
 
-  const disappearOrder = arr => {
-    const newArray = arr.slice(1);
-    setArray(newArray);
-
-    if (newArray.length > 0) {
-      setTimeout(() => disappearOrder(newArray), 1500);
-    }
-  };
-
-  const drawerProps = {
-    toggleDrawer: bool => dispatch(toggleRecap(bool)),
-    onClickItem: index => dispatch(changeCurrentItem(index)),
-    open: recapOpen,
-    component: OrdersList,
-  };
+  const loremIpsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+  interdum et ante hendrerit venenatis. Aliquam non tellus vel nunc
+  egestas rhoncus. Integer dictum nulla consectetur nunc pretium
+  suscipit. Cras mi tortor, tincidunt nec dolor vitae, efficitur
+  ullamcorper dolor. In sed aliquet mauris. In ut euismod risus, et
+  tempor purus. Vestibulum vehicula aliquam sapien non tristique. Nunc
+  volutpat ipsum ut justo lobortis tincidunt. Vestibulum a placerat
+  diam, eu pretium purus. Duis at vestibulum leo, vitae dignissim
+  eros. Phasellus odio nulla, pulvinar eu nulla quis, hendrerit mattis
+  est. Curabitur mauris justo, semper sit amet justo et, porta egestas
+  nunc. Quisque nec auctor leo. Nulla a fringilla magna. Cras suscipit
+  turpis ut risus laoreet ultrices.`;
 
   return (
-    <ContainerWrapper>
+    <div>
       <Helmet>
         <title>JapScreen</title>
         <meta name="description" content="Description of JapScreen" />
       </Helmet>
-      {orders.length > 0 ? (
-        <React.Fragment>
-          <H1>Commande : {orders[currentItem.index].id}</H1>
-          <CenteredDiv flex="2 1 0">
-            {orders[currentItem.index + 1] && <OffsetDiv />}
-            <CurrentJapaneseItemIcon
-              src={orders[currentItem.index].urls.regular}
-            />
-            {orders[currentItem.index + 1] && (
-              <NextJapaneseItemIcon
-                size="medium"
-                src={orders[currentItem.index + 1].urls.regular}
-                onClick={() =>
-                  dispatch(
-                    changeCurrentItem((currentItem.index + 1) % orders.length)
-                  )
-                }
+      <CardFluid>
+        <StyledCardHeader
+          title="Description"
+          titleTypographyProps={{
+            variant: 'subtitle1',
+            color: 'primary',
+          }}
+        />
+        <StyledCardContent>
+          <Typography variant="body2">
+            {isDescriptionClamped ? (
+              <LinesEllipsis
+                text={loremIpsum}
+                maxLine="3"
+                ellipsis={<Ellipsis setIsClamped={setIsDescriptionClamped} />}
+                trimRight
+                component="span"
               />
+            ) : (
+              <span>{loremIpsum}</span>
             )}
-          </CenteredDiv>
-
-          <OrdersWrapper>
-            {array.map(x => (
-              <OrderCard key={x} />
-            ))}
-          </OrdersWrapper>
-          <CenteredDiv>
-            <NumberWrapper>{number}</NumberWrapper>
-          </CenteredDiv>
-          <Numbers handleSelect={selectedNumber => setNumber(selectedNumber)} />
-        </React.Fragment>
-      ) : (
-        <LoadingIndicator />
-      )}
-      <Drawer {...drawerProps} />
-    </ContainerWrapper>
+          </Typography>
+        </StyledCardContent>
+      </CardFluid>
+      <CardFluid>
+        <StyledCardHeader
+          title="Souvenirs"
+          titleTypographyProps={{
+            variant: 'subtitle1',
+            color: 'primary',
+          }}
+          subheader={
+            <FlexWrapper>
+              <span>3</span>
+              <ChevronRightIcon fontSize="small" />
+            </FlexWrapper>
+          }
+          subheaderTypographyProps={{
+            variant: 'body2',
+            color: 'primary',
+          }}
+        />
+        <StyledCardContent>
+          <CardMediaGroup>
+            <StyledCardMedia image={GoJap} component="img" title="Go jap" />
+            <StyledCardMedia image={GoJap} component="img" title="Go jap" />
+            <StyledCardMedia image={GoJap} component="img" title="Go jap" />
+          </CardMediaGroup>
+        </StyledCardContent>
+      </CardFluid>
+      <CardFluid>
+        <StyledCardHeader
+          title={`${members.length} Participants`}
+          titleTypographyProps={{
+            variant: 'subtitle1',
+            color: 'primary',
+          }}
+        />
+        <StyledCardContent>
+          <MembersList />
+        </StyledCardContent>
+      </CardFluid>
+      <CardFluid>
+        <StyledCardButton startIcon={<ExitToAppIcon color="error" />}>
+          <Typography variant="subtitle2" component="p" color="error">
+            Quitter ma table
+          </Typography>
+        </StyledCardButton>
+      </CardFluid>
+      <CardFluid>
+        <StyledCardButton startIcon={<ExitToAppIcon color="error" />}>
+          <Typography variant="subtitle2" component="p" color="error">
+            Quitter le jap
+          </Typography>
+        </StyledCardButton>
+      </CardFluid>
+    </div>
   );
 }
 
 JapScreen.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  recapOpen: PropTypes.bool,
-  orders: PropTypes.array,
-  currentItem: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
-  recapOpen: makeSelectRecapOpen(),
-  orders: makeSelectOrders(),
-  currentItem: makeSelectCurrentItem(),
+  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {

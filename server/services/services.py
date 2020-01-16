@@ -10,15 +10,15 @@ def create_jap_event_service(data):
     Args :
         data = {nom, description, jap_place_id, nom, date}
     """
-    jap_event = JapEvent(nom=data['nom'],
-                         description=data['description'],
-                         jap_place_id=data['jap_place_id'],
-                         date=data['date'])
-    db.session.add(jap_event)
-    db.session.commit()
+    # jap_event = JapEvent(nom=data['nom'],
+    #                      description=data['description'],
+    #                      jap_place_id=data['jap_place_id'],
+    #                      date=data['date'])
+    # db.session.add(jap_event)
+    # db.session.commit()
 
-    join_jap_event_service({'nom': data['nom'],
-                           'jap_event_id': jap_event.id})
+    # join_jap_event_service({'nom': data['nom'],
+    #                        'jap_event_id': jap_event.id})
 
     return jap_event
 
@@ -37,12 +37,11 @@ def join_jap_event_service(data):
     japs[data['jap_event_id']].append(data['nom'])
     data['jap_tables'] = jap_tables[data['jap_event_id']]
     data["jap_members"] = japs[data['jap_event_id']]
-
-    jap_event = JapEvent.query.filter_by(id=data['jap_event_id'])
-    user = User.query.filter_by(id=data['nom'])
+    # jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
+    # user = User.query.filter_by(id=data['user_id']).first()
     jap_event.users.append(user)
-    db.session.add(jap_event)
-    db.session.commit()
+    # db.session.add(jap_event)
+    # db.session.commit()
 
     return data
 

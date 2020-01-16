@@ -15,17 +15,27 @@ import history from 'utils/history';
 
 export function JapListItem(props) {
   const { item } = props;
-
   // Put together the content of the Jap
   // Render the content into a list item
   return (
-    <ListItem divider button onClick={() => history.push('/jap')}>
+    <ListItem
+      divider
+      button
+      onClick={() => {
+        history.push(`/jap/${item.alias}`);
+      }}
+    >
       {item.name ? (
         <Grid container justify="space-between">
           <Grid item>
             <ListItemText
               primary={item.name}
-              secondary={isBrowser && item.location.display_address.join(', ')}
+              secondary={
+                isBrowser &&
+                item.location &&
+                item.location.display_address &&
+                item.location.display_address.join(', ')
+              }
             />
           </Grid>
           <Grid item>

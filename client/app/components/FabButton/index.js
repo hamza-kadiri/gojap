@@ -26,9 +26,15 @@ const StyledSpeedDial = styled(SpeedDial)`
   right: ${props => props.theme.spacing(2)}px;
   .MuiSpeedDialAction-staticTooltipLabel {
     position: unset;
+    color: ${props => props.theme.palette.common.white};
+    background-color: ${props => props.theme.palette.primary.main};
   }
   .MuiSpeedDialAction-staticTooltip {
     justify-content: flex-end;
+  }
+  .MuiSpeedDialAction-fab {
+    color: ${props => props.theme.palette.common.white};
+    background-color: ${props => props.theme.palette.primary.main};
   }
 `;
 export default function FabButton() {
@@ -38,14 +44,16 @@ export default function FabButton() {
     setOpen(true);
   };
 
-  const handleClose = action => () => {
-    console.log('in handle close', action);
-    setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const handleClickNewJap = () => {
-    console.log('in handle click');
     history.push('/newjap');
+  };
+
+  const handleClickJoinJap = () => {
+    history.push('/joinjap');
   };
 
   const actions = [
@@ -54,7 +62,11 @@ export default function FabButton() {
       name: 'Nouveau Jap',
       handleClick: handleClickNewJap,
     },
-    { icon: <PeopleIcon />, name: 'Rejoindre', handleClick: handleClose },
+    {
+      icon: <PeopleIcon />,
+      name: 'Rejoindre',
+      handleClick: handleClickJoinJap,
+    },
   ];
 
   return (
@@ -66,7 +78,7 @@ export default function FabButton() {
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}
-        FabProps={{ color: 'secondary' }}
+        FabProps={{ color: 'primary' }}
       >
         {actions.map(action => (
           <SpeedDialAction
