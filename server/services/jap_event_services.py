@@ -25,6 +25,25 @@ def create_jap_event_service(data):
     return jap_event
 
 
+def add_members_to_jap_event(data):
+    """Add multiple people to a jap event.
+
+    Args :
+        data = { jap_event_id, members: [ 'pseudo', 'pseudo2' ] }
+
+    Returns :
+        User[] // Array of User objects in the Jap Event
+    """
+    jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
+    users = User.query.filter(User.pseudo.in_(set(data['members']))).all()
+
+    jap_event.users += users
+    db.session.add(jap_event)
+    db.session.commit()
+
+    return jap_event.users
+
+
 def join_jap_event_service(data):
     """Process join jap request.
 
