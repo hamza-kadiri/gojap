@@ -1,3 +1,5 @@
+"""Jap Place blueprint."""
+
 from flask import Blueprint, request, abort
 from sqlalchemy import or_
 from services.jap_place_services import *
