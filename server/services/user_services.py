@@ -46,3 +46,14 @@ def remove_user_service(data):
         return user
     else:
         return None
+
+
+def get_all_users_service():
+    """
+    Display all users.
+
+    Args :
+        None
+    """
+    users = User.query.all()
+    return users

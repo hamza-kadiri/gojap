@@ -63,3 +63,21 @@ def remove_user():
 
     return json.dumps(user.as_dict())
 
+
+@user_blueprint.route('/all', methods=['GET'])
+def get_all_users():
+    """Display all users.
+
+    Args :
+        None
+
+    Returns :
+        list of users
+    """
+    users = get_all_users_service()
+    dict_users = {}
+    for user in users:
+        user = user.as_dict()
+        dict_users[user['id']] = user
+    return dict_users
+
