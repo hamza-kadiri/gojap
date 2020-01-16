@@ -1,9 +1,10 @@
-"""User blueprint."""
+"""JapEvent blueprint."""
 
 from flask import Blueprint, request, abort
 from models.model import db, User
 from sqlalchemy import or_
 from services.services import *
+import json
 
 jap_event_blueprint = Blueprint('jap_event_blueprint', __name__, url_prefix='/jap_event')
 
@@ -15,7 +16,7 @@ def create_jap_event():
     Returns :
         {nom, description, jap_place_id, user_id, date}
     """
-    body = request.json
-    jap_event = create_jap_event_service(body)
+    data = request.json
+    jap_event = create_jap_event_service(data)
 
-    return jap_event
+    return json.dumps(jap_event.as_dict(), indent=4, sort_keys=True, default=str)
