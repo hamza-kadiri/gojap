@@ -1,7 +1,6 @@
 """User blueprint."""
 
 from flask import Blueprint, request, abort
-from models.model import db, User
 from sqlalchemy import or_
 from services.user_services import *
 import json
@@ -63,3 +62,4 @@ def remove_user():
         abort(404, f"User not found")
 
     return json.dumps(user.as_dict())
+

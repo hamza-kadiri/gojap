@@ -29,7 +29,6 @@ class User(db.Model):
     achievements = db.relationship('Achievement', secondary=user_achievements, lazy='subquery',
                                    backref=db.backref('user', lazy=True))
 
-
     def __repr__(self):
         """Representation method."""
         return '<User %r>' % self.pseudo
@@ -70,6 +69,10 @@ class JapEvent(db.Model):
         """Representation method."""
         return '<JapEvent %r>' % self.userName
 
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 event_users = db.Table('event_users',
                        db.Column('event_id', db.Integer, db.ForeignKey('event.id'), primary_key=True),
@@ -95,6 +98,10 @@ class Achievement(db.Model):
         """Representation method."""
         return '<Achievement %r>' % self.name
 
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Event(db.Model):
     """
@@ -114,6 +121,10 @@ class Event(db.Model):
     def __repr__(self):
         """Representation method."""
         return '<Event %r>' % self.id
+
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class JapPlace(db.Model):
@@ -136,6 +147,10 @@ class JapPlace(db.Model):
     def __repr__(self):
         """Representation method."""
         return '<JapPlace %r>' % self.userName
+
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Photo(db.Model):
@@ -179,6 +194,10 @@ class Item(db.Model):
     points_amount = db.Column(db.Integer, nullable=False)
     icon_id = db.Column(db.Integer, db.ForeignKey('icon.id'), nullable=False)
 
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 item_commands = db.Table('item_commands',
                          db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
@@ -201,6 +220,10 @@ class CommandUser(db.Model):
     table_id = db.Column(db.Integer, db.ForeignKey('table.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 item_menus = db.Table('item_menus',
                       db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
@@ -221,6 +244,10 @@ class Menu(db.Model):
     items = db.relationship('Item', secondary=item_menus, lazy='subquery',
                             backref=db.backref('menus', lazy=True))
     jap_place = db.relationship("JapPlace", uselist=False, backref='menu')
+
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 table_users = db.Table('table_users',
@@ -244,3 +271,7 @@ class Table(db.Model):
     users = db.relationship('User', secondary=table_users, lazy='subquery',
                             backref=db.backref('table', lazy=True))
     jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+
+    def as_dict(self):
+        """Return object as dict."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
