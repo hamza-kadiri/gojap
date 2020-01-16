@@ -14,7 +14,7 @@ def create_jap_event():
     """Create a new jap_event.
 
     Returns :
-        {nom, description, jap_place_id, user_id, date}
+        {event_name, description, jap_place_id, user_id, date}
     """
     data = request.json
     jap_event = create_jap_event_service(data)
