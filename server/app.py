@@ -15,7 +15,7 @@ from services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint, jap_place_blueprint
 
 
 app = Flask(__name__)
@@ -37,6 +37,7 @@ app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(jap_event_blueprint)
 app.register_blueprint(table_blueprint)
+app.register_blueprint(jap_place_blueprint)
 
 
 @socketio.on('connect')

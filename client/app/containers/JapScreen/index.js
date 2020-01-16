@@ -96,7 +96,7 @@ export function JapScreen({ dispatch, members }) {
     },
     {
       name: 'Ajouter des participants',
-      onClick: () => console.log('add-users'),
+      onClick: () => history.push('/addmembers'),
     },
     {
       name: 'Commencer la commande',
