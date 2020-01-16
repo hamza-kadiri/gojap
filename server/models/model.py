@@ -57,7 +57,7 @@ class JapEvent(db.Model):
     event_name = db.Column(db.String(80), unique=False, nullable=False)
     description = db.Column(db.String(200), unique=False, nullable=True)
     date = db.Column(db.DateTime(), unique=False, nullable=False)
-    created_at = db.Column(db.DateTime(), unique=False, nullable=True)
+    created_at = db.Column(db.Integer, unique=False, nullable=True)
     created_by = db.Column(db.DateTime(), db.ForeignKey('user.id'), nullable=True)
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
