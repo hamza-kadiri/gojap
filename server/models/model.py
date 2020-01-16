@@ -21,8 +21,8 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=True)
-    phone = db.Column(db.String(12), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=False, nullable=True)
+    phone = db.Column(db.String(12), unique=False, nullable=True)
     calorie = db.Column(db.Integer, unique=False, nullable=True)
     avatar_url = db.Column(db.String(120), nullable=True)
     command_user_ids = db.relationship('CommandUser', backref='user', lazy=True)
@@ -54,9 +54,11 @@ class JapEvent(db.Model):
 
     __tablename__ = 'jap_event'
     id = db.Column(db.Integer, primary_key=True)
-    userName = db.Column(db.String(80), unique=False, nullable=False)
+    event_name = db.Column(db.String(80), unique=False, nullable=False)
     description = db.Column(db.String(200), unique=False, nullable=True)
     date = db.Column(db.DateTime(), unique=False, nullable=False)
+    created_at = db.Column(db.DateTime(), unique=False, nullable=True)
+    created_by = db.Column(db.DateTime(), db.ForeignKey('user.id'), nullable=True)
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
     photo_ids = db.relationship('Photo', backref='jap_event', lazy=True)
@@ -67,7 +69,7 @@ class JapEvent(db.Model):
 
     def __repr__(self):
         """Representation method."""
-        return '<JapEvent %r>' % self.userName
+        return '<JapEvent %r>' % self.event_name
 
     def as_dict(self):
         """Return object as dict."""
@@ -137,7 +139,7 @@ class JapPlace(db.Model):
 
     __tablename__ = 'jap_place'
     id = db.Column(db.Integer, primary_key=True)
-    userName = db.Column(db.String(80), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=False, nullable=False)
     adresse = db.Column(db.String(200), unique=False, nullable=False)
     telephone = db.Column(db.String(80), unique=False, nullable=True)
     horaires = db.Column(db.String(80), unique=False, nullable=True)
@@ -146,7 +148,7 @@ class JapPlace(db.Model):
 
     def __repr__(self):
         """Representation method."""
-        return '<JapPlace %r>' % self.userName
+        return '<JapPlace %r>' % self.name
 
     def as_dict(self):
         """Return object as dict."""
@@ -266,7 +268,8 @@ class Table(db.Model):
 
     _tablename_ = 'table'
     id = db.Column(db.Integer, primary_key=True)
-    emperor = db.Column(db.String(120), nullable=False)
+    emperor = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.Boolean, nullable=True)
     command_user_id = db.relationship('CommandUser', backref='table', lazy=True)
     users = db.relationship('User', secondary=table_users, lazy='subquery',
                             backref=db.backref('table', lazy=True))
