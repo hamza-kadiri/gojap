@@ -1,14 +1,14 @@
 """Entry point for socket messages."""
 from flask_socketio import Namespace, emit, join_room, send, leave_room
 from flask import current_app as app
-from services.services import \
-    join_jap_event_service,\
-    leave_jap_service,\
-    join_table_service, \
-    start_command_service,\
-    end_command_service,\
-    next_item_service,\
-    choose_item_service
+# from services.services import \
+#     join_jap_event_service,\
+#     leave_jap_service,\
+#     join_table_service, \
+#     start_command_service,\
+#     end_command_service,\
+#     next_item_service,\
+#     choose_item_service
 from .socket_messages import socket_messages
 
 class SocketServer(Namespace):
@@ -46,7 +46,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         app.logger.info("Join " + data['jap_event_id'] +
                         " received from " + data['nom'])
-        data = join_jap_event_service(data)
+        # data = join_jap_event_service(data)
         join_room(data['jap_id'])
         app.logger.debug(data)
         emit(socket_messages['USER_JOINED_JAP'], data, room=data['jap_event_id'])
@@ -63,7 +63,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         app.logger.info(
             "Leave jap " + data['jap_id'] + " received from " + data['nom'])
-        data = leave_jap_service(data)
+        # data = leave_jap_service(data)
         emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
         leave_room(data['jap_id'])
         if 'table_id' in data:
@@ -81,7 +81,7 @@ class SocketServer(Namespace):
         app.logger.info(
             "Join table " + data['table_id'] + " received from " + data['nom'])
 
-        data = join_table_service(data)
+        # data = join_table_service(data)
         join_room(data['table_id'])
         emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
 
@@ -98,7 +98,7 @@ class SocketServer(Namespace):
                         data['table_id'] + " received from " + data['nom'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
-            data = start_command_service(data)
+            # data = start_command_service(data)
             emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
 
     def on_end_command(self, data):
@@ -114,7 +114,7 @@ class SocketServer(Namespace):
                         data['table_id'] + " received from " + data['nom'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
-            data = end_command_service(data)
+            # data = end_command_service(data)
             emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
 
     def on_next_item(self, data):
@@ -129,7 +129,7 @@ class SocketServer(Namespace):
         app.logger.info("Next item on table " +
                         data['table_id'] + " received from " + data['nom'])
         if 'is_jap_master' in data and data['is_jap_master']:
-            data = next_item_service(data)
+            # data = next_item_service(data)
             print(data)
             # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
             emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
@@ -145,7 +145,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         app.logger.info(
             "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['nom'])
-        data = choose_item_service(data)
+        # data = choose_item_service(data)
         emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 
     
