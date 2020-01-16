@@ -8,14 +8,6 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
 from socket_module.socket_server import SocketServer
-from services.services import \
-    join_jap_event_service,\
-    leave_jap_service,\
-    join_table_service, \
-    start_command_service,\
-    end_command_service,\
-    next_item_service,\
-    choose_item_service
 from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
 
 
@@ -32,7 +24,6 @@ db.init_app(app)
 db.create_all()
 
 socketio = SocketIO(app, cors_allowed_origins='*')
-# Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
