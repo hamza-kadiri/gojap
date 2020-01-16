@@ -1,6 +1,7 @@
 """Database Model."""
 
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 db = SQLAlchemy()
 
@@ -9,6 +10,12 @@ user_achievements = db.Table('user_achievements',
                              db.Column('achievement_id', db.Integer, db.ForeignKey('achievement.id'), primary_key=True)
                              )
 
+def format_attribute(obj, name):
+    attr = getattr(obj, name)
+    if isinstance(attr, datetime.datetime):
+        return attr.__str__()
+    else:
+        return attr
 
 class User(db.Model):
     """
@@ -35,7 +42,7 @@ class User(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 jap_event_users = db.Table('jap_event_users',
@@ -73,7 +80,7 @@ class JapEvent(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 event_users = db.Table('event_users',
@@ -102,7 +109,7 @@ class Achievement(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 class Event(db.Model):
@@ -126,7 +133,7 @@ class Event(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 class JapPlace(db.Model):
@@ -152,7 +159,7 @@ class JapPlace(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 class Photo(db.Model):
@@ -198,7 +205,7 @@ class Item(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 item_commands = db.Table('item_commands',
@@ -224,7 +231,7 @@ class CommandUser(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 item_menus = db.Table('item_menus',
@@ -249,7 +256,7 @@ class Menu(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
 
 
 table_users = db.Table('table_users',
@@ -277,4 +284,4 @@ class Table(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: format_attribute(self, c.name) for c in self.__table__.columns}
