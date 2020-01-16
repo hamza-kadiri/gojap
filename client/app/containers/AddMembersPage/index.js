@@ -56,7 +56,7 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
   ];
 
   const handleClickOnUser = item => {
-    let list = membersList
+    const list = membersList;
     if (membersList.includes(item)) {
       list.pop(item);
       setMembersList(list);
@@ -76,7 +76,7 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
   const membersListProps = {
     loading: false,
     error: false,
-    items: members,
+    items: users,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,

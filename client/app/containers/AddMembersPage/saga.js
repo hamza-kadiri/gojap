@@ -7,7 +7,7 @@ import { loadUsersSuccess, loadUsersError } from './actions';
  * Japs request/response handler
  */
 export function* loadUsers() {
-  const requestURL = 'users';
+  const requestURL = 'user/all';
 
   try {
     // Call our request helper (see 'utils/request')
