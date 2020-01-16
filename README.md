@@ -296,6 +296,222 @@ Back answer :
 }
 ```
 
+#### Socket messages and payload
 
+##### Emperor to table members
+Message sended by the emperor to the table members (through the server)
+###### START_COMMAND
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  table_id,
+}
+```
+###### END_COMMAND
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  table_id,
+}
+```
+###### NEXT_ITEM
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  table_id,
+  current_item_id
+}
+```
+
+##### User to table members
+###### CHOOSE_ITEM
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  table_id,
+  item : {
+    item_id,
+    amount,
+  }
+}
+```
+
+##### User to jap event members
+###### JOIN_JAP
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+}
+```
+###### LEAVE_JAP
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+}
+```
+###### SEND_EVENT
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  event : {
+    event_id,
+    description,
+    ... ?
+  }
+}
+```
+###### JOIN_TABLE
+Payload :
+```json
+{
+  user_id,
+  jap_event_id,
+  table_id,
+}
+```
+
+##### Server to table members
+###### COMMAND_STARTED
+Payload :
+```json
+{
+  jap_event_id,
+  table_id,
+  command : {
+    command_id,
+    command_status,
+    command_number
+  }
+}
+```
+###### ITEM_CHANGED
+Payload :
+```json
+{
+  jap_event_id,
+  table_id,
+  item : {
+    item_id,
+    name, 
+    icon_url,
+  }
+}
+```
+###### COMMAND_ENDED
+Payload :
+```json
+{
+  jap_event_id,
+  table_id,
+  command : {
+    command_id,
+    command_status,
+    command_number,
+    summary : [ item_id : {name, amount, icon_url}, ...]
+  }
+}
+```
+###### ITEM_CHOSEN
+Payload :
+```json
+{
+  jap_event_id,
+  table_id,
+  command : {
+    command_id,
+    command_status,
+    command_number,
+    summary : { item_id : {name, amount, icon_url}, ... }
+  }
+}
+```
+
+##### Server to jap event members
+###### USER_LEFT_JAP
+Payload :
+```json
+{
+  jap_event_id,
+  members : [
+    {
+      user_id,
+      name,
+    },
+    ...
+  ]
+}
+```
+###### NEW_EVENT
+Payload :
+```json
+{
+  jap_event_id,
+  event : {
+    event_id,
+    despcription,
+    ...
+  }
+}
+```
+###### USER_JOINED_TABLE
+Payload :
+```json
+{
+  jap_event_id,
+  table_id,
+  members : [
+    {
+      user_id,
+      name,
+    },
+    ...
+  ],
+  command : {
+    command_status,
+    current_item : {
+      item_id,
+      name,
+      icon_url
+    }
+  }
+}
+```
+###### USER_JOINED_JAP
+Payload :
+```json
+{
+  jap_event_id,
+  members : [
+    {
+      user_id,
+      name,
+    },
+    ...
+  ],
+  jap_event_status,
+  current_command : {
+    command_status,
+    current_item : {
+      item_id,
+      name,
+      icon_url
+    }
+  }
+}
+```
 
 
