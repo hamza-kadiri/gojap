@@ -18,7 +18,7 @@ def get_user(user_id: int):
     user = db.session.query(User).filter_by(id=user_id).first()
 
     if not user:
-        json_abort(404, f"No user with id {user_id}")
+        return json_abort(404, f"No user with id {user_id}")
     return jsonify(user.as_dict())
 
 
