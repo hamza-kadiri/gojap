@@ -5,8 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 user_achievements = db.Table('user_achievements',
-                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-                             db.Column('achievement_id', db.Integer, db.ForeignKey('achievement.id'), primary_key=True)
+                             db.Column('user_id', db.Integer, db.ForeignKey(
+                                 'user.id'), primary_key=True),
+                             db.Column('achievement_id', db.Integer, db.ForeignKey(
+                                 'achievement.id'), primary_key=True)
                              )
 
 
@@ -24,7 +26,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     phone = db.Column(db.String(12), unique=True, nullable=False)
     calorie = db.Column(db.Integer, unique=False, nullable=True)
-    command_user_ids = db.relationship('CommandUser', backref='user', lazy=True)
+    command_user_ids = db.relationship(
+        'CommandUser', backref='user', lazy=True)
     achievements = db.relationship('Achievement', secondary=user_achievements, lazy='subquery',
                                    backref=db.backref('user', lazy=True))
 
@@ -34,12 +37,14 @@ class User(db.Model):
 
     def as_dict(self):
         """Return object as dict."""
-        return {c.name: getattr(self, c.name) for c in self.__table}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 jap_event_users = db.Table('jap_event_users',
-                           db.Column('jap_event_id', db.Integer, db.ForeignKey('jap_event.id'), primary_key=True),
-                           db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                           db.Column('jap_event_id', db.Integer, db.ForeignKey(
+                               'jap_event.id'), primary_key=True),
+                           db.Column('user_id', db.Integer, db.ForeignKey(
+                               'user.id'), primary_key=True)
                            )
 
 
@@ -70,8 +75,10 @@ class JapEvent(db.Model):
 
 
 event_users = db.Table('event_users',
-                       db.Column('event_id', db.Integer, db.ForeignKey('event.id'), primary_key=True),
-                       db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                       db.Column('event_id', db.Integer, db.ForeignKey(
+                           'event.id'), primary_key=True),
+                       db.Column('user_id', db.Integer, db.ForeignKey(
+                           'user.id'), primary_key=True)
                        )
 
 
@@ -105,7 +112,8 @@ class Event(db.Model):
     __tablename__ = 'event'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200), unique=False, nullable=True)
-    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey(
+        'jap_event.id'), nullable=False)
     users = db.relationship('User', secondary=event_users, lazy='subquery',
                             backref=db.backref('events', lazy=True))
 
@@ -146,7 +154,8 @@ class Photo(db.Model):
 
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
-    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey(
+        'jap_event.id'), nullable=False)
 
 
 class Icon(db.Model):
@@ -178,8 +187,10 @@ class Item(db.Model):
 
 
 item_commands = db.Table('item_commands',
-                         db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
-                         db.Column('command_id', db.Integer, db.ForeignKey('command_user.id'), primary_key=True)
+                         db.Column('item_id', db.Integer, db.ForeignKey(
+                             'item.id'), primary_key=True),
+                         db.Column('command_id', db.Integer, db.ForeignKey(
+                             'command_user.id'), primary_key=True)
                          )
 
 
@@ -200,8 +211,10 @@ class CommandUser(db.Model):
 
 
 item_menus = db.Table('item_menus',
-                      db.Column('item_id', db.Integer, db.ForeignKey('item.id'), primary_key=True),
-                      db.Column('menu_id', db.Integer, db.ForeignKey('menu.id'), primary_key=True)
+                      db.Column('item_id', db.Integer, db.ForeignKey(
+                          'item.id'), primary_key=True),
+                      db.Column('menu_id', db.Integer, db.ForeignKey(
+                          'menu.id'), primary_key=True)
                       )
 
 
@@ -221,8 +234,10 @@ class Menu(db.Model):
 
 
 table_users = db.Table('table_users',
-                       db.Column('table_id', db.Integer, db.ForeignKey('table.id'), primary_key=True),
-                       db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                       db.Column('table_id', db.Integer, db.ForeignKey(
+                           'table.id'), primary_key=True),
+                       db.Column('user_id', db.Integer, db.ForeignKey(
+                           'user.id'), primary_key=True)
                        )
 
 
@@ -237,7 +252,9 @@ class Table(db.Model):
     _tablename_ = 'table'
     id = db.Column(db.Integer, primary_key=True)
     emperor = db.Column(db.String(120), nullable=False)
-    command_user_id = db.relationship('CommandUser', backref='table', lazy=True)
+    command_user_id = db.relationship(
+        'CommandUser', backref='table', lazy=True)
     users = db.relationship('User', secondary=table_users, lazy='subquery',
                             backref=db.backref('table', lazy=True))
-    jap_event_id = db.Column(db.Integer, db.ForeignKey('jap_event.id'), nullable=False)
+    jap_event_id = db.Column(db.Integer, db.ForeignKey(
+        'jap_event.id'), nullable=False)

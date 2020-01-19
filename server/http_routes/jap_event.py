@@ -5,7 +5,8 @@ from models.model import db, User
 from sqlalchemy import or_
 from services.services import *
 
-jap_event_blueprint = Blueprint('jap_event_blueprint', __name__, url_prefix='/jap_event')
+jap_event_blueprint = Blueprint(
+    'jap_event_blueprint', __name__, url_prefix='/jap_event')
 
 
 @jap_event_blueprint.route('', methods=['POST'])

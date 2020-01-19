@@ -2,9 +2,10 @@
 
 import logging
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_migrate import Migrate
 from models.model import db
 from socket_module.socket_messages import socket_messages
 from services.services import \
@@ -16,8 +17,7 @@ from services.services import \
     next_item_service,\
     choose_item_service
 from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
-
-
+from helpers import init_error_handlers
 app = Flask(__name__)
 CORS(app)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
@@ -27,8 +27,9 @@ app.logger.setLevel(logging.DEBUG)
 app.config.from_object('config.Config')
 app.app_context().push()
 
+migrate = Migrate(app, db)
+
 db.init_app(app)
-db.create_all()
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 # Register all the blueprints (AKA the routes)
@@ -36,6 +37,8 @@ app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(jap_event_blueprint)
+
+init_error_handlers(app)
 
 
 @socketio.on('connect')
