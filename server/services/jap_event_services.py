@@ -20,7 +20,7 @@ def create_jap_event_service(data):
     db.session.commit()
 
     join_jap_event_service({'user_id': data['created_by'],
-                           'jap_event_id': jap_event.id})
+                            'jap_event_id': jap_event.id})
 
     return jap_event
 
@@ -73,7 +73,6 @@ def get_jap_events_for_user(data):
     Returns :
         { jap_events }
     """
-
     jap_events = JapEvent.query.filter(User.id.__eq__(data['user_id'])).all()
     return jap_events
 
@@ -88,5 +87,6 @@ def get_upcoming_jap_events_for_user(data):
         { jap_events }
     """
     current_time = datetime.date.today()
-    jap_events = JapEvent.query.filter(User.id.__eq__(data['user_id']), JapEvent.date >= current_time).all()
+    jap_events = JapEvent.query.filter(User.id.__eq__(
+        data['user_id']), JapEvent.date >= current_time).all()
     return jap_events
