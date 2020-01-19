@@ -20,25 +20,25 @@ def create_user_service(data):
     return user
 
 
-def get_user_service(data):
+def get_user_service(user_id):
     """
     Get user infos.
 
     Args :
         id : id de l'user à get.
     """
-    user = User.query.filter_by(id=data['id']).first()
+    user = User.query.filter_by(id=user_id).first()
     return user
 
 
-def remove_user_service(data):
+def remove_user_service(user_id):
     """
     Delete user.
 
     Args :
         id : id de l'user à delete.
     """
-    user = User.query.filter_by(id=data['id']).first()
+    user = User.query.filter_by(id=user_id).first()
 
     if user:
         db.session.delete(user)
