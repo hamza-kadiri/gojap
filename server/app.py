@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from models.model import db
 from socket_module.socket_messages import socket_messages
-from services.services import \
+from services import \
     join_jap_event_service,\
     leave_jap_service,\
     join_table_service, \

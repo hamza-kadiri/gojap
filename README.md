@@ -165,8 +165,8 @@ Back answer :
 }
 ```
 
-##### `/incoming` GET
-Get all incoming japs. 
+##### `/upcoming` GET
+Get all upcoming japs. 
 
 Front send : 
 ```json
@@ -194,13 +194,13 @@ Back answer :
 ##### `/add_members` POST
 Add members to a jap id.
 
-Front send : Nothing
+Front send : 
 ```json
 {
   jap_event_id,
   members : [
     {
-      email
+      username
     },
     ...
   ]
