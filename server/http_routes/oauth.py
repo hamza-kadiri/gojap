@@ -1,3 +1,4 @@
+"""OAuth module."""
 from flask import redirect, session, request, jsonify, Blueprint, url_for, current_app as app
 from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug import security
@@ -9,6 +10,7 @@ auth_bp = Blueprint('auth_bp', __name__, url_prefix='/oauth')
 
 
 def construct_oauth_blueprint(viarezo):
+    """COnstructs oauth protocol."""
 
     @auth_bp.route('/login')
     def login():
