@@ -1,4 +1,4 @@
-import { take, takeEvery, call, put, fork, select } from 'redux-saga/effects';
+import { take, takeLatest, call, put, fork, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import io from 'socket.io-client';
 import {
@@ -6,8 +6,10 @@ import {
   makeSelectUsername,
   makeSelectTableId,
 } from 'containers/User/selectors';
-import { START_ORDER, MESSAGES } from './constants';
+import MESSAGES from 'utils/socketMessages';
+import { START_ORDER } from './constants';
 import { changedCurrentItem } from './actions';
+import { changedOrderQuantity } from '../OrdersList/actions';
 
 function connect(username, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
@@ -24,7 +26,7 @@ function connect(username, japId, tableId) {
   });
 }
 
-function* read(socket) {
+function* readNextItem(socket) {
   const channel = yield call(subscribe, socket);
   while (true) {
     const action = yield take(channel);
@@ -32,7 +34,7 @@ function* read(socket) {
   }
 }
 
-export function* write(socket) {
+export function* writeNextItem(socket) {
   while (true) {
     const { payload } = yield take(MESSAGES.NEXT_ITEM);
     const username = yield select(makeSelectUsername());
@@ -49,10 +51,28 @@ export function* write(socket) {
   }
 }
 
+export function* writeChangeQuantity(socket) {
+  while (true) {
+    const { itemId, individual } = yield take(MESSAGES.CHOOSE_ITEM);
+    const username = yield select(makeSelectUsername());
+    const japId = yield select(makeSelectJapId());
+    const tableId = yield select(makeSelectTableId());
+    socket.emit(MESSAGES.CHOOSE_ITEM, {
+      pseudo: username,
+      jap_id: japId,
+      table_id: tableId,
+      item_id: itemId,
+      index: individual,
+    });
+  }
+}
+
 export function* subscribe(socket) {
   return eventChannel(emit => {
-    const update = data => emit(changedCurrentItem(data.index));
-    socket.on(MESSAGES.ITEM_CHANGED, update);
+    const updateItem = data => emit(changedCurrentItem(data.index));
+    const updateOrderQuantity = data => emit(changedOrderQuantity(data.i));
+    socket.on(MESSAGES.ITEM_CHANGED, updateItem);
+    socket.on(MESSAGES.USER_JOINED_TABLE, data => console.log(data));
     return () => {};
   });
 }
@@ -62,10 +82,10 @@ export function* OrderScreenSaga() {
   const japId = yield select(makeSelectJapId());
   const tableId = yield select(makeSelectTableId());
   const socket = yield call(connect, username, japId, tableId);
-  yield fork(read, socket);
-  yield fork(write, socket);
+  yield fork(readNextItem, socket);
+  yield fork(writeNextItem, socket);
 }
 
 export default function* watchOrderScreen() {
-  yield takeEvery(START_ORDER, OrderScreenSaga);
+  yield takeLatest(START_ORDER, OrderScreenSaga);
 }

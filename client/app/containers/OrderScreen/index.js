@@ -16,6 +16,7 @@ import { useInjectReducer } from 'utils/injectReducer';
 import Numbers from 'components/Numbers';
 import styled from 'styled-components';
 import Drawer from 'components/Drawer';
+import Divider from '@material-ui/core/Divider';
 import OrderCard from 'components/OrderCard';
 import JapaneseItemIcon from 'components/JapaneseItemIcon';
 import OrdersList from 'containers/OrdersList';
@@ -27,6 +28,7 @@ import {
   changeMoreMenu,
 } from 'containers/Header/actions';
 import { makeSelectTableId } from 'containers/User/selectors';
+import OrderNumber from 'components/OrderNumber';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -42,10 +44,6 @@ const CenteredDiv = styled.div`
   align-items: center;
   display: flex;
   flex: ${props => props.flex || `1 0 0`};
-`;
-
-const NumberWrapper = styled.span`
-  font-size: 42px;
 `;
 
 const OrdersWrapper = styled.div`
@@ -78,7 +76,7 @@ function OrderScreen({
 
   const { loading, orders } = ordersList;
 
-  const [number, setNumber] = useState(null);
+  const [number, setNumber] = useState(0);
   const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
   const moreMenu = [
@@ -146,7 +144,9 @@ function OrderScreen({
             ))}
           </OrdersWrapper>
           <CenteredDiv>
-            <NumberWrapper>{number}</NumberWrapper>
+            <OrderNumber title="Cumulé" big number={number} />
+            <Divider orientation="vertical" />
+            <OrderNumber title="Ma commande" number={number} />
           </CenteredDiv>
           <Numbers handleSelect={selectedNumber => setNumber(selectedNumber)} />
         </React.Fragment>

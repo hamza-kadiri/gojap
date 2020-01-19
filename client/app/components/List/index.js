@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import styled from 'styled-components';
 import AutoSizerWrapper from './AutoSizerWrapper';
 
 const MoreResults = ({ items, setShowMore }) => (
@@ -15,6 +16,10 @@ const MoreResults = ({ items, setShowMore }) => (
     <ListItemText primary={`${items.length - 6} de plus`} secondary="" />
   </ListItem>
 );
+
+const VirtualizedList = styled(VList)`
+  outline: none;
+`;
 
 const List = memo(function List(props) {
   const ComponentToRender = props.component;
@@ -47,7 +52,7 @@ const List = memo(function List(props) {
         <WindowScroller>
           {({ height, width, isScrolling, onChildScroll, scrollTop }) => (
             <React.Fragment>
-              <VList
+              <VirtualizedList
                 autoHeight
                 width={width}
                 isScrolling={isScrolling}
@@ -67,7 +72,7 @@ const List = memo(function List(props) {
       ) : (
         <AutoSizer>
           {({ height, width }) => (
-            <VList
+            <VirtualizedList
               width={width}
               height={height}
               rowCount={props.items.length}
