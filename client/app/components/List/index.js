@@ -59,11 +59,11 @@ const List = memo(function List(props) {
                 onScroll={onChildScroll}
                 scrollTop={scrollTop}
                 height={height}
-                rowCount={showMore ? props.items.length : 6}
+                rowCount={(props.items.length > 6) ? (showMore ? props.items.length : 6) : props.items.length }
                 rowHeight={props.multiline ? 72 : 49}
                 rowRenderer={rowRenderer}
               />
-              {!showMore && (
+              {props.items.length > 6 && !showMore && (
                 <MoreResults items={props.items} setShowMore={setShowMore} />
               )}
             </React.Fragment>

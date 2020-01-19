@@ -11,6 +11,7 @@ const ListWrapper = memo(function ListWrapper({
   component,
   multiline,
   isWindowScroller,
+  onClickItem,
   ...rest
 }) {
   if (loading) {
@@ -31,6 +32,7 @@ const ListWrapper = memo(function ListWrapper({
         multiline={multiline}
         isWindowScroller={isWindowScroller}
         component={component}
+        onClickItem={onClickItem}
         {...rest}
       />
     );
