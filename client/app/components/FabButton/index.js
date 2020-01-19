@@ -52,13 +52,21 @@ export default function FabButton() {
     history.push('/newjap');
   };
 
+  const handleClickJoinJap = () => {
+    history.push('/joinjap');
+  };
+
   const actions = [
     {
       icon: <LocalDiningIcon />,
       name: 'Nouveau Jap',
       handleClick: handleClickNewJap,
     },
-    { icon: <PeopleIcon />, name: 'Rejoindre', handleClick: handleClose },
+    {
+      icon: <PeopleIcon />,
+      name: 'Rejoindre',
+      handleClick: handleClickJoinJap,
+    },
   ];
 
   return (

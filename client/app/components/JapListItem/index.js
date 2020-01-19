@@ -30,7 +30,12 @@ export function JapListItem(props) {
           <Grid item>
             <ListItemText
               primary={item.name}
-              secondary={isBrowser && item.location.display_address.join(', ')}
+              secondary={
+                isBrowser &&
+                item.location &&
+                item.location.display_address &&
+                item.location.display_address.join(', ')
+              }
             />
           </Grid>
           <Grid item>

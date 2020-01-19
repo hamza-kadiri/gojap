@@ -8,7 +8,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_migrate import Migrate
 from models.model import db
 from socket_module.socket_messages import socket_messages
-from services.services import \
+from services import \
     join_jap_event_service,\
     leave_jap_service,\
     join_table_service, \
@@ -16,8 +16,10 @@ from services.services import \
     end_command_service,\
     next_item_service,\
     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint, jap_place_blueprint
 from helpers import init_error_handlers
+
+
 app = Flask(__name__)
 CORS(app)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
@@ -37,6 +39,8 @@ app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(jap_event_blueprint)
+app.register_blueprint(table_blueprint)
+app.register_blueprint(jap_place_blueprint)
 
 init_error_handlers(app)
 
