@@ -359,6 +359,7 @@ Payload :
 {
   user_id,
   jap_event_id,
+  ?table_id,
 }
 ```
 ###### SEND_EVENT
@@ -471,6 +472,7 @@ Payload :
 Payload :
 ```json
 {
+  new_member : { user_id, name, avatar_url }
   jap_event_id,
   table_id,
   members : [

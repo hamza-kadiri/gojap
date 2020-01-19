@@ -204,14 +204,14 @@ export function SocketTest() {
 
   const handleJoinJap = japID => {
     console.log('handle join jap');
-    socketClient.emitMessage(MESSAGES.JOIN_JAP, { nom, jap_event_id: japID });
+    socketClient.emitMessage(MESSAGES.JOIN_JAP, { user_id: nom, jap_event_id: japID });
   };
 
   const handleLeaveJap = () => {
     console.log('handle leave jap');
     const msg = {
-      nom,
-      jap_place_id: currentJap,
+      user_id: nom,
+      jap_event_id: currentJap,
     };
     if (currentTable) {
       msg.table_id = currentTable;
