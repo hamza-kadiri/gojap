@@ -85,7 +85,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         app.logger.info("Join " + data['jap_event_id'] +
                         " received from " + data['user_id'])
-        # data = join_jap_event_service(data)
+        data = join_jap_event_service(data)
         join_room(data['jap_event_id'])
         app.logger.debug(data)
 
