@@ -18,8 +18,10 @@ flask_sqlalchemy = "*"
 pydash = "*"
 pyOpenSSL = "*"
 python-dotenv = "*"
+pylint-flask = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"
