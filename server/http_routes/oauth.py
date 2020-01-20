@@ -10,7 +10,7 @@ auth_bp = Blueprint('auth_bp', __name__, url_prefix='/oauth')
 
 
 def construct_oauth_blueprint(viarezo):
-    """COnstructs oauth protocol."""
+    """Constructs oauth protocol."""
 
     @auth_bp.route('/login')
     def login():
