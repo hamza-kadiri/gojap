@@ -9,6 +9,8 @@ from flask import current_app as app
 #     end_command_service,\
 #     next_item_service,\
 #     choose_item_service
+from services.jap_event_services import join_jap_event_service
+from services.user_services import create_user_service
 from .socket_messages import socket_messages
 
 def _check_payload(message, needed_keys, payload):
@@ -62,6 +64,7 @@ class SocketServer(Namespace):
         Emit :
             USER_JOINED_JAP = {
                                 jap_event_id,
+                                new_member : {user_id, name, }
                                 members : [
                                     {
                                     user_id,
@@ -85,7 +88,12 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         app.logger.info("Join " + data['jap_event_id'] +
                         " received from " + data['user_id'])
-        data = join_jap_event_service(data)
+
+        # temp FIX create a use
+        user = create_user_service({})
+
+
+        service_answer = join_jap_event_service(data)
         join_room(data['jap_event_id'])
         app.logger.debug(data)
 
