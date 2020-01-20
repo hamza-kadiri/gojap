@@ -16,7 +16,7 @@ def get_user():
         data = {id}
 
     Returns :
-        {pseudo, id, email, phone, calorie}
+        {user_name, id, email, phone, calorie}
     """
     data = request.json
     user = get_user_service(data)
@@ -31,15 +31,15 @@ def create_user():
     """Create a new user.
 
     Args :
-        data = {pseudo, email, phone}
+        data = {user_name, email, phone}
 
     Returns :
-        {pseudo, email, phone, calorie}
+        {user_name, email, phone, calorie}
     """
     data = request.json
     old_user = db.session.query(User).filter(or_(User.email == data['email'], User.phone == data['phone'])).first()
     if old_user:
-        abort(409, f"User already exists. We do not allow for duplicate phones, emails, or pseudos.")
+        abort(409, f"User already exists. We do not allow for duplicate phones, emails, or user_names.")
 
     user = create_user_service(data)
 
@@ -54,7 +54,7 @@ def remove_user():
         data = {id}
 
     Returns :
-        {pseudo, email, phone, calorie}
+        {user_name, email, phone, calorie}
     """
     data = request.json
     user = remove_user_service(data)

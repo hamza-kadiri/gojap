@@ -60,11 +60,11 @@ def join_jap(data):
     Emit USER_JOINED_JAP in the room 'jap_id'.
 
     Args :
-        data = {pseudo, jap_id} // later user_id
+        data = {user_name, jap_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Join " + data['jap_id'] +
-                    " received from " + data['pseudo'])
+                    " received from " + data['user_name'])
     data = join_jap_event_service(data)
     join_room(data['jap_id'])
     app.logger.debug(data)
@@ -79,11 +79,11 @@ def leave_jap(data):
     Leave the room jap_id and table_id if a table id is present.
 
     Args :
-        data = {pseudo, jap_id, ?table_id} // later user_id
+        data = {user_name, jap_id, ?table_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "Leave jap " + data['jap_id'] + " received from " + data['pseudo'])
+        "Leave jap " + data['jap_id'] + " received from " + data['user_name'])
     data = leave_jap_service(data)
     emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
     leave_room(data['jap_id'])
@@ -98,11 +98,11 @@ def join_table(data):
     Emit USER_JOINED_TABLE in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id} // later user_id
+        data = {user_name, jap_id, table_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "Join table " + data['table_id'] + " received from " + data['pseudo'])
+        "Join table " + data['table_id'] + " received from " + data['user_name'])
 
     data = join_table_service(data)
     join_room(data['table_id'])
@@ -116,11 +116,11 @@ def start_command(data):
     Emit COMMAND_STARTED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+        data = {user_name, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Command started on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['user_name'])
 
     if 'is_jap_master' in data and data['is_jap_master']:
         data = start_command_service(data)
@@ -134,11 +134,11 @@ def end_command(data):
     Emit COMMAND_ENDED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+        data = {user_name, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Command ended on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['user_name'])
 
     if 'is_jap_master' in data and data['is_jap_master']:
         data = end_command_service(data)
@@ -152,11 +152,11 @@ def next_item(data):
     Emit ITEM_CHANGED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master, item_id} // later user_id
+        data = {user_name, jap_id, table_id, is_jap_master, item_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Next item on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['user_name'])
     if 'is_jap_master' in data and data['is_jap_master']:
         data = next_item_service(data)
         print(data)
@@ -171,11 +171,11 @@ def choose_item(data):
     Emit ITEM_CHOSEN in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, item_id} // later user_id
+        data = {user_name, jap_id, table_id, item_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['pseudo'])
+        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['user_name'])
     data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 

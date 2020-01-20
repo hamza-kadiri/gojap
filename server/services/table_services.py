@@ -61,7 +61,7 @@ def add_user_to_table_service(data):
     """
     table = User.query.filter_by(id=data['id']).first()
     user = User.query.filter_by(id=data['user_id']).first()
-    table.users.append(user)
+    table.members.append(user)
     db.session.add(table)
     db.session.commit()
 

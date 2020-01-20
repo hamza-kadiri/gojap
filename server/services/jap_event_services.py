@@ -1,6 +1,6 @@
 """Building services for JapEvent management."""
 
-from models.model import JapEvent, User, jap_event_users, db
+from models.model import JapEvent, User, jap_event_members, db
 import datetime
 
 
@@ -29,19 +29,19 @@ def add_members_to_jap_event(data):
     """Add multiple people to a jap event.
 
     Args :
-        data = { jap_event_id, members: [ 'pseudo', 'pseudo2' ] }
+        data = { jap_event_id, members: [ 'user_name', 'user_name2' ] }
 
     Returns :
         User[] // Array of User objects in the Jap Event
     """
     jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
-    users = User.query.filter(User.pseudo.in_(set(data['members']))).all()
+    members = User.query.filter(User.user_name.in_(set(data['members']))).all()
 
-    jap_event.users += users
+    jap_event.members += members
     db.session.add(jap_event)
     db.session.commit()
 
-    return jap_event.users
+    return jap_event.members
 
 
 def join_jap_event_service(data):
@@ -56,8 +56,8 @@ def join_jap_event_service(data):
         {user_id, jap_event_id, jap_tables, jap_members}
     """
     jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
-    user = User.query.filter_by(id=data['user_id']).first()
-    jap_event.users.append(user)
+    new_member = User.query.filter_by(id=data['user_id']).first()
+    jap_event.members.append(new_member)
     db.session.add(jap_event)
     db.session.commit()
 

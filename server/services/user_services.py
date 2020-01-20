@@ -8,9 +8,9 @@ def create_user_service(data):
     Create a new user.
 
     Args :
-        data = {pseudo, email, phone}
+        data = {user_name, email, phone}
     """
-    user = User(pseudo=data['pseudo'],
+    user = User(user_name=data['user_name'],
                 email=data['email'],
                 phone=data['phone'],
                 calorie=0)

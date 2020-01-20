@@ -13,10 +13,10 @@ def create_jap_place():
     """Create a new jap place.
 
     Args :
-        data = {name, adresse, telephone, horaires, menu_id}
+        data = {name, address, phone, opening_hours, menu_id}
 
     Returns :
-        {name, adresse, telephone, horaires, menu_id}
+        {name, address, phone, opening_hours, menu_id}
     """
     data = request.json
     old_jap_place = db.session.query(JapPlace).filter(JapPlace.name == data['name']).first()
@@ -35,7 +35,7 @@ def get_all_jap_places():
         None
 
     Returns :
-        list of users
+        list of jap places
     """
     jap_places = get_all_jap_places_service()
     dict_jap_places = {}
@@ -53,7 +53,7 @@ def get_jap_place():
         data = {id}
 
     Returns :
-        {name, adresse, telephone, horaires, menu_id}
+        {name, address, phone, opening_hours, menu_id}
     """
     data = request.json
     jap_place = get_jap_place_service(data)

@@ -8,13 +8,13 @@ def create_jap_place_service(data):
     Create a new jap_place.
 
     Args :
-        data = {name, adresse, telephone, horaires}
+        data = {name, address, phone, opening_hours}
     """
     print("debut")
     jap_place = JapPlace(name=data['name'],
-                         adresse=data['adresse'],
-                         telephone=data['telephone'],
-                         horaires=data['horaires'],
+                         address=data['address'],
+                         phone=data['phone'],
+                         opening_hours=data['opening_hours'],
                          menu_id=data['menu_id'])
     db.session.add(jap_place)
     db.session.commit()
