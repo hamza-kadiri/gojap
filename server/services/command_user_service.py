@@ -3,8 +3,9 @@
 from models.model import CommandUser, db, Item
 
 class CommandUserService():
-    """Command User service"""
+    """Command User service."""
 
+    @staticmethod
     def create_command_user(data):
         """
         Create a new command for a user.
@@ -18,7 +19,7 @@ class CommandUserService():
         db.session.commit()
         return command
 
-
+    @staticmethod
     def get_command_user(data):
         """
         Get command for a user.
@@ -29,7 +30,7 @@ class CommandUserService():
         command = CommandUser.query.filter_by(id=data['id']).first()
         return command
 
-
+    @staticmethod
     def add_item_to_command(data):
         """
         Add a new item to the command of a user.
@@ -45,7 +46,7 @@ class CommandUserService():
 
         return command
 
-
+    @staticmethod
     def get_all_command_table(data):
         """
         Get all commands for a table.
@@ -56,7 +57,7 @@ class CommandUserService():
         command = CommandUser.query.filter_by(table_id=data['table_id']).all()
         return command
 
-
+    @staticmethod
     def get_command_by_user(data):
         """
         Get command for a user in a table.
