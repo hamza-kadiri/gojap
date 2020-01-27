@@ -2,13 +2,13 @@
 
 socket_messages = {
     #   CLIENTS ---> SERVER
-  # master -> table users
+  # master -> table members
   'START_COMMAND': 'Start Command',
   'END_COMMAND': 'End Command',
   'NEXT_ITEM': 'Next Item',
-  # user -> table
+  # member -> table
   'CHOOSE_ITEM': 'Choose Item',
-  # user -> jap
+  # member -> jap
   'JOIN_JAP': 'Join Jap',
   'LEAVE_JAP': 'Leave Jap',
   'SEND_EVENT': 'Send Event',

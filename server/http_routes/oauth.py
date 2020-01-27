@@ -3,7 +3,7 @@ from flask import redirect, session, request, jsonify, Blueprint, url_for, curre
 from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug import security
 
-from services.user_services import create_user_service
+from services.user_services import UserService
 from models.model import db, User
 
 auth_bp = Blueprint('auth_bp', __name__, url_prefix='/oauth')
@@ -53,7 +53,7 @@ def construct_oauth_blueprint(viarezo):
         else:
             first_name = me.data['firstName']
             last_name = me.data['lastName']
-            user = create_user_service(me.data)
+            user = UserService.create_user(me.data)
 
         identity = {"id": user.id, "admin": user.admin}
         response = {'access_token': create_access_token(identity=identity),
