@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import Flask, jsonify
+from flask import Flask, session, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_migrate import Migrate
@@ -16,7 +16,9 @@ from socket_module.socket_messages import socket_messages
 #     end_command_service,\
 #     next_item_service,\
 #     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint, jap_place_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, construct_oauth_blueprint, table_blueprint, jap_place_blueprint
+from authlib.integrations.flask_client import OAuth
+from werkzeug import security
 from helpers import init_error_handlers
 
 
@@ -26,6 +28,7 @@ gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
 
+
 app.config.from_object('config.Config')
 app.app_context().push()
 
@@ -33,11 +36,26 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
+oauth = OAuth(app)
+
+viarezo = oauth.register(
+    'viarezo',
+    client_id=app.config['VIAREZO_CLIENT_ID'],
+    client_secret=app.config['VIAREZO_CLIENT_SECRET'],
+    request_token_params={'scope': 'default',
+                          'state': lambda: security.gen_salt(10)},
+    api_base_url=app.config['VIAREZO_BASE_URL'],
+    access_token_method='POST',
+    access_token_url=app.config['VIAREZO_TOKEN_URL'],
+    authorize_url=app.config['VIAREZO_AUTH_URL']
+)
+
 socketio = SocketIO(app, cors_allowed_origins='*')
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(construct_oauth_blueprint(viarezo))
 app.register_blueprint(jap_event_blueprint)
 app.register_blueprint(table_blueprint)
 app.register_blueprint(jap_place_blueprint)
@@ -165,8 +183,8 @@ def next_item(data):
     if 'is_jap_master' in data and data['is_jap_master']:
         # data = next_item_service(data)
         print(data)
-        # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
-        emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
+        emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
+        #emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
 
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])
@@ -180,8 +198,8 @@ def choose_item(data):
     """
     app.logger.debug(data)
     app.logger.info(
-        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['username'])
-    # data = choose_item_service(data)
+        f"New item {str(data['item_id'])} chosen on table {data['table_id']} received from {data['pseudo']}")
+    data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 
 

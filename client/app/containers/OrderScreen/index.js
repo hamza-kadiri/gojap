@@ -16,6 +16,7 @@ import { useInjectReducer } from 'utils/injectReducer';
 import Numbers from 'components/Numbers';
 import styled from 'styled-components';
 import Drawer from 'components/Drawer';
+import Divider from '@material-ui/core/Divider';
 import OrderCard from 'components/OrderCard';
 import JapaneseItemIcon from 'components/JapaneseItemIcon';
 import OrdersList from 'containers/OrdersList';
@@ -26,6 +27,10 @@ import {
   changeSubtitle,
   changeMoreMenu,
 } from 'containers/Header/actions';
+import { makeSelectTableId } from 'containers/User/selectors';
+import OrderNumber from 'components/OrderNumber';
+import ordersSaga from 'containers/OrdersList/saga';
+import { changeOrderQuantity } from 'containers/OrdersList/actions';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -33,7 +38,6 @@ import {
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import ordersSaga from '../OrdersList/saga';
 import { toggleRecap, changeCurrentItem, startOrder } from './actions';
 
 const CenteredDiv = styled.div`
@@ -41,10 +45,6 @@ const CenteredDiv = styled.div`
   align-items: center;
   display: flex;
   flex: ${props => props.flex || `1 0 0`};
-`;
-
-const NumberWrapper = styled.span`
-  font-size: 42px;
 `;
 
 const OrdersWrapper = styled.div`
@@ -64,14 +64,20 @@ const CurrentJapaneseItemIcon = styled(JapaneseItemIcon)`
   border: ${props => `3px solid ${props.theme.palette.primary.main}`};
 `;
 
-function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
+function OrderScreen({
+  dispatch,
+  recapOpen,
+  ordersList,
+  currentItem,
+  tableId,
+}) {
   useInjectReducer({ key: 'orderScreen', reducer });
   useInjectSaga({ key: 'orderScreen', saga });
   useInjectSaga({ key: 'ordersList', saga: ordersSaga });
 
   const { loading, orders } = ordersList;
 
-  const [number, setNumber] = useState(null);
+  const [number, setNumber] = useState(0);
   const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
   const moreMenu = [
@@ -80,7 +86,7 @@ function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
   const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
 
   useEffect(() => {
-    dispatch(changeTitle('Jap du jour - Table 1'));
+    dispatch(changeTitle(tableId));
     dispatch(changeSubtitle(members.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder());
@@ -139,9 +145,28 @@ function OrderScreen({ dispatch, recapOpen, ordersList, currentItem }) {
             ))}
           </OrdersWrapper>
           <CenteredDiv>
-            <NumberWrapper>{number}</NumberWrapper>
+            <OrderNumber
+              title="Cumulé"
+              big
+              number={orders[currentItem.index].accumulated || 0}
+            />
+            <Divider orientation="vertical" />
+            <OrderNumber
+              title="Ma commande"
+              number={orders[currentItem.index].individual || 0}
+            />
           </CenteredDiv>
-          <Numbers handleSelect={selectedNumber => setNumber(selectedNumber)} />
+          <Numbers
+            handleSelect={selectedNumber =>
+              dispatch(
+                changeOrderQuantity(
+                  currentItem.index,
+                  selectedNumber,
+                  orders[currentItem.index].accumulated || 0
+                )
+              )
+            }
+          />
         </React.Fragment>
       )}
       <Drawer {...drawerProps} />
@@ -160,6 +185,7 @@ const mapStateToProps = createStructuredSelector({
   recapOpen: makeSelectRecapOpen(),
   ordersList: makeSelectOrdersList(),
   currentItem: makeSelectCurrentItem(),
+  tableId: makeSelectTableId(),
 });
 
 function mapDispatchToProps(dispatch) {

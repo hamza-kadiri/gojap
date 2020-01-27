@@ -19,6 +19,10 @@ pydash = "*"
 pyOpenSSL = "*"
 python-dotenv = "*"
 Flask-Migrate = "*"
+flask_jwt_extended = "*"
+authlib = "*"
+
+
 [dev-packages]
 pylint = "*"
 

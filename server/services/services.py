@@ -16,9 +16,9 @@ def join_table_service(data):
     """
     jap_id = data['jap_id']
     table_id = data['table_id']
-    jap_tables[jap_id][table_id].append(data['username'])
-    data['jap_tables'] = jap_tables[jap_id]
-    data["jap_members"] = japs[jap_id]
+    jap_tables.setdefault(table_id, []).append(data['pseudo'])
+    data['jap_tables'] = jap_tables
+    data["table_members"] = jap_tables[table_id]
     return data
 
 
@@ -97,6 +97,9 @@ def choose_item_service(data):
     Returns :
         {username, jap_id, table_id, item_id}
     """
+    data['accumulated'] = data['accumulated'] + data['individual']
+    data['itemId'] = data['item_id']
+
     return data
 
 

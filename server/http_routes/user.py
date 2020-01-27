@@ -42,7 +42,8 @@ def create_user():
     data = request.json
     avatar_url = data["avatar_url"] if "avatar_url" in data else ""
 
-    user = UserService.create_user(data["username"], data["email"], data["phone"], avatar_url)
+    user = UserService.create_user(
+        data["username"], data["email"], data["phone"], avatar_url)
 
     return jsonify({"user": user.as_dict()})
 

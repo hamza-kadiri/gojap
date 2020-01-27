@@ -4,6 +4,7 @@
 
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
+import reducer from 'containers/User/reducer';
 
 import history from 'utils/history';
 
@@ -13,6 +14,7 @@ import history from 'utils/history';
 export default function createReducer(injectedReducers = {}) {
   const rootReducer = combineReducers({
     router: connectRouter(history),
+    user: reducer,
     ...injectedReducers,
   });
 
