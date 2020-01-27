@@ -1,59 +1,69 @@
 """Building services for user management."""
+from flask import abort
+from models.model import db, User
+from sqlalchemy import or_
 
-from models.model import *
+class UserService():
+    """UserService class."""
 
+    @staticmethod
+    def create_user(username, email, phone, avatar_url):
+        """
+        Create a new user.
 
-def create_user_service(data):
-    """
-    Create a new user.
+        Args :
+            data = {username, email, phone}
+        """
+        old_user = db.session.query(User).filter(or_(User.email == email, User.phone == phone)).first()
+        if old_user:
+            abort(409, f"User already exists. We do not allow for duplicate phones, emails, or usernames.")
 
-    Args :
-        data = {user_name, email, phone}
-    """
-    user = User(user_name=data['user_name'],
-                email=data['email'],
-                phone=data['phone'],
-                calorie=0)
-    db.session.add(user)
-    db.session.commit()
-
-    return user
-
-
-def get_user_service(data):
-    """
-    Get user infos.
-
-    Args :
-        id : id de l'user à get.
-    """
-    user = User.query.filter_by(id=data['id']).first()
-    return user
-
-
-def remove_user_service(data):
-    """
-    Delete user.
-
-    Args :
-        id : id de l'user à delete.
-    """
-    user = User.query.filter_by(id=data['id']).first()
-
-    if user:
-        db.session.delete(user)
+        print(username, email, phone, avatar_url)
+        user = User(username,
+                    email,
+                    phone,
+                    avatar_url,
+                    calorie=0)
+        db.session.add(user)
         db.session.commit()
+
         return user
-    else:
-        return None
 
+    @staticmethod
+    def get_user(data):
+        """
+        Get user infos.
 
-def get_all_users_service():
-    """
-    Display all users.
+        Args :
+            id : id de l'user à get.
+        """
+        user = User.query.filter_by(id=data['id']).first()
+        return user
 
-    Args :
-        None
-    """
-    users = User.query.all()
-    return users
+    @staticmethod
+    def remove_user(data):
+        """
+        Delete user.
+
+        Args :
+            id : id de l'user à delete.
+        """
+        user = User.query.filter_by(id=data['id']).first()
+
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return user
+        else:
+            return None
+
+    @staticmethod
+    def get_all_users():
+        """
+        Display all users.
+
+        Args :
+            None
+        """
+        users = User.query.all()
+        return users

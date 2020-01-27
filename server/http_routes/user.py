@@ -1,8 +1,8 @@
 """User blueprint."""
 
 from flask import Blueprint, request, abort
-from sqlalchemy import or_
-from services.user_services import *
+# from sqlalchemy import or
+from services.user_services import UserService
 import json
 
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
@@ -16,10 +16,10 @@ def get_user():
         data = {id}
 
     Returns :
-        {user_name, id, email, phone, calorie}
+        {username, id, email, phone, calorie}
     """
     data = request.json
-    user = get_user_service(data)
+    user = UserService.get_user(data)
 
     if not user:
         abort(404, f"No user with id {data['id']}")
@@ -31,17 +31,17 @@ def create_user():
     """Create a new user.
 
     Args :
-        data = {user_name, email, phone}
+        data = {username, email, phone, ?avatar_url}
 
     Returns :
-        {user_name, email, phone, calorie}
+        {id, username, email, phone, calorie}
     """
+    print("hey")
+    print(request)
     data = request.json
-    old_user = db.session.query(User).filter(or_(User.email == data['email'], User.phone == data['phone'])).first()
-    if old_user:
-        abort(409, f"User already exists. We do not allow for duplicate phones, emails, or user_names.")
-
-    user = create_user_service(data)
+    print(data)
+    avatar_url = data["avatar_url"] if "avatar_url" in data else None
+    user = UserService.create_user(data["username"], data["email"], data["phone"], avatar_url)
 
     return json.dumps(user.as_dict())
 
@@ -54,10 +54,10 @@ def remove_user():
         data = {id}
 
     Returns :
-        {user_name, email, phone, calorie}
+        {username, email, phone, calorie}
     """
     data = request.json
-    user = remove_user_service(data)
+    user = UserService.remove_user(data)
     if not user:
         abort(404, f"User not found")
 
@@ -74,7 +74,7 @@ def get_all_users():
     Returns :
         list of users
     """
-    users = get_all_users_service()
+    users = UserService.get_all_users()
     dict_users = {}
     for user in users:
         user = user.as_dict()

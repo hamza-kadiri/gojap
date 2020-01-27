@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request, abort
 from sqlalchemy import or_
-from services.jap_place_services import *
+from services.jap_place_services import JapPlaceService
 import json
 
 jap_place_blueprint = Blueprint('jap_place_blueprint', __name__, url_prefix='/jap_place')
@@ -22,7 +22,7 @@ def create_jap_place():
     old_jap_place = db.session.query(JapPlace).filter(JapPlace.name == data['name']).first()
     if old_jap_place:
        abort(409, f"JapPlace already exists. We do not allow for duplicates.")
-    jap_place = create_jap_place_service(data)
+    jap_place = JapPlaceService.create_jap_place(data)
 
     return json.dumps(jap_place.as_dict())
 
@@ -37,7 +37,7 @@ def get_all_jap_places():
     Returns :
         list of jap places
     """
-    jap_places = get_all_jap_places_service()
+    jap_places = JapPlaceService.get_all_jap_places()
     dict_jap_places = {}
     for jap_place in jap_places:
         jap_place = jap_place.as_dict()
@@ -56,7 +56,7 @@ def get_jap_place():
         {name, address, phone, opening_hours, menu_id}
     """
     data = request.json
-    jap_place = get_jap_place_service(data)
+    jap_place = JapPlaceService.get_jap_place(data)
 
     if not jap_place:
         abort(404, f"No user with id {data['id']}")

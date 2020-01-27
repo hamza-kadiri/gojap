@@ -31,12 +31,12 @@ class User(db.Model):
     Defines a new user in the database.
 
     Defined variables :
-        {id, user_name, email, phone, calorie, command_user_ids, achievments}
+        {id, username, email, phone, calorie, command_user_ids, achievments}
     """
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
     phone = db.Column(db.String(12), unique=False, nullable=True)
     calorie = db.Column(db.Integer, unique=False, nullable=True)
@@ -48,7 +48,7 @@ class User(db.Model):
 
     def __repr__(self):
         """Representation method."""
-        return '<User %r>' % self.user_name
+        return '<User %r>' % self.username
 
     def as_dict(self):
         """Return object as dict."""

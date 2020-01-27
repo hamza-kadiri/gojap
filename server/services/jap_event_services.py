@@ -32,13 +32,13 @@ class JapEventService():
         """Add multiple people to a jap event.
 
         Args :
-            data = { jap_event_id, members: [ 'user_name', 'user_name2' ] }
+            data = { jap_event_id, members: [ 'username', 'username2' ] }
 
         Returns :
             User[] // Array of User objects in the Jap Event
         """
         jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
-        members = User.query.filter(User.user_name.in_(set(data['members']))).all()
+        members = User.query.filter(User.username.in_(set(data['members']))).all()
 
         jap_event.members += members
         db.session.add(jap_event)
