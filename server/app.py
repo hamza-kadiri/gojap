@@ -193,7 +193,7 @@ def choose_item(data):
     """
     app.logger.debug(data)
     app.logger.info(
-        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['pseudo'])
+        f"New item {str(data['item_id'])} chosen on table {data['table_id']} received from {data['pseudo']}")
     data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 

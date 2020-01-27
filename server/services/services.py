@@ -97,7 +97,8 @@ def choose_item_service(data):
     Returns :
         {pseudo, jap_id, table_id, item_id}
     """
-    data['individual']: data
+    data['accumulated'] = data['accumulated'] + data['individual']
+    data['itemId'] = data['item_id']
 
     return data
 

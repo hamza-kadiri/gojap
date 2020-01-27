@@ -26,7 +26,7 @@ function connect(username, japId, tableId) {
   });
 }
 
-function* readNextItem(socket) {
+function* read(socket) {
   const channel = yield call(subscribe, socket);
   while (true) {
     const action = yield take(channel);
@@ -53,7 +53,9 @@ export function* writeNextItem(socket) {
 
 export function* writeChangeQuantity(socket) {
   while (true) {
-    const { itemId, individual } = yield take(MESSAGES.CHOOSE_ITEM);
+    const { itemId, individual, accumulated } = yield take(
+      MESSAGES.CHOOSE_ITEM
+    );
     const username = yield select(makeSelectUsername());
     const japId = yield select(makeSelectJapId());
     const tableId = yield select(makeSelectTableId());
@@ -62,7 +64,8 @@ export function* writeChangeQuantity(socket) {
       jap_id: japId,
       table_id: tableId,
       item_id: itemId,
-      index: individual,
+      individual,
+      accumulated,
     });
   }
 }
@@ -70,9 +73,13 @@ export function* writeChangeQuantity(socket) {
 export function* subscribe(socket) {
   return eventChannel(emit => {
     const updateItem = data => emit(changedCurrentItem(data.index));
-    const updateOrderQuantity = data => emit(changedOrderQuantity(data.i));
+    const updateOrderQuantity = data =>
+      emit(
+        changedOrderQuantity(data.itemId, data.individual, data.accumulated)
+      );
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
     socket.on(MESSAGES.USER_JOINED_TABLE, data => console.log(data));
+    socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
     return () => {};
   });
 }
@@ -82,8 +89,9 @@ export function* OrderScreenSaga() {
   const japId = yield select(makeSelectJapId());
   const tableId = yield select(makeSelectTableId());
   const socket = yield call(connect, username, japId, tableId);
-  yield fork(readNextItem, socket);
+  yield fork(read, socket);
   yield fork(writeNextItem, socket);
+  yield fork(writeChangeQuantity, socket);
 }
 
 export default function* watchOrderScreen() {

@@ -29,6 +29,8 @@ import {
 } from 'containers/Header/actions';
 import { makeSelectTableId } from 'containers/User/selectors';
 import OrderNumber from 'components/OrderNumber';
+import ordersSaga from 'containers/OrdersList/saga';
+import { changeOrderQuantity } from 'containers/OrdersList/actions';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -36,7 +38,6 @@ import {
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import ordersSaga from '../OrdersList/saga';
 import { toggleRecap, changeCurrentItem, startOrder } from './actions';
 
 const CenteredDiv = styled.div`
@@ -144,11 +145,28 @@ function OrderScreen({
             ))}
           </OrdersWrapper>
           <CenteredDiv>
-            <OrderNumber title="Cumulé" big number={number} />
+            <OrderNumber
+              title="Cumulé"
+              big
+              number={orders[currentItem.index].accumulated || 0}
+            />
             <Divider orientation="vertical" />
-            <OrderNumber title="Ma commande" number={number} />
+            <OrderNumber
+              title="Ma commande"
+              number={orders[currentItem.index].individual || 0}
+            />
           </CenteredDiv>
-          <Numbers handleSelect={selectedNumber => setNumber(selectedNumber)} />
+          <Numbers
+            handleSelect={selectedNumber =>
+              dispatch(
+                changeOrderQuantity(
+                  currentItem.index,
+                  selectedNumber,
+                  orders[currentItem.index].accumulated || 0
+                )
+              )
+            }
+          />
         </React.Fragment>
       )}
       <Drawer {...drawerProps} />

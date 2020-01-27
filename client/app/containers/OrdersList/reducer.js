@@ -34,15 +34,13 @@ const ordersListReducer = (state = initialState, action) =>
         draft.loading = false;
         break;
       case CHANGE_ORDER_QUANTITY_SUCCESS:
-        draft.orders = state.orders.map((order, index) =>
-          index === action.itemId
-            ? {
-                individual: action.individual,
-                accumulated: action.accumulated,
-              }
-            : null
-        );
-
+        draft.orders = state.orders;
+        console.log(action.itemId);
+        draft.orders[action.itemId] = {
+          ...draft.orders[action.itemId],
+          individual: action.individual,
+          accumulated: action.accumulated,
+        };
         break;
     }
   });

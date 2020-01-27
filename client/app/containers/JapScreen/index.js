@@ -51,7 +51,6 @@ const StyledCardHeader = styled(CardHeader)`
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
 `;
 
 const FlexWrapper = styled.div`

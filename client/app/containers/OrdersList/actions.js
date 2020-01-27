@@ -31,15 +31,16 @@ export function ordersLoadingError(error) {
   };
 }
 
-export function changeOrderQuantity({ itemId, individual }) {
+export function changeOrderQuantity(itemId, individual, accumulated) {
   return {
     type: MESSAGES.CHOOSE_ITEM,
     itemId,
     individual,
+    accumulated,
   };
 }
 
-export function changedOrderQuantity({ itemId, individual, accumulated }) {
+export function changedOrderQuantity(itemId, individual, accumulated) {
   return {
     type: CHANGE_ORDER_QUANTITY_SUCCESS,
     itemId,
