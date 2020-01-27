@@ -4,7 +4,7 @@ from models.model import JapEvent, User, jap_event_members, db
 import datetime
 
 class JapEventService():
-    """"Jap event service class."""
+    """Jap event service class."""
 
     @staticmethod
     def create_jap_event(data):

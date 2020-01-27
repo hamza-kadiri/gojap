@@ -3,6 +3,7 @@
 from models.model import JapPlace
 
 class JapPlaceService():
+    """JapPlaceService Class."""
 
     @staticmethod
     def create_jap_place(data):

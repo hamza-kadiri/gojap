@@ -2,6 +2,7 @@
 from flask import abort
 from models.model import db, User
 from sqlalchemy import or_
+from helpers import json_abort
 
 class UserService():
     """UserService class."""
@@ -16,13 +17,11 @@ class UserService():
         """
         old_user = db.session.query(User).filter(or_(User.email == email, User.phone == phone)).first()
         if old_user:
-            abort(409, f"User already exists. We do not allow for duplicate phones, emails, or usernames.")
-
-        print(username, email, phone, avatar_url)
-        user = User(username,
-                    email,
-                    phone,
-                    avatar_url,
+            json_abort(409, f"User already exists. We do not allow for duplicate phones, emails, or usernames.")
+        user = User(username=username,
+                    email=email,
+                    phone=phone,
+                    avatar_url=avatar_url,
                     calorie=0)
         db.session.add(user)
         db.session.commit()
@@ -30,25 +29,25 @@ class UserService():
         return user
 
     @staticmethod
-    def get_user(data):
+    def get_user(user_id):
         """
         Get user infos.
 
         Args :
             id : id de l'user à get.
         """
-        user = User.query.filter_by(id=data['id']).first()
+        user = User.query.filter_by(id=user_id).first()
         return user
 
     @staticmethod
-    def remove_user(data):
+    def remove_user(user_id):
         """
         Delete user.
 
         Args :
             id : id de l'user à delete.
         """
-        user = User.query.filter_by(id=data['id']).first()
+        user = User.query.filter_by(id=user_id).first()
 
         if user:
             db.session.delete(user)

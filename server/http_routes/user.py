@@ -1,15 +1,18 @@
 """User blueprint."""
 
-from flask import Blueprint, request, abort
+from flask import Blueprint, request, abort, jsonify
 # from sqlalchemy import or
 from services.user_services import UserService
+from helpers import json_abort
+from models.model import db, User
+from sqlalchemy import or_
 import json
 
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
 
 
-@user_blueprint.route('', methods=['GET'])
-def get_user():
+@user_blueprint.route('<int:user_id>', methods=['GET'])
+def get_user(user_id: int):
     """Find a given user.
 
     Args :
@@ -19,11 +22,11 @@ def get_user():
         {username, id, email, phone, calorie}
     """
     data = request.json
-    user = UserService.get_user(data)
+    user = UserService.get_user(user_id)
 
     if not user:
-        abort(404, f"No user with id {data['id']}")
-    return json.dumps(user.as_dict())
+        return json_abort(404, f"No user with id {user_id}")
+    return jsonify(user.as_dict())
 
 
 @user_blueprint.route('', methods=['POST'])
@@ -36,18 +39,16 @@ def create_user():
     Returns :
         {id, username, email, phone, calorie}
     """
-    print("hey")
-    print(request)
     data = request.json
-    print(data)
-    avatar_url = data["avatar_url"] if "avatar_url" in data else None
+    avatar_url = data["avatar_url"] if "avatar_url" in data else ""
+
     user = UserService.create_user(data["username"], data["email"], data["phone"], avatar_url)
 
-    return json.dumps(user.as_dict())
+    return jsonify({"user": user.as_dict()})
 
 
-@user_blueprint.route('', methods=['DELETE'])
-def remove_user():
+@user_blueprint.route('<int:user_id>', methods=['DELETE'])
+def remove_user(user_id: int):
     """Delete a user.
 
     Args :
@@ -56,12 +57,11 @@ def remove_user():
     Returns :
         {username, email, phone, calorie}
     """
-    data = request.json
-    user = UserService.remove_user(data)
+    user = UserService.remove_user(user_id)
     if not user:
-        abort(404, f"User not found")
+        return json_abort(404, f"User not found")
 
-    return json.dumps(user.as_dict())
+    return jsonify({"user": user.as_dict()})
 
 
 @user_blueprint.route('/all', methods=['GET'])
@@ -79,5 +79,4 @@ def get_all_users():
     for user in users:
         user = user.as_dict()
         dict_users[user['id']] = user
-    return dict_users
-
+    return jsonify({"users": [user.as_dict() for user in users]})
