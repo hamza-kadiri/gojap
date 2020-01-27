@@ -1,10 +1,11 @@
 """User blueprint."""
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, abort, jsonify
+# from sqlalchemy import or
+from services.user_services import UserService
 from helpers import json_abort
 from models.model import db, User
 from sqlalchemy import or_
-from services.user_services import *
 import json
 
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
@@ -18,9 +19,10 @@ def get_user(user_id: int):
         data = {id}
 
     Returns :
-        {pseudo, id, email, phone, calorie}
+        {username, id, email, phone, calorie}
     """
-    user = get_user_service(user_id)
+    data = request.json
+    user = UserService.get_user(user_id)
 
     if not user:
         return json_abort(404, f"No user with id {user_id}")
@@ -32,19 +34,15 @@ def create_user():
     """Create a new user.
 
     Args :
-        data = {pseudo, email, phone}
+        data = {username, email, phone, ?avatar_url}
 
     Returns :
-        {pseudo, email, phone, calorie}
+        {id, username, email, phone, calorie}
     """
     data = request.json
-    old_user = db.session.query(User).filter(
-        or_(User.email == data['email'], User.phone == data['phone'])).first()
-    if old_user:
-        json_abort(
-            409, f"User already exists. We do not allow for duplicate phones, emails, or pseudos.")
+    avatar_url = data["avatar_url"] if "avatar_url" in data else ""
 
-    user = create_user_service(data)
+    user = UserService.create_user(data["username"], data["email"], data["phone"], avatar_url)
 
     return jsonify({"user": user.as_dict()})
 
@@ -57,9 +55,9 @@ def remove_user(user_id: int):
         data = {id}
 
     Returns :
-        {pseudo, email, phone, calorie}
+        {username, email, phone, calorie}
     """
-    user = remove_user_service(user_id)
+    user = UserService.remove_user(user_id)
     if not user:
         return json_abort(404, f"User not found")
 
@@ -76,7 +74,7 @@ def get_all_users():
     Returns :
         list of users
     """
-    users = get_all_users_service()
+    users = UserService.get_all_users()
     dict_users = {}
     for user in users:
         user = user.as_dict()

@@ -20,6 +20,7 @@ pyOpenSSL = "*"
 python-dotenv = "*"
 Flask-Migrate = "*"
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"

@@ -3,7 +3,7 @@
 from flask import Blueprint, request, abort
 from models.model import db, User
 from sqlalchemy import or_
-from services.jap_event_services import create_jap_event_service, get_jap_events_for_user, get_upcoming_jap_events_for_user, add_members_to_jap_event
+from services.jap_event_services import JapEventService
 import json
 
 jap_event_blueprint = Blueprint(
@@ -18,7 +18,7 @@ def create_jap_event():
         {event_name, description, jap_place_id, created_by, date}
     """
     data = request.json
-    jap_event = create_jap_event_service(data)
+    jap_event = JapEventService.create_jap_event(data)
 
     return json.dumps(jap_event.as_dict(), indent=4, sort_keys=True, default=str)
 
