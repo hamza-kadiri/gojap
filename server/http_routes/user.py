@@ -26,7 +26,7 @@ def get_user(user_id: int):
 
     if not user:
         return json_abort(404, f"No user with id {user_id}")
-    return jsonify(user.as_dict())
+    return jsonify(user)
 
 
 @user_blueprint.route('', methods=['POST'])
@@ -45,7 +45,7 @@ def create_user():
     user = UserService.create_user(
         data["username"], data["email"], data["phone"], avatar_url)
 
-    return jsonify({"user": user.as_dict()})
+    return jsonify({"user": user})
 
 
 @user_blueprint.route('<int:user_id>', methods=['DELETE'])
@@ -62,7 +62,7 @@ def remove_user(user_id: int):
     if not user:
         return json_abort(404, f"User not found")
 
-    return jsonify({"user": user.as_dict()})
+    return jsonify({"user": user})
 
 
 @user_blueprint.route('/all', methods=['GET'])
@@ -76,8 +76,4 @@ def get_all_users():
         list of users
     """
     users = UserService.get_all_users()
-    dict_users = {}
-    for user in users:
-        user = user.as_dict()
-        dict_users[user['id']] = user
-    return jsonify({"users": [user.as_dict() for user in users]})
+    return jsonify({"users": users})

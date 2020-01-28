@@ -4,6 +4,7 @@ from models.model import db, User
 from sqlalchemy import or_
 from helpers import json_abort
 
+
 class UserService():
     """UserService class."""
 
@@ -15,9 +16,11 @@ class UserService():
         Args :
             data = {username, email, phone}
         """
-        old_user = db.session.query(User).filter(or_(User.email == email, User.phone == phone)).first()
+        old_user = db.session.query(User).filter(
+            or_(User.email == email, User.phone == phone)).first()
         if old_user:
-            json_abort(409, f"User already exists. We do not allow for duplicate phones, emails, or usernames.")
+            json_abort(
+                409, f"User already exists. We do not allow for duplicate phones, emails, or usernames.")
         user = User(username=username,
                     email=email,
                     phone=phone,
@@ -37,6 +40,7 @@ class UserService():
             id : id de l'user à get.
         """
         user = User.query.filter_by(id=user_id).first()
+        print(user.jap_events)
         return user
 
     @staticmethod

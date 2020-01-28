@@ -1,6 +1,6 @@
 """Table blueprint."""
 
-from flask import Blueprint, request, abort
+from flask import Blueprint, request, abort, jsonify
 from services.table_services import TableService
 import json
 
@@ -11,17 +11,20 @@ table_blueprint = Blueprint('table_blueprint', __name__, url_prefix='/table')
 def create_table():
     """Create a new table.
 
+     Body args :
+        {user_id, jap_event_id}
+
     Returns :
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
     table = TableService.create_table(data)
 
-    return json.dumps(table.as_dict())
+    return jsonify({table: table.as_dict()})
 
 
-@table_blueprint.route('', methods=['GET'])
-def get_table():
+@table_blueprint.route('<int:table_id>', methods=['GET'])
+def get_table(table_id):
     """Create a new table.
 
     Args :
@@ -30,10 +33,9 @@ def get_table():
     Returns :
         {table}
     """
-    data = request.json
-    table = TableService.get_table(data)
+    table = TableService.get_table(table_id)
 
-    return json.dumps(table.as_dict())
+    return jsonify({table: table.as_dict()})
 
 
 @table_blueprint.route('', methods=['DELETE'])

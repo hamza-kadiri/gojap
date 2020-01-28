@@ -3,8 +3,15 @@
 from models.model import JapEvent, User, jap_event_members, db
 import datetime
 
+
 class JapEventService():
     """Jap event service class."""
+
+    @staticmethod
+    def get_all_jap_events():
+        """Get all japs."""
+        jap_events = JapEvent.query.all()
+        return jap_events
 
     @staticmethod
     def create_jap_event(data):
@@ -15,15 +22,15 @@ class JapEventService():
             data = {event_name, description, jap_place_id, created_by, date}
         """
         jap_event = JapEvent(event_name=data['event_name'],
-                            description=data['description'],
-                            jap_place_id=data['jap_place_id'],
-                            created_by=data['created_by'],
-                            date=data['date'])
+                             description=data['description'],
+                             jap_place_id=data['jap_place_id'],
+                             created_by=data['created_by'],
+                             date=data['date'])
         db.session.add(jap_event)
         db.session.commit()
 
         join_jap_event({'user_id': data['created_by'],
-                                'jap_event_id': jap_event.id})
+                        'jap_event_id': jap_event.id})
 
         return jap_event
 
@@ -38,7 +45,8 @@ class JapEventService():
             User[] // Array of User objects in the Jap Event
         """
         jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
-        members = User.query.filter(User.username.in_(set(data['members']))).all()
+        members = User.query.filter(
+            User.username.in_(set(data['members']))).all()
 
         jap_event.members += members
         db.session.add(jap_event)
@@ -47,7 +55,7 @@ class JapEventService():
         return jap_event.members
 
     @staticmethod
-    def join_jap_event(data):
+    def join_jap_event(jap_event_id, user_id):
         """Process join jap request.
 
         Return update data after changing entries in flash memory or DB
@@ -58,13 +66,13 @@ class JapEventService():
         Returns :
             {user_id, jap_event_id, jap_tables, jap_members}
         """
-        jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
-        new_member = User.query.filter_by(id=data['user_id']).first()
+        jap_event = JapEvent.query.filter_by(jap_event_id).first()
+        new_member = User.query.filter_by(user_id).first()
         jap_event.members.append(new_member)
         db.session.add(jap_event)
         db.session.commit()
 
-        return data
+        return jap_event
 
     @staticmethod
     def get_jap_events_for_user(data):
@@ -76,7 +84,8 @@ class JapEventService():
         Returns :
             { jap_events }
         """
-        jap_events = JapEvent.query.filter(User.id.__eq__(data['user_id'])).all()
+        jap_events = JapEvent.query.filter(
+            User.id.__eq__(data['user_id'])).all()
         return jap_events
 
     @staticmethod
