@@ -2,20 +2,24 @@
 
 import logging
 
-from flask import Flask
+from flask import Flask, session, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_migrate import Migrate
 from models.model import db
 from socket_module.socket_messages import socket_messages
-from services.services import \
-    join_jap_event_service,\
-    leave_jap_service,\
-    join_table_service, \
-    start_command_service,\
-    end_command_service,\
-    next_item_service,\
-    choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, table_blueprint
+# from services import \
+#     join_jap_event_service,\
+#     leave_jap_service,\
+#     join_table_service, \
+#     start_command_service,\
+#     end_command_service,\
+#     next_item_service,\
+#     choose_item_service
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, construct_oauth_blueprint, table_blueprint, jap_place_blueprint, command_blueprint
+from authlib.integrations.flask_client import OAuth
+from werkzeug import security
+from helpers import init_error_handlers
 
 
 app = Flask(__name__)
@@ -24,19 +28,41 @@ gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
 
+
 app.config.from_object('config.Config')
 app.app_context().push()
 
+migrate = Migrate(app, db)
+
 db.init_app(app)
-db.create_all()
+
+oauth = OAuth(app)
+
+viarezo = oauth.register(
+    'viarezo',
+    client_id=app.config['VIAREZO_CLIENT_ID'],
+    client_secret=app.config['VIAREZO_CLIENT_SECRET'],
+    request_token_params={'scope': 'default',
+                          'state': lambda: security.gen_salt(10)},
+    api_base_url=app.config['VIAREZO_BASE_URL'],
+    access_token_method='POST',
+    access_token_url=app.config['VIAREZO_TOKEN_URL'],
+    authorize_url=app.config['VIAREZO_AUTH_URL']
+)
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 # Register all the blueprints (AKA the routes)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(construct_oauth_blueprint(viarezo))
 app.register_blueprint(jap_event_blueprint)
 app.register_blueprint(table_blueprint)
+app.register_blueprint(jap_place_blueprint)
+app.register_blueprint(command_blueprint)
+
+
+init_error_handlers(app)
 
 
 @socketio.on('connect')
@@ -59,12 +85,12 @@ def join_jap(data):
     Emit USER_JOINED_JAP in the room 'jap_id'.
 
     Args :
-        data = {pseudo, jap_id} // later user_id
+        data = {username, jap_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Join " + data['jap_id'] +
-                    " received from " + data['pseudo'])
-    data = join_jap_event_service(data)
+                    " received from " + data['username'])
+    # data = join_jap_event_service(data)
     join_room(data['jap_id'])
     app.logger.debug(data)
     emit(socket_messages['USER_JOINED_JAP'], data, room=data['jap_id'])
@@ -78,12 +104,12 @@ def leave_jap(data):
     Leave the room jap_id and table_id if a table id is present.
 
     Args :
-        data = {pseudo, jap_id, ?table_id} // later user_id
+        data = {username, jap_id, ?table_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "Leave jap " + data['jap_id'] + " received from " + data['pseudo'])
-    data = leave_jap_service(data)
+        "Leave jap " + data['jap_id'] + " received from " + data['username'])
+    # data = leave_jap_service(data)
     emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
     leave_room(data['jap_id'])
     if 'table_id' in data:
@@ -97,13 +123,13 @@ def join_table(data):
     Emit USER_JOINED_TABLE in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id} // later user_id
+        data = {username, jap_id, table_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "Join table " + data['table_id'] + " received from " + data['pseudo'])
+        "Join table " + data['table_id'] + " received from " + data['username'])
 
-    data = join_table_service(data)
+    # data = join_table_service(data)
     join_room(data['table_id'])
     emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
 
@@ -115,14 +141,14 @@ def start_command(data):
     Emit COMMAND_STARTED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+        data = {username, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Command started on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['username'])
 
     if 'is_jap_master' in data and data['is_jap_master']:
-        data = start_command_service(data)
+        # data = start_command_service(data)
         emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
 
 
@@ -133,14 +159,14 @@ def end_command(data):
     Emit COMMAND_ENDED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master} // later user_id
+        data = {username, jap_id, table_id, is_jap_master} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Command ended on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['username'])
 
     if 'is_jap_master' in data and data['is_jap_master']:
-        data = end_command_service(data)
+        # data = end_command_service(data)
         emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
 
 
@@ -151,16 +177,16 @@ def next_item(data):
     Emit ITEM_CHANGED in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, is_jap_master, item_id} // later user_id
+        data = {username, jap_id, table_id, is_jap_master, item_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info("Next item on table " +
-                    data['table_id'] + " received from " + data['pseudo'])
+                    data['table_id'] + " received from " + data['username'])
     if 'is_jap_master' in data and data['is_jap_master']:
-        data = next_item_service(data)
+        # data = next_item_service(data)
         print(data)
-        # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
-        emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
+        emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
+        #emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
 
 
 @socketio.on(socket_messages['CHOOSE_ITEM'])
@@ -170,11 +196,11 @@ def choose_item(data):
     Emit ITEM_CHOSEN in the room 'table_id'.
 
     Args :
-        data = {pseudo, jap_id, table_id, item_id} // later user_id
+        data = {username, jap_id, table_id, item_id} // later user_id
     """
     app.logger.debug(data)
     app.logger.info(
-        "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['pseudo'])
+        f"New item {str(data['item_id'])} chosen on table {data['table_id']} received from {data['pseudo']}")
     data = choose_item_service(data)
     emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
 

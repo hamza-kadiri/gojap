@@ -1,10 +1,7 @@
 """Table blueprint."""
 
-from flask import Blueprint, request, abort
-from services.table_services import create_table_service,\
-    get_table_service,\
-    add_user_to_table_service,\
-    remove_table_service
+from flask import Blueprint, request, abort, jsonify
+from services.table_services import TableService
 import json
 
 table_blueprint = Blueprint('table_blueprint', __name__, url_prefix='/table')
@@ -14,17 +11,20 @@ table_blueprint = Blueprint('table_blueprint', __name__, url_prefix='/table')
 def create_table():
     """Create a new table.
 
+     Body args :
+        {user_id, jap_event_id}
+
     Returns :
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
-    table = create_table_service(data)
+    table = TableService.create_table(data)
 
-    return json.dumps(table.as_dict())
+    return jsonify({table: table.as_dict()})
 
 
-@table_blueprint.route('', methods=['GET'])
-def get_table():
+@table_blueprint.route('<int:table_id>', methods=['GET'])
+def get_table(table_id):
     """Create a new table.
 
     Args :
@@ -33,10 +33,9 @@ def get_table():
     Returns :
         {table}
     """
-    data = request.json
-    table = get_table_service(data)
+    table = TableService.get_table(table_id)
 
-    return json.dumps(table.as_dict())
+    return jsonify({table: table.as_dict()})
 
 
 @table_blueprint.route('', methods=['DELETE'])
@@ -50,7 +49,7 @@ def remove_table():
         {table}
     """
     data = request.json
-    table = remove_table_service(data)
+    table = TableService.remove_table(data)
     if not table:
         abort(404, f"User not found")
 
@@ -65,7 +64,7 @@ def add_user_to_table():
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
-    table = add_user_to_table_service(data)
+    table = TableService.add_user_to_table(data)
 
     return json.dumps(table.as_dict())
 
@@ -82,6 +81,6 @@ def set_table_status():
         {table}
     """
     data = request.json
-    table = add_user_to_table_service(data)
+    table = TableService.add_user_to_table(data)
 
     return json.dumps(table.as_dict())

@@ -1,6 +1,6 @@
 """Base blueprint."""
 import requests
-from flask import Blueprint, jsonify, current_app as app
+from flask import Blueprint, abort, jsonify, current_app as app
 base_blueprint = Blueprint('base_blueprint', __name__, url_prefix='/')
 
 

@@ -16,25 +16,31 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 function MembersListItem(props) {
   const { item, index, onClickItem } = props;
+  const [isSelected, setIsSelected] = React.useState(false);
+
+  const handleClickItem = () => {
+    setIsSelected(!isSelected);
+    onClickItem(item);
+  };
 
   return (
-    <ListItem onClick={() => (onClickItem ? onClickItem(index) : null)}>
+    <ListItem selected={isSelected} button={onClickItem} divider={onClickItem} onClick={() => (onClickItem ? handleClickItem() : null)}>
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemAvatar>
-            <MediumAvatar src={item.picture.medium} alt={item.name.first} />
+            <MediumAvatar src={item.picture && item.picture.medium} alt={item.name && item.name.first} />
           </ListItemAvatar>
         </Grid>
         <Grid item>
           <ListItemText
-            primary={`${item.name.first} ${item.name.last}`}
+            primary={`${item.name && item.name.first} ${item.name && item.name.last}`}
             secondary={
               <Chip
                 size="small"
                 color="primary"
                 variant="outlined"
                 component="span"
-                label={`Table ${(item.dob.age % 4) + 1}`}
+                label={`Table ${(item.dob && item.dob.age % 4) + 1}`}
               />
             }
           />

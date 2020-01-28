@@ -21,6 +21,8 @@ import styled from 'styled-components';
 
 import AppBar from '@material-ui/core/AppBar';
 import SubPage from 'components/SubPage';
+import { changeJapId, changeTableId } from 'containers/User/actions';
+import history from 'utils/history';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -54,12 +56,19 @@ export function HomePage({ dispatch, loading, error, japs }) {
     dispatch(loadJaps());
   }, []);
 
+  const handleJapClick = japId => {
+    dispatch(changeJapId(japId));
+    dispatch(changeTableId(`${japId}-table1`));
+    history.push(`/jap/${japId}`);
+  };
+
   const japsListProps = {
     loading,
     error,
     items: japs,
     component: JapListItem,
     multiline: true,
+    onClickItem: handleJapClick,
   };
 
   const handleChange = (event, newValue) => {

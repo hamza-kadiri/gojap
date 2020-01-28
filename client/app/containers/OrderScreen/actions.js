@@ -4,10 +4,10 @@
  *
  */
 
+import MESSAGES from 'utils/socketMessages';
 import {
   TOGGLE_RECAP,
   START_ORDER,
-  MESSAGES,
   CHANGE_CURRENT_ITEM_SUCCESS,
 } from './constants';
 
