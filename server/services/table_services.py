@@ -1,3 +1,4 @@
+# coding=utf-8
 """Building services for table management."""
 from models.model import Table, User, db
 

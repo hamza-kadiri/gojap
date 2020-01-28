@@ -1,3 +1,4 @@
+# coding=utf-8
 """Table blueprint."""
 
 from flask import Blueprint, request, abort, jsonify
@@ -56,7 +57,7 @@ def remove_table():
     return json.dumps(table.as_dict())
 
 
-@table_blueprint.route('', methods=['POST'])
+@table_blueprint.route('/add_user', methods=['POST'])
 def add_user_to_table():
     """Create a new table.
 
