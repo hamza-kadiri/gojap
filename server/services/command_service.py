@@ -33,7 +33,7 @@ class CommandService():
     @staticmethod
     def get_command_by_table_id(table_id):
         """
-        Get command by table id
+        Get command by table id.
 
         Args :
             data = {table_id}

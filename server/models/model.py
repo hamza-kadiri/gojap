@@ -37,6 +37,7 @@ jap_event_members = db.Table('jap_event_members',
 
 @dataclass
 class User(db.Model):
+
     """
     Defines a new user in the database.
 

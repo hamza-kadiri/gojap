@@ -12,7 +12,7 @@ jap_event_blueprint = Blueprint(
 
 @jap_event_blueprint.route('/all', methods=['GET'])
 def get_all_jap_events():
-    """Get all jap events
+    """Get all jap events.
 
     Returns :
         {JapEvent}
@@ -50,7 +50,7 @@ def get_events_for_user():
         { jap_events }
     """
     data = request.json
-    jap_events = get_jap_events_for_user(data)
+    jap_events = JapEventService.get_jap_events_for_user(data)
     return json.dumps(jap_events)
 
 
