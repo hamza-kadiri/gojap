@@ -1,5 +1,4 @@
 """Building services for table management."""
-
 from models.model import Table, User, db
 
 
@@ -15,21 +14,21 @@ class TableService():
             data = {user_id, jap_event_id}
         """
         table = Table(emperor=data['user_id'],
-                    jap_event_id=data['jap_event_id'],
-                    status=0)
+                      jap_event_id=data['jap_event_id'],
+                      status=0)
         db.session.add(table)
         db.session.commit()
         return table
 
     @staticmethod
-    def get_table(data):
+    def get_table(table_id):
         """
         Get user infos.
 
         Args :
             id : id de la table à get.
         """
-        table = Table.query.filter_by(id=data['id']).first()
+        table = Table.query.filter_by(id=table_id).first()
         return table
 
     @staticmethod

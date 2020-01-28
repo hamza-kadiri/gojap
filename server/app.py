@@ -16,7 +16,7 @@ from socket_module.socket_messages import socket_messages
 #     end_command_service,\
 #     next_item_service,\
 #     choose_item_service
-from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, construct_oauth_blueprint, table_blueprint, jap_place_blueprint
+from http_routes import base_blueprint, auth_blueprint, user_blueprint, jap_event_blueprint, construct_oauth_blueprint, table_blueprint, jap_place_blueprint, command_blueprint
 from authlib.integrations.flask_client import OAuth
 from werkzeug import security
 from helpers import init_error_handlers
@@ -59,6 +59,8 @@ app.register_blueprint(construct_oauth_blueprint(viarezo))
 app.register_blueprint(jap_event_blueprint)
 app.register_blueprint(table_blueprint)
 app.register_blueprint(jap_place_blueprint)
+app.register_blueprint(command_blueprint)
+
 
 init_error_handlers(app)
 
