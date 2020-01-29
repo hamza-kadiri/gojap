@@ -35,7 +35,7 @@ def get_table(table_id):
     """
     table = TableService.get_table(table_id)
 
-    return jsonify({table: table.as_dict()})
+    return jsonify({"table": table})
 
 
 @table_blueprint.route('', methods=['DELETE'])
