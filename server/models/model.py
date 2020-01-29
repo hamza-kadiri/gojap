@@ -173,6 +173,7 @@ class JapPlace(db.Model):
     Defined variables :
         {id, name, addresse, phone, opening_hourss, jap_event_ids, menu_id}
     """
+
     menu: Menu
     id: int
     name: str
