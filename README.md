@@ -4,51 +4,59 @@ Go jap !
 
 Table of contents
 
-1. [DEV2019_Go_Jap](#dev2019gojap)
-    1. [Client](#client)
-        1. [Overview](#overview)
-        1. [Used Libraries :](#used-libraries)
-        1. [Installation :](#installation)
-    1. [Backend](#backend)
-        1. [Install back](#install-back)
-        1. [Run back](#run-back)
-        1. [Run database](#run-database)
-    1. [API](#api)
-        1. [HTTP](#http)
-            1. [/auth](#/auth)
-                1. [/login : POST](#/login:-post)
-                1. [/register : POST](#/register:-post)
-            1. [/jap_event](#/jap_event)
-                1. [POST](#post)
-                1. [GET](#get))
-                1. [/incoming GET](#/incoming:-get))
-            1. [/jap_place](#/jap_event)
-                1. [POST](#post)
-                1. [GET](#get))
-                1. [/details GET](#/detail:-get)
-                1. [/add_members POST](#/add_members:-post)
-        1. [Socket messages and payload](#socket-messages-and-payload)
-            1. [Emperor to table members](#emperor-to-table-members)
-                1. [START_COMMAND](#START_COMMAND)
-                1. [END_COMMAND](#END_COMMAND)
-                1. [NEXT_ITEM](#NEXT_ITEM)
-            1. [User to table members](#user-to-table-members)
-                1. [CHOOSE_ITEM](#CHOOSE_ITEM)
-            1. [User to jap event members](#user-to-jap-members)
-                1. [JOIN_JAP](#JOIN_JAP)   
-                1. [LEAVE_JAP](#LEAVE_JAP)
-                1. [SEND_EVENT](#SEND_EVENT)
-                1. [JOIN_TABLE](#JOIN_TABLE)
-            1. [Server to table members](#server-to-table-members)
-                1. [COMMAND_STARTED](#COMMAND_STARTED)
-                1. [ITEM_CHANGED](#ITEM_CHANGED)
-                1. [COMMAND_ENDED](#COMMAND_ENDED)
-                1. [ITEM_CHOSEN](#COMMAND_ENDED)
-            1. [Server to jap event members](#server-to-jap-event-members)
-                1. [USER_LEFT_JAP](#COMMAND_ENDED)
-                1. [NEW_EVENT](#COMMAND_ENDED)
-                1. [USER_JOINED_TABLE](#COMMAND_ENDED)
-                1. [USER_JOINED_JAP](#COMMAND_ENDED)
+- [DEV2019_Go_Jap](#dev2019gojap)
+  - [Client](#client)
+    - [Overview](#overview)
+    - [Used Libraries :](#used-libraries)
+    - [Installation :](#installation)
+  - [Backend](#backend)
+    - [Install back](#install-back)
+    - [Run back](#run-back)
+    - [Run database](#run-database)
+    - [Run migrations (To update your database schema)](#run-migrations-to-update-your-database-schema)
+  - [API](#api)
+    - [HTTP details](#http-details)
+      - [Blueprint `/auth`](#blueprint-auth)
+        - [POST `/login`](#post-login)
+        - [`/register`](#register)
+      - [Blueprint `/jap_place`](#blueprint-japplace)
+        - [GET `/all`](#get-all)
+        - [GET `/menu/<int:jap_place_id>`](#get-menuintjapplaceid)
+      - [Blueprint `/jap_event`](#blueprint-japevent)
+        - [POST `''`](#post)
+        - [GET `/user/<int:user_id>`](#get-userintuserid)
+        - [GET `/table/<int:table_id>`](#get-tableinttableid)
+        - [GET `/upcoming/<int:user_id>`  (not so important, keep it last)](#get-upcomingintuserid-not-so-important-keep-it-last)
+        - [POST `/add_members/<int:jap_event_id>`](#post-addmembersintjapeventid)
+        - [PUT `<int:jap_event_id>/status/<int:status>`](#put-intjapeventidstatusintstatus)
+      - [Blueprint `/table`](#blueprint-table)
+        - [POST `''`](#post-1)
+        - [GET `/jap_event/<int:jap_event_id>/user/<int:user_id>`](#get-japeventintjapeventiduserintuserid)
+        - [POST `/add_members/<int:table_id>`](#post-addmembersinttableid)
+        - [PUT `/<int:table_id>/status/<int:status>`](#put-inttableidstatusintstatus)
+      - [Blueprint `/command`](#blueprint-command)
+      - [Socket messages and payload](#socket-messages-and-payload)
+        - [Emperor to table members](#emperor-to-table-members)
+          - [START_COMMAND](#startcommand)
+          - [END_COMMAND](#endcommand)
+          - [NEXT_ITEM](#nextitem)
+        - [User to table members](#user-to-table-members)
+          - [CHOOSE_ITEM](#chooseitem)
+        - [User to jap event members](#user-to-jap-event-members)
+          - [JOIN_JAP](#joinjap)
+          - [LEAVE_JAP](#leavejap)
+          - [SEND_EVENT](#sendevent)
+          - [JOIN_TABLE](#jointable)
+        - [Server to table members](#server-to-table-members)
+          - [COMMAND_STARTED](#commandstarted)
+          - [ITEM_CHANGED](#itemchanged)
+          - [COMMAND_ENDED](#commandended)
+          - [ITEM_CHOSEN](#itemchosen)
+        - [Server to jap event members](#server-to-jap-event-members)
+          - [USER_LEFT_JAP](#userleftjap)
+          - [NEW_EVENT](#newevent)
+          - [USER_JOINED_TABLE](#userjoinedtable)
+          - [USER_JOINED_JAP](#userjoinedjap)
 
 ## Client
 
@@ -93,6 +101,12 @@ It allows to generated a highly scalable, offline-first foundation with the best
 - `docker-compose up`
 - mac : may be usefull to update volume url to `./docker/postgres/data:/var/lib/postgresql/data`
 
+### Run migrations (To update your database schema)
+- Delete migrations folder
+- `pipenv run db-init`
+- `pipenv run migrate`
+- `pipenv run upgrade`
+
 
 ## API
 
@@ -103,9 +117,9 @@ Possible status of command and jap:
 
 ### HTTP details
 
-#### `/auth`
+#### Blueprint `/auth`
 
-##### `/login`: POST
+##### POST `/login` 
 Front send : `{username, email}`
 
 Back answer : 
@@ -133,102 +147,19 @@ Back answer :
 
 If the user is not already in the data base (no matching email), he is added to the databased and then logged in.
 
-##### `/register`: POST
+##### `/register`
 
 USELESS NOW
 
-#### `/jap_event`
+#### Blueprint `/jap_place`
+We must be able to :
+- Get all jap places
+- Get the menu of a specific jap_place
 
-##### POST
-Front send : `{event_name, description, date, jap_place_id, created_by}`
+##### GET `/all` 
+Get all jap places
 
-Back answer : `{id, event_name, description, date, jap_place_id, created_by, created_at, members}`
-
-##### GET
-Get all your japs.
-
-Front send : 
-```json
-{
-  user_id
-}
-```
-
-Back answer : 
-```json
-{
-  japs: 
-    [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, members}, 
-      ...
-    ]
-}
-```
-
-##### `/upcoming` GET
-Get all upcoming japs. 
-
-Front send : 
-```json
-{
-  user_id
-}
-```
-
-Back answer : 
-```json
-{
-  your_japs: 
-    [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, members}, 
-      ...
-    ], 
-  other_japs: 
-    [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, members}, 
-      ...
-    ]
-}
-```
-
-##### `/add_members` POST
-Add members to a jap id.
-
-Front send : 
-```json
-{
-  jap_event_id,
-  members : [
-    {
-      username
-    },
-    ...
-  ]
-}
-```
-
-Back answer : 
-```json
-{
-  members : [
-    {
-      id, 
-      username, 
-      email, 
-      phone, 
-    },
-    ...
-  ]
-}
-```
-
-#### `/jap_place`
-
-##### GET
-
-Front send : nothing
-
-Back answer : 
+Server response : 
 ```json
 {
   jap_places : [
@@ -244,57 +175,163 @@ Back answer :
 }
 ```
 
-##### POST
-Front send: 
+##### GET `/menu/<int:jap_place_id>` 
+```json
+{ menu : [{id: name, points_amount, icon_id}, Item 2, Item 3, ....]}
+```
+
+#### Blueprint `/jap_event`
+We must be able to: 
+- Create a jap event
+- Get all jap events concerning a user
+- Get all tables associated to a jap_event
+- Get upcoming japs
+- Add members to a jap event
+- Update a jap_event status
+
+##### POST `''`
+Create jap event
+
+Request body : `{event_name, description, date, jap_place_id, created_by}`
+
+Server response : (serialized JapEvent Object)
+```json
+{jap_event : id, event_name, description, date, jap_place_id, created_by, created_at, status, members}
+```
+
+##### GET `/user/<int:user_id>`
+Get all jap_events concerning the user whose id is user_id 
+
+
+Server response : 
 ```json
 {
-  name,
-  address,
-  phone,
-  opening_hours,
-  menu : [
-    {
-      name,
-      points,
-      icon_url
-    },
-    ...
-  ]
+  jap_events: 
+    [
+      {id, event_name, description, date, jap_place_id, created_by, created_at, status, members}, 
+      ...
+    ]
 }
 ```
 
-Back answer:
+##### GET `/table/<int:table_id>`
+Get all tables associated to a jap_event
+
+Server response : 
 ```json
 {
-  id, 
-  name, 
-  address,
-  phone,
-  opening_hours,
-  menu
+  tables: 
+    [
+      Table 1, Table 2, ....
+    ]
 }
 ```
 
-##### `/details`: GET
+##### GET `/upcoming/<int:user_id>`  (not so important, keep it last)
+Get all upcoming japs concerning the user whose id is user_id
 
-Front send: 
+
+Server response : 
 ```json
 {
-  jap_place_id
+  user_jap_events: 
+    [
+      {id, event_name, description, date, jap_place_id, created_by, created_at, status, members}, 
+      ...
+    ], 
+  other_jap_events: 
+    [
+      {id, event_name, description, date, jap_place_id, created_by, created_at, members}, 
+      ...
+    ]
 }
 ```
 
-Back answer :
+##### POST `/add_members/<int:jap_event_id>` 
+Add members to a jap event.
+
+Request body : 
 ```json
 {
-  id, 
-  name, 
-  address,
-  phone,
-  opening_hours,
-  menu
+  new_members : [id_user_1, id_user_2, id_user_3 ...]
 }
 ```
+
+Server response (serialized JapEvent Object)
+ : 
+```json
+{jap_event : id, event_name, description, date, jap_place_id, created_by, created_at, members}` 
+```
+
+##### PUT `<int:jap_event_id>/status/<int:status>`
+Update a jap_event status
+
+Server response : (serialized JapEvent Object)
+```json
+{jap_event : id, event_name, description, date, jap_place_id, status, created_by, created_at, members}
+```
+
+
+
+#### Blueprint `/table`
+
+We must be able to:
+- Create a table
+- Get a user table within a jap_event
+- Add people to a table
+- Update a table status
+
+##### POST `''`
+Create table
+
+Request body : `{emperor, jap_event_id}`
+
+Server response : (serialized Table Object)
+```json
+{table : {id, emperor, status, members}}
+```
+
+##### GET `/jap_event/<int:jap_event_id>/user/<int:user_id>`
+Get a user table within a jap_event
+
+Server response : 
+```json
+{table : {id, emperor, status, members}}
+```
+
+##### POST `/add_members/<int:table_id>` 
+Add members to a jap event.
+
+Request body : 
+```json
+{
+  new_members : [id_user_1, id_user_2, id_user_3 ...]
+}
+```
+
+Server response (serialized Table Object)
+ : 
+```json
+{table : {id, emperor, status, members}}
+```
+
+##### PUT `/<int:table_id>/status/<int:status>`
+Update a table status
+
+Server response : (serialized Table Object)
+```json
+{table : {id, emperor, status, members}}
+```
+
+#### Blueprint `/command`
+
+We must be able to:
+- Create a unique command associated to a couple (table_id, item_id)
+- Add user's orders to this command (amount of food ordered)
+- Get all commands associated to a table
+- .... Still TBD
+
+
 
 #### Socket messages and payload
 
