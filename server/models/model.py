@@ -1,5 +1,7 @@
 """Database Model."""
 
+from __future__ import annotations
+
 from flask_sqlalchemy import SQLAlchemy
 from dataclasses import dataclass
 
