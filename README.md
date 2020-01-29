@@ -120,24 +120,24 @@ Possible status of command and jap:
 #### Blueprint `/auth`
 
 ##### POST `/login` 
-Front send : `{username, email}`
+Front send : `{"username", "email"}`
 
 Back answer : 
 ```json
 {
-  id, 
-  username, 
-  email, 
-  phone, 
-  user_japs: 
+  "id", 
+  "username", 
+  "email", 
+  "phone", 
+  "user_japs": 
   [
     {
-      id, 
-      name, 
-      members, 
-      table:
+      "id", 
+      "name", 
+      "members", 
+      "table":
         [
-          {id, status, members}, ...], status}, 
+          {"id", "status", "members"}, ...], "status"}, 
           ...
         ]
     }
@@ -162,13 +162,13 @@ Get all jap places
 Server response : 
 ```json
 {
-  jap_places : [
+  "jap_places" : [
     {
-      id, 
-      name, 
-      address,
-      phone,
-      opening_hours,
+      "id", 
+      "name", 
+      "address",
+      "phone",
+      "opening_hours",
     },
     ...
   ]
@@ -177,7 +177,13 @@ Server response :
 
 ##### GET `/menu/<int:jap_place_id>` 
 ```json
-{ menu : [{id: name, points_amount, icon_id}, Item 2, Item 3, ....]}
+{ 
+  "menu" : 
+  [
+    {"id": "name", "points_amount", "icon_id"}, 
+    {"id": "name", "points_amount", "icon_id"}, ....
+  ]
+}
 ```
 
 #### Blueprint `/jap_event`
@@ -192,11 +198,17 @@ We must be able to:
 ##### POST `''`
 Create jap event
 
-Request body : `{event_name, description, date, jap_place_id, created_by}`
+Request body : `{"event_name", "description", "date", "jap_place_id", "created_by:}`
 
 Server response : (serialized JapEvent Object)
 ```json
-{jap_event : id, event_name, description, date, jap_place_id, created_by, created_at, status, members}
+{
+  "jap_event" : 
+    { 
+      "id", "event_name", "description", "date", "jap_place_id", 
+      "created_by", "created_at", "status", "members"
+    }
+}
 ```
 
 ##### GET `/user/<int:user_id>`
@@ -206,9 +218,11 @@ Get all jap_events concerning the user whose id is user_id
 Server response : 
 ```json
 {
-  jap_events: 
+  "jap_events": 
     [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, status, members}, 
+      { "id", "event_name", "description", "date", "jap_place_id", 
+        "created_by", "created_at", "status", "members"
+      }, 
       ...
     ]
 }
@@ -220,9 +234,11 @@ Get all tables associated to a jap_event
 Server response : 
 ```json
 {
-  tables: 
+  "tables": 
     [
-      Table 1, Table 2, ....
+      {"id", "emperor", "status", "members"}, 
+      {"id", "emperor", "status", "members"}, 
+      ....
     ]
 }
 ```
@@ -234,14 +250,18 @@ Get all upcoming japs concerning the user whose id is user_id
 Server response : 
 ```json
 {
-  user_jap_events: 
+  "user_jap_events": 
     [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, status, members}, 
+      { "id", "event_name", "description", "date", "jap_place_id", 
+        "created_by", "created_at", "status", "members"
+      }, 
       ...
     ], 
-  other_jap_events: 
+  "other_jap_events": 
     [
-      {id, event_name, description, date, jap_place_id, created_by, created_at, members}, 
+      { "id", "event_name", "description", "date", "jap_place_id", 
+        "created_by", "created_at", "status", "members"
+      }, 
       ...
     ]
 }
@@ -253,14 +273,19 @@ Add members to a jap event.
 Request body : 
 ```json
 {
-  new_members : [id_user_1, id_user_2, id_user_3 ...]
+  "new_members" : [{"id_user" : 1}, {"id_user" : 2}, {"id_user" : 3}, ...]
 }
 ```
 
 Server response (serialized JapEvent Object)
  : 
 ```json
-{jap_event : id, event_name, description, date, jap_place_id, created_by, created_at, members}` 
+{ 
+  "jap_event": 
+    { "id", "event_name", "description", "date",    "jap_place_id", 
+      "created_by", "created_at", "status", "members"
+    }
+}` 
 ```
 
 ##### PUT `<int:jap_event_id>/status/<int:status>`
@@ -268,7 +293,10 @@ Update a jap_event status
 
 Server response : (serialized JapEvent Object)
 ```json
-{jap_event : id, event_name, description, date, jap_place_id, status, created_by, created_at, members}
+{ 
+  "id", "event_name", "description", "date", "jap_place_id", 
+  "created_by", "created_at", "status", "members"
+}
 ```
 
 
@@ -288,7 +316,9 @@ Request body : `{emperor, jap_event_id}`
 
 Server response : (serialized Table Object)
 ```json
-{table : {id, emperor, status, members}}
+{
+  "table" : {"id", "emperor", "status", "members"}
+}
 ```
 
 ##### GET `/jap_event/<int:jap_event_id>/user/<int:user_id>`
@@ -296,23 +326,26 @@ Get a user table within a jap_event
 
 Server response : 
 ```json
-{table : {id, emperor, status, members}}
+{
+  "table" : {"id", "emperor", "status", "members"}
+}
 ```
-
 ##### POST `/add_members/<int:table_id>` 
 Add members to a jap event.
 
 Request body : 
 ```json
 {
-  new_members : [id_user_1, id_user_2, id_user_3 ...]
+  "new_members" : [{"id_user" : 1}, {"id_user" : 2}, {"id_user" : 3}, ...]
 }
 ```
 
 Server response (serialized Table Object)
  : 
 ```json
-{table : {id, emperor, status, members}}
+{
+  "table" : {"id", "emperor", "status", "members"}
+}
 ```
 
 ##### PUT `/<int:table_id>/status/<int:status>`
@@ -320,9 +353,10 @@ Update a table status
 
 Server response : (serialized Table Object)
 ```json
-{table : {id, emperor, status, members}}
+{
+  "table" : {"id", "emperor", "status", "members"}
+}
 ```
-
 #### Blueprint `/command`
 
 We must be able to:
