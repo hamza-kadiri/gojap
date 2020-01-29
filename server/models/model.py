@@ -2,6 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from dataclasses import dataclass
+
 import datetime
 
 db = SQLAlchemy()
@@ -44,7 +45,6 @@ class User(db.Model):
         {id, username, email, phone, calorie, jap_events, achievments}
     """
 
-    jap_events: list
     id: int
     username: str
     email: str
@@ -85,8 +85,7 @@ class JapEvent(db.Model):
     created_at: datetime.datetime
     created_by: int
     jap_place_id: int
-    photos: list
-    events: list
+    status: int
     tables: list
     members: list
 
@@ -100,10 +99,11 @@ class JapEvent(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
+    status = db.Column(db.Integer, nullable=False, default=0)
     photos = db.relationship('Photo', backref='jap_event', lazy=True)
     events = db.relationship('Event', backref='jap_event', lazy=True)
     tables = db.relationship('Table', backref='jap_event', lazy=True)
-    members = db.relationship('User', secondary=jap_event_members, lazy='subquery',
+    members = db.relationship('User', secondary=jap_event_members, lazy=True,
                               backref=db.backref('jap_events', lazy=True))
 
     def __repr__(self):
@@ -173,7 +173,7 @@ class JapPlace(db.Model):
     Defined variables :
         {id, name, addresse, phone, opening_hourss, jap_event_ids, menu_id}
     """
-
+    menu: Menu
     id: int
     name: str
     address: str
@@ -263,6 +263,9 @@ class CommandItem(db.Model):
     item_id: int
 
     _tablename_ = 'command_item'
+    _table_args__ = (db.UniqueConstraint(
+        'table_id', 'item_id', name='uc_table_item')),
+
     id = db.Column(db.Integer, primary_key=True)
     users = db.relationship('UserCommand')
     table_id = db.Column(db.Integer, db.ForeignKey('table.id'), nullable=False)
@@ -282,6 +285,9 @@ class UserCommand(db.Model):
     order_amount: int
 
     _tablename_ = 'user_command'
+    _table_args__ = (db.UniqueConstraint(
+        'id', 'user_id', name='uc_id_user_id')),
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     command_id = db.Column(db.Integer, db.ForeignKey('command_item.id'))
@@ -309,7 +315,6 @@ class Menu(db.Model):
 
     id: int
     items: list
-    jap_place: JapPlace
 
     _tablename_ = 'menu'
     id = db.Column(db.Integer, primary_key=True)
@@ -338,7 +343,6 @@ class Table(db.Model):
     id: int
     emperor: int
     status: int
-    commands: list
     members: list
 
     _tablename_ = 'table'
