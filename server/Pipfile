@@ -30,6 +30,7 @@ pylint = "*"
 python_version = "3.7"
 
 [scripts]
+tests="python -m pytest"
 db-init="python -m flask db init"
 stamp-head="python -m flask db stamp head"
 migrate="python -m flask db migrate"
