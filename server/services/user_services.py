@@ -44,6 +44,17 @@ class UserService():
         return user
 
     @staticmethod
+    def get_user_by_name(user_name):
+        """
+        Get user infos. TEST PURPOSE.
+
+        Args :
+            user_name : name of the user to get.
+        """
+        user = User.query.filter_by(username=user_name).first()
+        return user
+
+    @staticmethod
     def remove_user(user_id):
         """
         Delete user.
