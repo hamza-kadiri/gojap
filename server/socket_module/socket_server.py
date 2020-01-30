@@ -3,6 +3,7 @@
 from flask_socketio import Namespace, emit, join_room, send, leave_room
 from flask import current_app as app
 from .socket_messages import socket_messages
+from services.jap_event_services import JapEventService
 
 class SocketServer(Namespace):
     """Socket server class to use flask io Namespace.
@@ -58,14 +59,18 @@ class SocketServer(Namespace):
                             }
         """
         app.logger.debug(data)
-        app.logger.info("Join " + data['jap_event_id'] +
-                        " received from " + data['user_id'])
+        # app.logger.info("Join " + data['jap_event_id'] +
+        #                 " received from " + data['user_id'])
+
 
         # temp FIX create a use
-        user = create_user_service({})
-        join_room(data['jap_event_id'])
-        app.logger.debug(data)
-        emit(socket_messages['USER_JOINED_JAP'], data, room=data['jap_event_id'])
+        answer = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
+        # join_room(data['jap_event_id'])
+        # app.logger.debug(data)
+        print("answer")
+        print(answer)
+        print("/jap_event/"+str(data['jap_event_id']))
+        emit(socket_messages['USER_JOINED_JAP'], answer, room="/jap_event/"+str(data['jap_event_id']))
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.

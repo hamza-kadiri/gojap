@@ -4,7 +4,7 @@ from models.model import JapEvent, User, jap_event_members, db
 import datetime
 
 
-class JapEventService():
+class JapEventService:
     """Jap event service class."""
 
     @staticmethod
@@ -12,27 +12,6 @@ class JapEventService():
         """Get all japs."""
         jap_events = JapEvent.query.all()
         return jap_events
-
-    @staticmethod
-    def create_jap_event(data):
-        """
-        Create a new jap event.
-
-        Args :
-            data = {event_name, description, jap_place_id, created_by, date}
-        """
-        jap_event = JapEvent(event_name=data['event_name'],
-                             description=data['description'],
-                             jap_place_id=data['jap_place_id'],
-                             created_by=data['created_by'],
-                             date=data['date'])
-        db.session.add(jap_event)
-        db.session.commit()
-
-        join_jap_event({'user_id': data['created_by'],
-                        'jap_event_id': jap_event.id})
-
-        return jap_event
 
     @staticmethod
     def add_members_to_jap_event(data):
@@ -44,7 +23,8 @@ class JapEventService():
         Returns :
             User[] // Array of User objects in the Jap Event
         """
-        jap_event = JapEvent.query.filter_by(id=data['jap_event_id']).first()
+        jap_event = db.session.query(JapEvent).filter_by(JapEvent.id==data['jap_event_id']).first()
+        print(jap_event)
         members = User.query.filter(
             User.username.in_(set(data['members']))).all()
 
@@ -66,11 +46,36 @@ class JapEventService():
         Returns :
             {user_id, jap_event_id, jap_tables, jap_members}
         """
-        jap_event = JapEvent.query.filter_by(jap_event_id).first()
-        new_member = User.query.filter_by(user_id).first()
+        print(jap_event_id, user_id)
+        
+        jap_event = db.session.query(JapEvent).get(jap_event_id)
+        print(jap_event)
+        new_member = db.session.query(User).get(user_id)
+        print(new_member)
         jap_event.members.append(new_member)
         db.session.add(jap_event)
         db.session.commit()
+        
+        return jap_event
+
+    @staticmethod
+    def create_jap_event(event_name, description, jap_place_id, created_by, date):
+        """
+        Create a new jap event.
+
+        Args :
+            data = {event_name, description, jap_place_id, created_by, date}
+        """
+        jap_event = JapEvent(event_name=event_name,
+                             description=description,
+                             jap_place_id=jap_place_id,
+                             created_by=created_by,
+                             date=date)
+        print(jap_event)
+        db.session.add(jap_event)
+        db.session.commit()
+
+        JapEventService.join_jap_event(jap_event.id, created_by)
 
         return jap_event
 
