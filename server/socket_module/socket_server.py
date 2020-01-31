@@ -4,6 +4,7 @@ from flask_socketio import Namespace, emit, join_room, send, leave_room
 from flask import current_app as app
 from .socket_messages import socket_messages
 from services.jap_event_services import JapEventService
+from dataclasses import asdict
 
 class SocketServer(Namespace):
     """Socket server class to use flask io Namespace.
@@ -40,11 +41,11 @@ class SocketServer(Namespace):
             USER_JOINED_JAP = {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
         """
         app.logger.debug(data)
-        answer = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
+        jap_event, new_member = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
         room = "jap_event/"+str(data['jap_event_id'])
         join_room(room)
         print("answer")
-        emit(socket_messages['USER_JOINED_JAP'], answer, room=room)
+        emit(socket_messages['USER_JOINED_JAP'], {"jap_event": asdict(jap_event), "new_member": asdict(new_member)}, room=room)
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.
