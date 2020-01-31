@@ -45,18 +45,14 @@ class JapEventService:
             data = {user_id, jap_event_id}
 
         Returns :
-            {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
+            JapEvent, User
         """
-        print(jap_event_id, user_id)
-        
         jap_event = db.session.query(JapEvent).get(jap_event_id)
-        print(jap_event)
         new_member = db.session.query(User).get(user_id)
-        print(new_member)
         jap_event.members.append(new_member)
         db.session.add(jap_event)
         db.session.commit()
-        return {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
+        return jap_event, new_member
 
     @staticmethod
     def create_jap_event(event_name, description, jap_place_id, created_by, date):
