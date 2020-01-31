@@ -65,14 +65,17 @@ class TestSocketServer(TestClassWithClient):
         """Test join jap."""
         print(self.user_id)
         self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.jap_creator_id, "jap_event_id": self.jap_event_id})
-        received = self.client.get_received()
+        received = self.client.get_received()[0]
         print("received")
         # print(self.jap_event_room)
         print(received)
         # received2 = self.jap_event_socket_client.get_received()
         # print("received")
         # print(received2)
-        assert(False)
+        assert received["name"] == socket_messages['USER_JOINED_JAP']
+        assert received["namespace"] == "/"
+        args = received["args"]
+        assert received["args"] == "/"
         # self.assertEqual(len(received), 3)
         # self.assertEqual(received[0]['args'], 'connected')
         # self.assertEqual(received[1]['args'], '{"foo": ["bar", "baz"]}')
