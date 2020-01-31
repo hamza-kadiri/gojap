@@ -59,18 +59,10 @@ class SocketServer(Namespace):
                             }
         """
         app.logger.debug(data)
-        # app.logger.info("Join " + data['jap_event_id'] +
-        #                 " received from " + data['user_id'])
-
-
-        # temp FIX create a use
         answer = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
-        # join_room(data['jap_event_id'])
-        # app.logger.debug(data)
-        print("answer")
-        print(answer)
-        print("/jap_event/"+str(data['jap_event_id']))
-        emit(socket_messages['USER_JOINED_JAP'], answer, room="/jap_event/"+str(data['jap_event_id']))
+        room = "jap_event/"+str(data['jap_event_id'])
+        join_room(room)
+        emit(socket_messages['USER_JOINED_JAP'], answer, room=room)
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.

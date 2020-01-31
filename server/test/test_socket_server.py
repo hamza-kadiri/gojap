@@ -47,8 +47,8 @@ class TestClassWithClient:
         cls.jap_event = JapEventService.create_jap_event("Jap de promo", "blabla", cls.jap_place.id, cls.jap_creator.id, date)
         cls.jap_event_id = cls.jap_event.id
 
-        cls.jap_event_room = "/jap_event/"+str(cls.jap_event.id)
-        cls.jap_event_socket_client = socketio.test_client(app, namespace=cls.jap_event_room)
+        # cls.jap_event_room = "/jap_event/"+str(cls.jap_event.id)
+        # cls.jap_event_socket_client = socketio.test_client(app, namespace=cls.jap_event_room)
 
 
 class TestSocketServer(TestClassWithClient):
@@ -58,20 +58,21 @@ class TestSocketServer(TestClassWithClient):
         """Test socket connection is working properly."""
         assert self.client.is_connected()
         received = self.client.get_received()
+        # received_jap_event_client = self.jap_event_socket_client.get_received()
         print(received)
-        print(self.user)
 
     def test_join_jap(self):
         """Test join jap."""
         print(self.user_id)
         self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.jap_creator_id, "jap_event_id": self.jap_event_id})
-        received = self.jap_event_socket_client.get_received(self.jap_event_room)
+        received = self.client.get_received()
         print("received")
-        print("/jap_event/"+str(self.jap_event_id))
+        # print(self.jap_event_room)
         print(received)
-        received2 = self.client.get_received()
-        print("received")
-        print(received2)
+        # received2 = self.jap_event_socket_client.get_received()
+        # print("received")
+        # print(received2)
+        assert(False)
         # self.assertEqual(len(received), 3)
         # self.assertEqual(received[0]['args'], 'connected')
         # self.assertEqual(received[1]['args'], '{"foo": ["bar", "baz"]}')
