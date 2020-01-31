@@ -32,36 +32,18 @@ class SocketServer(Namespace):
     def on_join_jap(self, data):
         """Call on message JOIN_JAP.
 
-        Emit USER_JOINED_JAP in the room 'jap_id'.
+        Emit USER_JOINED_JAP in the room 'jap_event/jap_id'.
 
         Args :
             data = {user_id, jap_event_id} // later user_id
         Emit :
-            USER_JOINED_JAP = {
-                                jap_event_id,
-                                new_member : {user_id, name, }
-                                members : [
-                                    {
-                                    user_id,
-                                    name,
-                                    },
-                                    ...
-                                ],
-                                jap_event_status,
-                                current_command : {
-                                    command_status,
-                                    current_item : {
-                                    item_id,
-                                    name,
-                                    icon_url
-                                    }
-                                }
-                            }
+            USER_JOINED_JAP = {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
         """
         app.logger.debug(data)
         answer = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
         room = "jap_event/"+str(data['jap_event_id'])
         join_room(room)
+        print("answer")
         emit(socket_messages['USER_JOINED_JAP'], answer, room=room)
 
     def on_leave_jap(self, data):

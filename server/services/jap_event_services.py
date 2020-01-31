@@ -2,6 +2,7 @@
 
 from models.model import JapEvent, User, jap_event_members, db
 import datetime
+from dataclasses import asdict
 
 
 class JapEventService:
@@ -44,7 +45,7 @@ class JapEventService:
             data = {user_id, jap_event_id}
 
         Returns :
-            {user_id, jap_event_id, jap_tables, jap_members}
+            {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
         """
         print(jap_event_id, user_id)
         
@@ -55,8 +56,7 @@ class JapEventService:
         jap_event.members.append(new_member)
         db.session.add(jap_event)
         db.session.commit()
-        
-        return jap_event
+        return {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
 
     @staticmethod
     def create_jap_event(event_name, description, jap_place_id, created_by, date):
