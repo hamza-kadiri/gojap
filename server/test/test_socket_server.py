@@ -2,6 +2,7 @@
 
 import datetime
 from flask_socketio import SocketIOTestClient, test_client
+# from sqlalchemy import refresh
 # from socket_module.socket_server import SocketServer
 from app import app, socketio
 from socket_module.socket_messages import socket_messages
@@ -47,10 +48,6 @@ class TestClassWithClient:
         cls.jap_event = JapEventService.create_jap_event("Jap de promo", "blabla", cls.jap_place.id, cls.jap_creator.id, date)
         cls.jap_event_id = cls.jap_event.id
 
-        cls.jap_event_room = "/jap_event/"+str(cls.jap_event.id)
-        cls.jap_event_socket_client = socketio.test_client(app, namespace=cls.jap_event_room)
-
-
 class TestSocketServer(TestClassWithClient):
     """Test Class for socket server."""
 
@@ -58,23 +55,15 @@ class TestSocketServer(TestClassWithClient):
         """Test socket connection is working properly."""
         assert self.client.is_connected()
         received = self.client.get_received()
-        print(received)
-        print(self.user)
 
     def test_join_jap(self):
         """Test join jap."""
-        print(self.user_id)
-        self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.jap_creator_id, "jap_event_id": self.jap_event_id})
-        received = self.jap_event_socket_client.get_received(self.jap_event_room)
-        print("received")
-        print("/jap_event/"+str(self.jap_event_id))
-        print(received)
-        received2 = self.client.get_received()
-        print("received")
-        print(received2)
-        # self.assertEqual(len(received), 3)
-        # self.assertEqual(received[0]['args'], 'connected')
-        # self.assertEqual(received[1]['args'], '{"foo": ["bar", "baz"]}')
-        # self.assertEqual(received[2]['args'],
-        #                  '{"Authorization": "Bearer foobar"}')
-        # client.disconnect()
+        self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
+        received = self.client.get_received()
+        received = received[0]
+        assert received["name"] == socket_messages['USER_JOINED_JAP']
+        assert received["namespace"] == "/"
+        answer = received["args"][0]
+        assert list(answer.keys()) == ["jap_event", "new_member"]
+        assert answer["new_member"]["username"] == "TestUser"
+        assert answer["new_member"]["id"] in [member["id"] for member in answer["jap_event"]["members"]]
