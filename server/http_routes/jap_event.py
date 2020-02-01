@@ -68,8 +68,37 @@ def get_upcoming_events_for_user(user_id):
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('/add_members', methods=['POST'])
-def add_members():
+@jap_event_blueprint.route('/add_members/<int:jap_event_id>', methods=['POST'])
+def add_members(jap_event_id: int):
+    """Add members to a jap event.
+
+    Args :
+        jap_event_id, data = {members: [ user_id, user_id2 ] }
+
+    Returns :
+        { members: [User] }
+    """
+    data = request.json
+    members = JapEventService.add_members_to_jap_event(jap_event_id, set(data['members']))
+    return jsonify(members)
+
+
+@jap_event_blueprint.route('<int:jap_event_id>/status/<int:status>', methods=['PUT'])
+def update_status(jap_event_id: int, status: int):
+    """Update status of a jap event.
+
+    Args :
+        data = {jap_event_id, status}
+
+    Returns :
+        { jap_event }
+    """
+    jap_event = JapEventService.update_status(jap_event_id, status)
+    return jsonify(jap_event)
+
+
+@jap_event_blueprint.route('/table/<int:jap_event_id>', methods=['GET'])
+def get_tables_jap_event(jap_event_id: int):
     """Add members to a jap event.
 
     Args :
@@ -78,6 +107,5 @@ def add_members():
     Returns :
         { members: [User] }
     """
-    data = request.json
-    members = JapEventService.add_members_to_jap_event(data['jap_event_id'], set(data['members']))
-    return jsonify(members)
+    tables = JapEventService.get_tables_for_a_jap(jap_event_id)
+    return jsonify(tables)
