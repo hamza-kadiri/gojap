@@ -440,7 +440,7 @@ Server response : (Array of serialized command objects)
 #### Socket messages and payload
 
 ##### Emperor to table members
-Message sended by the emperor to the table members (through the server)
+Message sent by the emperor to the table members (through the server)
 ###### START_COMMAND
 Payload :
 

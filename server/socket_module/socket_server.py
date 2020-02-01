@@ -1,15 +1,17 @@
 """Socket entry point."""
 
-from flask_socketio import Namespace, emit, join_room, send, leave_room
+from flask_socketio import Namespace, emit, join_room, leave_room
 from flask import current_app as app
+
+from services import UserService
 from .socket_messages import socket_messages
-from services.jap_event_services import JapEventService
 from dataclasses import asdict
+
 
 class SocketServer(Namespace):
     """Socket server class to use flask io Namespace.
 
-    Deals with thiose messages :
+    Deals with those messages :
         - connect
         - disconnect
         - join_jap
@@ -19,6 +21,11 @@ class SocketServer(Namespace):
         - end_command
 
     """
+
+    def __init__(self):
+        """Create the Socket Server object."""
+        self.connected_by_room = {}
+        super().__init__()
 
     def on_connect(self):
         """Call when a connection socket is set with a client."""
@@ -38,14 +45,30 @@ class SocketServer(Namespace):
         Args :
             data = {user_id, jap_event_id} // later user_id
         Emit :
-            USER_JOINED_JAP = {"jap_event": asdict(jap_event), "new_member":asdict(new_member)}
+            USER_JOINED_JAP = {
+                "jap_event_id": int,
+                "new_member": asdict(new_member),
+                "users_in_room": list(User)
+            }
         """
         app.logger.debug(data)
-        jap_event, new_member = JapEventService.join_jap_event(data['jap_event_id'], data['user_id'])
+        new_member = UserService.get_user(data['user_id'])
         room = "jap_event/"+str(data['jap_event_id'])
         join_room(room)
-        print("answer")
-        emit(socket_messages['USER_JOINED_JAP'], {"jap_event": asdict(jap_event), "new_member": asdict(new_member)}, room=room)
+        if room in self.connected_by_room.keys():
+            self.connected_by_room[room].append(asdict(new_member))
+        else:
+            self.connected_by_room[room] = [asdict(new_member)]
+
+        emit(
+            socket_messages['USER_JOINED_JAP'],
+            {
+                "jap_event_id": data['jap_event_id'],
+                "new_member": asdict(new_member),
+                "members": self.connected_by_room[room]
+            },
+            room=room
+        )
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.
@@ -78,25 +101,25 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, ?table_id} // later user_id
         Emit :
             USER_JOINED_TABLE = {
-                                    new_member : { user_id, name, avatar_url }
-                                    jap_event_id,
-                                    table_id,
-                                    members : [
-                                        {
-                                        user_id,
-                                        name,
-                                        },
-                                        ...
-                                    ],
-                                    command : {
-                                        command_status,
-                                        current_item : {
-                                        item_id,
-                                        name,
-                                        icon_url
-                                        }
-                                    }
-                                }
+                new_member : { user_id, name, avatar_url }
+                jap_event_id,
+                table_id,
+                members : [
+                    {
+                    user_id,
+                    name,
+                    },
+                    ...
+                ],
+                command : {
+                    command_status,
+                    current_item : {
+                    item_id,
+                    name,
+                    icon_url
+                    }
+                }
+            }
         """
         app.logger.debug(data)
         app.logger.info(
@@ -116,14 +139,14 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, table_id} // later user_id
         Emit : 
             COMMAND_STARTED = {
-                                jap_event_id,
-                                table_id,
-                                command : {
-                                    command_id,
-                                    command_status,
-                                    command_number
-                                }
-                            }
+                jap_event_id,
+                table_id,
+                command : {
+                    command_id,
+                    command_status,
+                    command_number
+                }
+            }
         """
         app.logger.debug(data)
         app.logger.info("Command started on table " +
@@ -142,15 +165,15 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, table_id} // later user_id
         Emit : 
             COMMAND_ENDED = {
-                                jap_event_id,
-                                table_id,
-                                command : {
-                                    command_id,
-                                    command_status,
-                                    command_number,
-                                    summary : [ item_id : {name, amount, icon_url}, ...]
-                                }
-                            }
+                jap_event_id,
+                table_id,
+                command : {
+                    command_id,
+                    command_status,
+                    command_number,
+                    summary : [ item_id : {name, amount, icon_url}, ...]
+                }
+            }
         """
         app.logger.debug(data)
         app.logger.info("Command ended on table " +
@@ -169,14 +192,14 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, table_id, current_item_id} // later user_id
         Emit :
             ITEM_CHANGED = {
-                                jap_event_id,
-                                table_id,
-                                item : {
-                                    item_id,
-                                    name, 
-                                    icon_url,
-                                }
-                            }
+                jap_event_id,
+                table_id,
+                item : {
+                    item_id,
+                    name,
+                    icon_url,
+                }
+            }
         """
         app.logger.debug(data)
         app.logger.info("Next item on table " +
@@ -196,15 +219,15 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, table_id, item : {item_id, amount}} // later user_id
         Emit :
             ITEM_CHOSEN = {
-                            jap_event_id,
-                            table_id,
-                            command : {
-                                command_id,
-                                command_status,
-                                command_number,
-                                summary : { item_id : {name, amount, icon_url}, ... }
-                            }
-                        }
+                jap_event_id,
+                table_id,
+                command : {
+                    command_id,
+                    command_status,
+                    command_number,
+                    summary : { item_id : {name, amount, icon_url}, ... }
+                }
+            }
         """
         app.logger.debug(data)
         app.logger.info(

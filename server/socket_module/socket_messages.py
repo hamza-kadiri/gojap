@@ -1,7 +1,7 @@
 """Messages to communicate through socket with the frontend."""
 
 socket_messages = {
-    #   CLIENTS ---> SERVER
+  #   CLIENTS ---> SERVER
   # master -> table users
   'START_COMMAND': 'start_command',
   'END_COMMAND': 'end_command',
