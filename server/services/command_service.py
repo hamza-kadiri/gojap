@@ -52,6 +52,7 @@ class CommandService():
         user = User.query.filter_by(id=user_id).first()
         item_command = UserCommand(user=user, order_amount=order_amount)
         command = CommandItem.query.filter_by(id=command_id).first()
+        print(command.users)
         command.users.append(item_command)
         db.session.add(command)
         db.session.commit()

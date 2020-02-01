@@ -35,6 +35,9 @@ Table of contents
         - [POST `/add_members/<int:table_id>`](#post-addmembersinttableid)
         - [PUT `/<int:table_id>/status/<int:status>`](#put-inttableidstatusintstatus)
       - [Blueprint `/command`](#blueprint-command)
+        - [POST `/`](#post-2)
+        - [POST `/add`](#post-add)
+        - [GET `/all/<int:table_id>`](#get-allinttableid)
       - [Socket messages and payload](#socket-messages-and-payload)
         - [Emperor to table members](#emperor-to-table-members)
           - [START_COMMAND](#startcommand)
@@ -365,7 +368,74 @@ We must be able to:
 - Get all commands associated to a table
 - .... Still TBD
 
+##### POST `/`
+Update a table status
 
+Request body : 
+```json
+{"table_id", "item_id"}
+```
+
+Server response 
+```json
+{
+  {
+    "command": {
+        "id"
+        "item_id"
+        "table_id"
+        "users": [UserCommand, UserCommand ....]
+    }
+}}
+```
+
+##### POST `/add`
+Add a new user command to the global command
+
+Request body : 
+```json
+{"table_id", "item_id", "amount_ordered", "id_user}
+```
+
+If the user `user_id` has already ordered `item_id` in `table_id`, this request should update `amount_ordered`
+Otherwise this request should create a new `UserCommand` entry
+
+Server response :
+```json
+{
+  "command": 
+    {
+      "id"
+      "item_id"
+      "table_id"
+      "users": [UserCommand, UserCommand ....]
+    }
+}
+```
+
+##### GET `/all/<int:table_id>`
+Get all commands associated to a table
+
+
+Server response : (Array of serialized command objects)
+```json
+{
+  commands : [
+      {
+        "id"
+        "item_id"
+        "table_id"
+        "users": [UserCommand, UserCommand ....]
+      },
+      {
+        "id"
+        "item_id"
+        "table_id"
+        "users": [UserCommand, UserCommand ....]
+      },
+    ]
+}
+```
 
 #### Socket messages and payload
 
@@ -373,6 +443,7 @@ We must be able to:
 Message sended by the emperor to the table members (through the server)
 ###### START_COMMAND
 Payload :
+
 ```json
 {
   user_id,

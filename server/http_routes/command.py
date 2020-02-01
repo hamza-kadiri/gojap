@@ -80,18 +80,4 @@ def get_command_by_table_id(table_id: int):
     if not command:
         return json_abort(404, f"Command not found")
 
-    return jsonify({"command": command.as_dict()})
-
-
-@command_blueprint.route('/all', methods=['GET'])
-def get_all_users():
-    """Display all users.
-
-    Args :
-        None
-
-    Returns :
-        list of users
-    """
-    users = UserService.get_all_users()
-    return jsonify(users)
+    return jsonify({"command": command})
