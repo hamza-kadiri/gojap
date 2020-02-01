@@ -1,10 +1,7 @@
 """JapEvent blueprint."""
 
-from flask import Blueprint, request, abort, jsonify
-from models.model import db, User
-from sqlalchemy import or_
+from flask import Blueprint, request, jsonify
 from services.jap_event_services import JapEventService
-import json
 
 jap_event_blueprint = Blueprint(
     'jap_event_blueprint', __name__, url_prefix='/jap_event')
@@ -17,9 +14,7 @@ def get_all_jap_events():
     Returns :
         {JapEvent}
     """
-    data = request.json
     jap_events = JapEventService.get_all_jap_events()
-
     return jsonify(jap_events)
 
 
@@ -34,13 +29,19 @@ def create_jap_event():
         {event_name, description, jap_place_id, created_by, date}
     """
     data = request.json
-    jap_event = JapEventService.create_jap_event(data)
+    jap_event = JapEventService.create_jap_event(
+        data["event_name"],
+        data["description"],
+        data["jap_place_id"],
+        data["user_id"],
+        data["date"]
+    )
 
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('', methods=['GET'])
-def get_events_for_user():
+@jap_event_blueprint.route('<int:user_id>', methods=['GET'])
+def get_events_for_user(user_id):
     """Get all jap_events for a given user.
 
     Args :
@@ -49,29 +50,25 @@ def get_events_for_user():
     Returns :
         { jap_events }
     """
-    data = request.json
-    jap_events = JapEventService.get_jap_events_for_user(data)
-    return json.dumps(jap_events)
+    jap_events = JapEventService.get_jap_events_for_user(user_id)
+    return jsonify({"events": jap_events})
 
 
-@jap_event_blueprint.route('/upcoming', methods=['GET'])
-def get_upcoming_events_for_user():
+@jap_event_blueprint.route('/upcoming/<int:user_id>', methods=['GET'])
+def get_upcoming_events_for_user(user_id):
     """Get all upcoming jap_events for a given user.
 
     Args :
-        data = {user_id}
+        user_id: int
 
     Returns :
         { jap_events }
     """
-    data = request.json
-    jap_events = get_upcoming_jap_events_for_user(data)
-
-    jap_events = list(map(lambda event: event.as_dict(), jap_events))
-    return json.dumps(jap_events)
+    jap_events = JapEventService.get_upcoming_jap_events_for_user(user_id)
+    return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('/add_members', methods=['GET'])
+@jap_event_blueprint.route('/add_members', methods=['POST'])
 def add_members():
     """Add members to a jap event.
 
@@ -82,7 +79,5 @@ def add_members():
         { members: [User] }
     """
     data = request.json
-    members = add_members_to_jap_event(data)
-
-    members = list(map(lambda u: u.as_dict(), members))
-    return json.dumps({"members": members})
+    members = JapEventService.add_members_to_jap_event(data['jap_event_id'], set(data['members']))
+    return jsonify(members)

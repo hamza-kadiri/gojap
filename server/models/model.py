@@ -77,7 +77,7 @@ class JapEvent(db.Model):
 
     Defined variables :
         {id, userName, description, date, jap_place_id,
-            photo_ids, event_ids,table_ids, members}
+            photo_ids, event_ids,status, table_ids, members}
     """
 
     id: int

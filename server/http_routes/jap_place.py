@@ -1,7 +1,7 @@
 """Jap Place blueprint."""
 
 from flask import Blueprint, request, abort
-from sqlalchemy import or_
+
 from services.jap_place_services import JapPlaceService
 import json
 
@@ -19,9 +19,9 @@ def create_jap_place():
         {name, address, phone, opening_hours, menu_id}
     """
     data = request.json
-    old_jap_place = db.session.query(JapPlace).filter(JapPlace.name == data['name']).first()
+    old_jap_place = JapPlaceService.get_jap_place_by_name(data['name'])
     if old_jap_place:
-       abort(409, f"JapPlace already exists. We do not allow for duplicates.")
+        abort(409, f"JapPlace already exists. We do not allow for duplicates.")
     jap_place = JapPlaceService.create_jap_place(data)
 
     return json.dumps(jap_place.as_dict())

@@ -2,6 +2,7 @@
 
 from models.model import JapPlace, db, Item, Menu, Icon
 
+
 class JapPlaceService():
     """JapPlaceService Class."""
 

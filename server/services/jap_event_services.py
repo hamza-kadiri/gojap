@@ -15,24 +15,27 @@ class JapEventService:
         return jap_events
 
     @staticmethod
-    def add_members_to_jap_event(data):
+    def add_members_to_jap_event(jap_event_id, usernames):
         """Add multiple people to a jap event.
 
         Args :
-            data = { jap_event_id, members: [ 'username', 'username2' ] }
+            jap_event_id: int,
+            members: [ 'username', 'username2' ]
 
         Returns :
             User[] // Array of User objects in the Jap Event
         """
-        jap_event = db.session.query(JapEvent).filter_by(JapEvent.id==data['jap_event_id']).first()
-        print(jap_event)
+        jap_event = JapEvent.query.filter(
+            JapEvent.id.__eq__(jap_event_id)
+        ).first()
+
         members = User.query.filter(
-            User.username.in_(set(data['members']))).all()
+            User.username.in_(usernames)
+        ).all()
 
         jap_event.members += members
         db.session.add(jap_event)
         db.session.commit()
-
         return jap_event.members
 
     @staticmethod
@@ -47,8 +50,8 @@ class JapEventService:
         Returns :
             JapEvent, User
         """
-        jap_event = db.session.query(JapEvent).get(jap_event_id)
-        new_member = db.session.query(User).get(user_id)
+        jap_event = JapEvent.query.get(jap_event_id)
+        new_member = User.query.get(user_id)
         jap_event.members.append(new_member)
         db.session.add(jap_event)
         db.session.commit()
@@ -67,7 +70,7 @@ class JapEventService:
                              jap_place_id=jap_place_id,
                              created_by=created_by,
                              date=date)
-        print(jap_event)
+
         db.session.add(jap_event)
         db.session.commit()
 
@@ -76,30 +79,33 @@ class JapEventService:
         return jap_event
 
     @staticmethod
-    def get_jap_events_for_user(data):
+    def get_jap_events_for_user(user_id):
         """Get all jap events for a given user.
 
         Args :
-            data = {user_id}
+            user_id: int
 
         Returns :
             { jap_events }
         """
         jap_events = JapEvent.query.filter(
-            User.id.__eq__(data['user_id'])).all()
+            JapEvent.members.any(User.id.__eq__(user_id))
+        ).all()
         return jap_events
 
     @staticmethod
-    def get_upcoming_jap_events_for_user(data):
+    def get_upcoming_jap_events_for_user(user_id):
         """Get all upcoming jap events for a given user.
 
         Args :
-            data = {user_id}
+            user_id: int
 
         Returns :
             { jap_events }
         """
         current_time = datetime.date.today()
-        jap_events = JapEvent.query.filter(User.id.__eq__(
-            data['user_id']), JapEvent.date >= current_time).all()
+        jap_events = JapEvent.query.filter(
+            JapEvent.members.any(User.id.__eq__(user_id)),
+            JapEvent.date >= current_time
+        ).all()
         return jap_events
