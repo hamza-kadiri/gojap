@@ -1,6 +1,6 @@
 """Building services for JapEvent management."""
 
-from models.model import JapEvent, User, jap_event_members, db
+from models.model import JapEvent, User, jap_event_members, db, Table
 import datetime
 from dataclasses import asdict
 
@@ -15,12 +15,12 @@ class JapEventService:
         return jap_events
 
     @staticmethod
-    def add_members_to_jap_event(jap_event_id, usernames):
+    def add_members_to_jap_event(jap_event_id, user_ids):
         """Add multiple people to a jap event.
 
         Args :
             jap_event_id: int,
-            members: [ 'username', 'username2' ]
+            members: [ id1, id2 ]
 
         Returns :
             User[] // Array of User objects in the Jap Event
@@ -30,7 +30,7 @@ class JapEventService:
         ).first()
 
         members = User.query.filter(
-            User.username.in_(usernames)
+            User.id.in_(user_ids)
         ).all()
 
         jap_event.members += members
@@ -109,3 +109,39 @@ class JapEventService:
             JapEvent.date >= current_time
         ).all()
         return jap_events
+
+    @staticmethod
+    def update_status(jap_event_id, status):
+        """Update status for a given jap.
+
+        Args :
+            jap_event_id: int
+            status: int
+
+        Returns :
+            { jap_event }
+        """
+        jap_event = JapEvent.query.filter(
+            JapEvent.id.__eq__(jap_event_id)
+        ).first()
+
+        jap_event.status = status
+        db.session.add(jap_event)
+        db.session.commit()
+        return jap_event
+
+    @staticmethod
+    def get_tables_for_a_jap(jap_event_id):
+        """Get tables for a jap event id.
+
+        Args :
+            jap_event_id: int
+
+        Returns :
+            { Tables list }
+        """
+        tables = Table.query.filter(
+            Table.jap_event_id.__eq__(jap_event_id)
+        ).all()
+
+        return tables
