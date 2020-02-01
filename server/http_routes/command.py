@@ -33,15 +33,15 @@ def create_command():
     """Create a new command.
 
     Args :
-        data = {user_id, table_id}
+        data = {item_id, table_id}
 
     Returns :
-        {command: id, user_id, table_id}
+        {command: id, item_id, table_id}
     """
     data = request.json
-    if not data or "user_id" not in data or "table_id" not in data:
+    if not data or "item_id" not in data or "table_id" not in data:
         abort(400)
-    command = CommandService.create_command(data["user_id"], data["table_id"])
+    command = CommandService.create_command(data["item_id"], data["table_id"])
 
     return jsonify({"command": command})
 
@@ -80,18 +80,4 @@ def get_command_by_table_id(table_id: int):
     if not command:
         return json_abort(404, f"Command not found")
 
-    return jsonify({"command": command.as_dict()})
-
-
-@command_blueprint.route('/all', methods=['GET'])
-def get_all_users():
-    """Display all users.
-
-    Args :
-        None
-
-    Returns :
-        list of users
-    """
-    users = UserService.get_all_users()
-    return jsonify(users)
+    return jsonify({"command": command})
