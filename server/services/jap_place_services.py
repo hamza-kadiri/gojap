@@ -75,4 +75,14 @@ class JapPlaceService():
         db.session.commit()
         return icon
 
+    @staticmethod
+    def get_jap_place_menu(id):
+        """
+        Get jap_place menu.
 
+        Args :
+            id : id du jap dont on veut get le menu.
+        """
+        jap_place = JapPlace.query.filter_by(id=id).first()
+
+        return jap_place.menu
