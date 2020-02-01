@@ -1,15 +1,13 @@
 """Test socket server call."""
 
 import datetime
-from flask_socketio import SocketIOTestClient, test_client
-# from sqlalchemy import refresh
-# from socket_module.socket_server import SocketServer
+
 from app import app, socketio
 from socket_module.socket_messages import socket_messages
 from services.user_services import UserService
 from services.jap_place_services import JapPlaceService
 from services.jap_event_services import JapEventService
-from models.model import db, Icon, Item, Menu
+from models.model import Item
 
 
 class TestClassWithClient:
@@ -34,10 +32,8 @@ class TestClassWithClient:
         
         JapPlaceService.create_item("sushi", 300, cls.icon.id)
         cls.items = Item.query.all()
-
         
         cls.menu = JapPlaceService.create_menu(cls.items)
-
 
         cls.jap_place = JapPlaceService.get_jap_place_by_name("Oki")
         if cls.jap_place is None:
@@ -47,6 +43,7 @@ class TestClassWithClient:
         date = datetime.datetime.now() + datetime.timedelta(days=10)
         cls.jap_event = JapEventService.create_jap_event("Jap de promo", "blabla", cls.jap_place.id, cls.jap_creator.id, date)
         cls.jap_event_id = cls.jap_event.id
+
 
 class TestSocketServer(TestClassWithClient):
     """Test Class for socket server."""
@@ -64,6 +61,7 @@ class TestSocketServer(TestClassWithClient):
         assert received["name"] == socket_messages['USER_JOINED_JAP']
         assert received["namespace"] == "/"
         answer = received["args"][0]
-        assert list(answer.keys()) == ["jap_event", "new_member"]
+        assert list(answer.keys()) == ["jap_event_id", "new_member", "members"]
         assert answer["new_member"]["username"] == "TestUser"
-        assert answer["new_member"]["id"] in [member["id"] for member in answer["jap_event"]["members"]]
+        assert answer["new_member"]["id"] in [member["id"] for member in answer["members"]]
+
