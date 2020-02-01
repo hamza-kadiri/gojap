@@ -1,7 +1,7 @@
 """Socket entry point."""
 
 from flask_socketio import Namespace, emit, join_room, leave_room
-from flask import current_app as app, jsonify
+from flask import current_app as app
 
 from services import UserService
 from .socket_messages import socket_messages
@@ -21,7 +21,9 @@ class SocketServer(Namespace):
         - end_command
 
     """
+
     def __init__(self):
+        """Create the Socket Server object."""
         self.connected_by_room = {}
         super().__init__()
 
