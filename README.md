@@ -105,10 +105,9 @@ It allows to generated a highly scalable, offline-first foundation with the best
 - mac : may be usefull to update volume url to `./docker/postgres/data:/var/lib/postgresql/data`
 
 ### Run migrations (To update your database schema)
-- Delete migrations folder
-- `pipenv run db-init`
+- If you had migrations already, empty `alembic_version` table
+- `pipenv run stamp-head`
 - `pipenv run migrate`
-- `pipenv run upgrade`
 
 
 ## API
