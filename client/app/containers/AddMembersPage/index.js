@@ -43,18 +43,6 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
     dispatch(changeTitle('Ajouter des membres'));
   }, []);
 
-  const members = [
-    { id: 4, name: { first: 'Annelo', last: 'delo' } },
-    { id: 5, name: { first: 'Smo', last: 'Koko' } },
-    { id: 6, name: { first: 'Smo', last: 'Koko' } },
-    { id: 7, name: { first: 'Annelo', last: 'delo' } },
-    { id: 8, name: { first: 'Smo', last: 'Koko' } },
-    { id: 9, name: { first: 'Smo', last: 'Koko' } },
-    { id: 10, name: { first: 'Annelo', last: 'delo' } },
-    { id: 11, name: { first: 'Smo', last: 'Koko' } },
-    { id: 12, name: { first: 'Smo', last: 'Koko' } },
-  ];
-
   const handleClickOnUser = item => {
     const list = membersList;
     if (membersList.includes(item)) {
@@ -73,10 +61,23 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
     history.goBack();
   };
 
+
+  const testmembers = [
+    { id: 4, name: { first: 'Annelo', last: 'delo' } },
+    { id: 5, name: { first: 'Smo', last: 'Koko' } },
+    { id: 6, name: { first: 'Smo', last: 'Koko' } },
+    { id: 7, name: { first: 'Annelo', last: 'delo' } },
+    { id: 8, name: { first: 'Smo', last: 'Koko' } },
+    { id: 9, name: { first: 'Smo', last: 'Koko' } },
+    { id: 10, name: { first: 'Annelo', last: 'delo' } },
+    { id: 11, name: { first: 'Smo', last: 'Koko' } },
+    { id: 12, name: { first: 'Smo', last: 'Koko' } },
+  ];
+
   const membersListProps = {
     loading: false,
     error: false,
-    items: users,
+    items: testmembers,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,
