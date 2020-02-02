@@ -4,13 +4,12 @@
  *
  */
 
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
@@ -18,11 +17,9 @@ import Wrapper from 'components/FlexHeightWrapper';
 
 import makeSelectMembersList from './selectors';
 import reducer from './reducer';
-import saga from './saga';
 
-export function MembersList({ dispatch, members, membersList }) {
+export function MembersList({ dispatch, members }) {
   useInjectReducer({ key: 'membersList', reducer });
-  useInjectSaga({ key: 'membersList', saga });
 
   const membersListProps = {
     error: false,
@@ -38,6 +35,7 @@ export function MembersList({ dispatch, members, membersList }) {
 
 MembersList.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
