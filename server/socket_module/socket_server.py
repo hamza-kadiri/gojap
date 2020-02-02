@@ -19,13 +19,44 @@ class SocketServer(Namespace):
         - join_table
         - start_command
         - end_command
-
+        - next_item
+        - choose_item
     """
 
     def __init__(self):
         """Create the Socket Server object."""
-        self.connected_by_room = {}
+        self.connected_by_jap_event = {}
+        self.connected_at_table = {}
         super().__init__()
+
+    def add_to_event(self, user, room):
+        if room in self.connected_by_jap_event.keys():
+            self.connected_by_jap_event[room].append(asdict(user))
+        else:
+            self.connected_by_jap_event[room] = [asdict(user)]
+
+    def remove_from_event(self, user_id, room):
+        if room in self.connected_by_jap_event.keys():
+            print(self.connected_by_jap_event[room])
+            self.connected_by_jap_event[room] = [user for user in self.connected_by_jap_event[room] if user.get('id') != user_id]
+            print(self.connected_by_jap_event[room])
+        else:
+            app.logger.info("Should not happen: User left jap_event but was not on it")
+
+    def add_to_table(self, user, table):
+        if table in self.connected_by_jap_event.keys():
+            self.connected_at_table[table].append(asdict(user))
+        else:
+            self.connected_at_table[table] = [asdict(user)]
+
+    def remove_from_table(self, user_id, table):
+        if table in self.connected_at_table.keys():
+            self.connected_at_table[table] = list(filter(
+                lambda x: x["id"] == user_id,
+                self.connected_at_table[table]
+            ))
+        else:
+            app.logger.info("Should not happen: User left table but was not on it")
 
     def on_connect(self):
         """Call when a connection socket is set with a client."""
@@ -48,24 +79,21 @@ class SocketServer(Namespace):
             USER_JOINED_JAP = {
                 "jap_event_id": int,
                 "new_member": asdict(new_member),
-                "users_in_room": list(User)
+                "members": list(User)
             }
         """
         app.logger.debug(data)
         new_member = UserService.get_user(data['user_id'])
         room = "jap_event/"+str(data['jap_event_id'])
         join_room(room)
-        if room in self.connected_by_room.keys():
-            self.connected_by_room[room].append(asdict(new_member))
-        else:
-            self.connected_by_room[room] = [asdict(new_member)]
+        self.add_to_event(new_member, room)
 
         emit(
             socket_messages['USER_JOINED_JAP'],
             {
                 "jap_event_id": data['jap_event_id'],
                 "new_member": asdict(new_member),
-                "members": self.connected_by_room[room]
+                "members": self.connected_by_jap_event[room]
             },
             room=room
         )
@@ -83,14 +111,25 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
         app.logger.info(
-            "Leave jap " + data['jap_id'] + " received from " + data['nom'])
-        # data = leave_jap_service(data)
+            "Leave jap " + str(data['jap_event_id']) + " received from " + str(data['user_id'])
+        )
 
-        emit(socket_messages['USER_LEFT_JAP'], data, room=data['jap_id'])
-        
-        leave_room(data['jap_id'])
+        room = "jap_event/"+str(data['jap_event_id'])
+        self.remove_from_event(data["user_id"], room)
+
+        emit(
+            socket_messages['USER_LEFT_JAP'],
+            {
+                 **data,
+                 "members": self.connected_by_jap_event[room]
+            },
+            room=room
+        )
+        leave_room(room)
+
         if 'table_id' in data:
             leave_room(data['table_id'])
+            self.remove_from_table(data["user_id"], data['table_id'])
 
     def on_join_table(self, data):
         """Call on message JOIN_TABLE.
@@ -149,8 +188,7 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info("Command started on table " +
-                        data['table_id'] + " received from " + data['nom'])
+        app.logger.info("Command started on table " + data['table_id'] + " received from " + data['user_id'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
             # data = start_command_service(data)

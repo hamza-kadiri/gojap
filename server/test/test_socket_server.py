@@ -56,6 +56,7 @@ class TestSocketServer(TestClassWithClient):
     def test_join_jap(self):
         """Test join jap."""
         self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
+
         received = self.client.get_received()
         received = received[0]
         assert received["name"] == socket_messages['USER_JOINED_JAP']
@@ -65,3 +66,16 @@ class TestSocketServer(TestClassWithClient):
         assert answer["new_member"]["username"] == "TestUser"
         assert answer["new_member"]["id"] in [member["id"] for member in answer["members"]]
 
+    def test_leave_jap(self):
+        self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
+        self.client.emit(socket_messages["LEAVE_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
+
+        received = self.client.get_received()
+        assert received[0]["name"] == socket_messages['USER_JOINED_JAP']
+
+        received = received[1]
+        assert received["name"] == socket_messages['USER_LEFT_JAP']
+        answer = received["args"][0]
+        assert list(answer.keys()) == ["user_id", "jap_event_id", "members"]
+        assert answer["user_id"] == self.user_id
+        assert answer["user_id"] not in [member["id"] for member in answer["members"]]
