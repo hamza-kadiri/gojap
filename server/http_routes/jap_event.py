@@ -7,6 +7,19 @@ jap_event_blueprint = Blueprint(
     'jap_event_blueprint', __name__, url_prefix='/jap_event')
 
 
+@jap_event_blueprint.route('event/<int:jap_event_id>', methods=['GET'])
+def get_jap_event(jap_event_id):
+    """Get jap event for a given event id.
+
+    Args :
+        data = {jap_event_id}
+
+    Returns :
+        { jap_event }
+    """
+    jap_event = JapEventService.get_jap_event(jap_event_id)
+    return jsonify(jap_event)
+
 @jap_event_blueprint.route('/all', methods=['GET'])
 def get_all_jap_events():
     """Get all jap events.
