@@ -21,7 +21,7 @@ python-dotenv = "*"
 Flask-Migrate = "*"
 flask_jwt_extended = "*"
 authlib = "*"
-psycopg2-binary = "*"
+psycopg2-binary = "~=2.8.4"
 
 [dev-packages]
 pylint = "*"

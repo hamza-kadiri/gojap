@@ -2,6 +2,7 @@
 # Heroku only allows for 1 concurrent build
 stages:
   - test
+  - migrate_db
   - server_deploy
   - client_deploy
 
@@ -20,6 +21,15 @@ test_server:
     - echo "============ TESTING DOCSTYLE NOW ============"
     - echo "----------------------------------------------"
     - pipenv run pydocstyle
+
+migrate_db:
+  image: python:3.7
+  stage: migrate_db
+  script:
+    - pip install pipenv
+    - cd ./server
+    - pipenv install
+    - pipenv run upgrade
 
 deploy_server:
   image: ruby:2.2
