@@ -22,7 +22,7 @@ export function JapListItem(props) {
       divider
       button
       onClick={() => {
-        onClickItem(item.alias);
+        onClickItem(item.id);
       }}
     >
       {item.event_name ? (

@@ -4,33 +4,26 @@
  *
  */
 
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
 import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
 import Wrapper from 'components/FlexHeightWrapper';
 
-import makeSelectMembersList, { makeSelectMembers } from './selectors';
+import makeSelectMembersList from './selectors';
 import reducer from './reducer';
-import saga from './saga';
-import { loadMembers } from './actions';
 
-export function MembersList({ dispatch, members, membersList }) {
+export function MembersList({ dispatch, members }) {
   useInjectReducer({ key: 'membersList', reducer });
-  useInjectSaga({ key: 'membersList', saga });
-
-  useEffect(() => {
-    dispatch(loadMembers());
-  }, []);
 
   const membersListProps = {
-    ...membersList,
+    error: false,
+    loading: false,
     items: members,
     component: MembersListItem,
     multiline: true,
@@ -42,11 +35,11 @@ export function MembersList({ dispatch, members, membersList }) {
 
 MembersList.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   membersList: makeSelectMembersList(),
-  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {

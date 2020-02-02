@@ -18,7 +18,7 @@ export function loadMembers() {
 export function membersLoaded(members) {
   return {
     type: LOAD_MEMBERS_SUCCESS,
-    members: members.results,
+    members,
   };
 }
 

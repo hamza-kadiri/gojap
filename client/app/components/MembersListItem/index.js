@@ -28,19 +28,19 @@ function MembersListItem(props) {
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemAvatar>
-            <MediumAvatar src={item.picture && item.picture.medium} alt={item.name && item.name.first} />
+            <MediumAvatar src={item.avatar_url && item.picture.medium} alt={item.username} />
           </ListItemAvatar>
         </Grid>
         <Grid item>
           <ListItemText
-            primary={`${item.name && item.name.first} ${item.name && item.name.last}`}
+            primary={item.username}
             secondary={
               <Chip
                 size="small"
                 color="primary"
                 variant="outlined"
                 component="span"
-                label={`Table ${(item.dob && item.dob.age % 4) + 1}`}
+                label={`${item.calories || '0'} calories`}
               />
             }
           />
