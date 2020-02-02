@@ -67,7 +67,7 @@ def add_user_order_to_command(command_id):
 
 @command_blueprint.route('table/<int:table_id>', methods=['GET'])
 def get_command_by_table_id(table_id: int):
-    """Delete a user from a command.
+    """Get commands for a table.
 
     Args :
         data = {id}
@@ -80,3 +80,21 @@ def get_command_by_table_id(table_id: int):
         return json_abort(404, f"Command not found")
 
     return jsonify({"command": command})
+
+
+@command_blueprint.route('table/<int:table_id>/item/<int:item_id>', methods=['GET'])
+def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
+    """Get a unique command for a table_id and item_id.
+
+    Args :
+        data = {table_id, item_id}
+
+    Returns :
+        {command: id, item_id, table_id, users}
+    """
+    print("route")
+    command = CommandService.get_unique_command_by_table_id_and_item_id(table_id, item_id)
+    if not command:
+        return json_abort(404, f"Command not found")
+
+    return jsonify(command)
