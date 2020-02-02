@@ -1,5 +1,4 @@
-// import { take, call, put, select } from 'redux-saga/effects';
-import { takeLatest, call, put } from 'redux-saga/effects';
+import { takeLatest, call, put, select } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 import { makeSelectJapId } from 'containers/User/selectors';
 
@@ -7,8 +6,7 @@ import { GET_JAP } from './constants';
 import { getJapSuccess, getJapError } from './actions';
 
 export function* getJap() {
-  // Select username from store
-  const id = makeSelectJapId();
+  const id = yield select(makeSelectJapId());
   const requestURL = `jap_event/event/${id}`;
 
   try {

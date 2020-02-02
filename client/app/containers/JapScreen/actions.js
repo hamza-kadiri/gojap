@@ -17,7 +17,6 @@ export function defaultAction() {
   };
 }
 export function getJap(japId) {
-  console.log('kqjsbfkqjsbkqjsbkjqbsfkjqbsfkjbqxs');
   return {
     type: GET_JAP,
     japId,

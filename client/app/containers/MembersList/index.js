@@ -16,21 +16,17 @@ import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
 import Wrapper from 'components/FlexHeightWrapper';
 
-import makeSelectMembersList, { makeSelectMembers } from './selectors';
+import makeSelectMembersList from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { loadMembers } from './actions';
 
 export function MembersList({ dispatch, members, membersList }) {
   useInjectReducer({ key: 'membersList', reducer });
   useInjectSaga({ key: 'membersList', saga });
 
-  useEffect(() => {
-    dispatch(loadMembers());
-  }, []);
-
   const membersListProps = {
-    ...membersList,
+    error: false,
+    loading: false,
     items: members,
     component: MembersListItem,
     multiline: true,
@@ -46,7 +42,6 @@ MembersList.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   membersList: makeSelectMembersList(),
-  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {

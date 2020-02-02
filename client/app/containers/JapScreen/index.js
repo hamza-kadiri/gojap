@@ -35,7 +35,7 @@ import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/MembersList/selectors';
 import { makeSelectJapId } from 'containers/User/selectors';
 import { makeSelectJaps } from 'containers/HomePage/selectors';
-import makeSelectJapScreen from './selectors';
+import makeSelectJapScreen, { makeSelectJap } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import { getJap } from './actions';
@@ -116,9 +116,10 @@ export function JapScreen({ dispatch, japId, members, jap }) {
     dispatch(changeTitle(jap && jap.event_name));
     dispatch(changeSubtitle(createdBy));
     dispatch(changeMoreMenu(moreMenu));
+    dispatch(getJap());
   }, []);
 
-  const loremIpsum = jap && jap.description;
+  const loremIpsum = jap ? jap.description : '';
 
   return (
     <div>
@@ -178,14 +179,14 @@ export function JapScreen({ dispatch, japId, members, jap }) {
       </CardFluid>
       <CardFluid>
         <StyledCardHeader
-          title={`${members ? members.length : 0} Participants`}
+          title={`${jap && jap.members ? jap.members.length : 0} Participants`}
           titleTypographyProps={{
             variant: 'subtitle1',
             color: 'primary',
           }}
         />
         <StyledCardContent>
-          <MembersList />
+          <MembersList members={jap && jap.members} />
         </StyledCardContent>
       </CardFluid>
       <CardFluid>
@@ -215,7 +216,7 @@ const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
   members: makeSelectMembers(),
   japId: makeSelectJapId(),
-  jap: getJap(),
+  jap: makeSelectJap(),
 });
 
 function mapDispatchToProps(dispatch) {
