@@ -56,8 +56,8 @@ app.register_blueprint(command_blueprint)
 
 init_error_handlers(app)
 
-
-socketio.on_namespace(SocketServer())
+socket_server_instance = SocketServer()
+socketio.on_namespace(socket_server_instance)
 
 if __name__ == "__main__":
     print("server is running on port :" + "5000")
