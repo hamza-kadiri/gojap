@@ -50,7 +50,8 @@ class SocketServer(Namespace):
 
     def add_to_table(self, user, table):
         """Add a user to list of people on a given table."""
-        if table.id in self.connected_by_jap_event.keys():
+        print("ADD TO TABLE")
+        if table.id in self.connected_at_table.keys():
             self.connected_at_table[table.id].append(asdict(user))
         else:
             self.connected_at_table[table.id] = [asdict(user)]
@@ -167,24 +168,8 @@ class SocketServer(Namespace):
             data = {user_id, jap_event_id, ?table_id} // later user_id
         Emit :
             USER_JOINED_TABLE = {
-                new_member : { user_id, name, avatar_url }
-                jap_event_id,
-                table_id,
-                members : [
-                    {
-                    user_id,
-                    name,
-                    },
-                    ...
-                ],
-                command : {
-                    command_status,
-                    current_item : {
-                    item_id,
-                    name,
-                    icon_url
-                    }
-                }
+                new_member,
+                members
             }
         """
         app.logger.debug(data)
@@ -201,8 +186,15 @@ class SocketServer(Namespace):
 
         join_room(table_room)
         join_room(user_room)
-
-        emit(socket_messages['USER_JOINED_TABLE'], data, room=table_room)
+        print(self.connected_at_table)
+        emit(
+            socket_messages['USER_JOINED_TABLE'],
+            {
+                "members": self.connected_at_table[table.id],
+                "new_member": asdict(user)
+            },
+            room=table_room
+        )
 
     def on_start_command(self, data):
         """Call on message START_COMMAND.

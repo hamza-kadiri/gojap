@@ -2,7 +2,7 @@
 
 import datetime
 
-from app import app, socketio
+from app import app, socketio, socket_server_instance
 from socket_module.socket_messages import socket_messages
 from services.user_services import UserService
 from services.jap_place_services import JapPlaceService
@@ -44,6 +44,8 @@ class TestClassWithClient:
         date = datetime.datetime.now() + datetime.timedelta(days=10)
         cls.jap_event = JapEventService.create_jap_event("Jap de promo", "blabla", cls.jap_place.id, cls.jap_creator.id, date)
         cls.jap_event_id = cls.jap_event.id
+
+        cls.default_table_id = cls.jap_event.tables[0].id
 
 class TestSocketServer(TestClassWithClient):
     """Test Class for socket server."""
@@ -92,6 +94,20 @@ class TestSocketServer(TestClassWithClient):
         assert user_joined_table["namespace"] == "/"
         answer = user_joined_table["args"][0]
 
+    def test_join_table(self):
+        """Test join jap table."""
+        initial_length = len(TableService.get_table(self.default_table_id).members)
+        self.client.emit(socket_messages["JOIN_TABLE"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
+        received = self.client.get_received()
+        assert len(received) == 1
+        received = received[0]
+        assert received["name"] == socket_messages['USER_JOINED_TABLE']
+        assert received["namespace"] == "/"
+        answer = received["args"][0]
+        assert list(answer.keys()) == ["members", "new_member"]
+        assert answer["new_member"]["username"] == "TestUser"
+        assert len(answer["members"]) == 2
+        assert answer["new_member"]["id"] in [member["id"] for member in answer["members"]]
 
     def test_leave_jap(self):
         """Test leave jap."""
@@ -107,10 +123,6 @@ class TestSocketServer(TestClassWithClient):
         assert list(answer.keys()) == ["user_id", "jap_event_id", "members"]
         assert answer["user_id"] == self.user_id
         assert answer["user_id"] not in [member["id"] for member in answer["members"]]
-
-    # def test_join_table(self):
-    #     """Test join jap table."""
-    #     self.client.emit(socket_messages["JOIN_TABLE"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.table.id})
 
 
 
