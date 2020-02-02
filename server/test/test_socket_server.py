@@ -58,6 +58,7 @@ class TestSocketServer(TestClassWithClient):
         self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
 
         received = self.client.get_received()
+        assert len(received) == 1
         received = received[0]
         assert received["name"] == socket_messages['USER_JOINED_JAP']
         assert received["namespace"] == "/"
