@@ -25,10 +25,11 @@ export function changeCurrentItem(item) {
   };
 }
 
-export function changedCurrentItem(item) {
+export function changedCurrentItem(data) {
   return {
     type: CHANGE_CURRENT_ITEM_SUCCESS,
-    payload: item,
+    itemId: data.item_id,
+    commandId: data.command_id,
   };
 }
 

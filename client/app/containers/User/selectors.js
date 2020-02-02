@@ -27,6 +27,12 @@ const makeSelectUsername = () =>
     substate => substate.user.username
   );
 
+const makeSelectUserId = () =>
+  createSelector(
+    selectUserDomain,
+    substate => substate.user.userId
+  );
+
 const makeSelectJapId = () =>
   createSelector(
     selectUserDomain,
@@ -43,6 +49,7 @@ export default makeSelectUser;
 export {
   selectUserDomain,
   makeSelectUsername,
+  makeSelectUserId,
   makeSelectJapId,
   makeSelectTableId,
 };

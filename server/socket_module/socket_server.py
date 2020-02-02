@@ -5,6 +5,8 @@ from flask import current_app as app
 
 from services import UserService
 from .socket_messages import socket_messages
+from services.jap_event_services import JapEventService
+from services.command_service import CommandService
 from dataclasses import asdict
 
 
@@ -40,10 +42,12 @@ class SocketServer(Namespace):
         """Remove a user from list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
             print(self.connected_by_jap_event[room])
-            self.connected_by_jap_event[room] = [user for user in self.connected_by_jap_event[room] if user.get('id') != user_id]
+            self.connected_by_jap_event[room] = [
+                user for user in self.connected_by_jap_event[room] if user.get('id') != user_id]
             print(self.connected_by_jap_event[room])
         else:
-            app.logger.info("Should not happen: User left jap_event but was not on it")
+            app.logger.info(
+                "Should not happen: User left jap_event but was not on it")
 
     def add_to_table(self, user, table):
         """Add a user to list of people on a given table."""
@@ -60,7 +64,8 @@ class SocketServer(Namespace):
                 self.connected_at_table[table]
             ))
         else:
-            app.logger.info("Should not happen: User left table but was not on it")
+            app.logger.info(
+                "Should not happen: User left table but was not on it")
 
     def on_connect(self):
         """Call when a connection socket is set with a client."""
@@ -115,7 +120,8 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
         app.logger.info(
-            "Leave jap " + str(data['jap_event_id']) + " received from " + str(data['user_id'])
+            "Leave jap " + str(data['jap_event_id']) +
+            " received from " + str(data['user_id'])
         )
 
         room = "jap_event/"+str(data['jap_event_id'])
@@ -124,8 +130,8 @@ class SocketServer(Namespace):
         emit(
             socket_messages['USER_LEFT_JAP'],
             {
-                 **data,
-                 "members": self.connected_by_jap_event[room]
+                **data,
+                "members": self.connected_by_jap_event[room]
             },
             room=room
         )
@@ -166,10 +172,10 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
         app.logger.info(
-            "Join table " + data['table_id'] + " received from " + data['nom'])
+            f"Join table {data['table_id']} received from {data['username']}")
 
-        # data = join_table_service(data)
         join_room(data['table_id'])
+        join_room(data['user_id'])
 
         emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
 
@@ -180,7 +186,7 @@ class SocketServer(Namespace):
 
         Args :
             data = {user_id, jap_event_id, table_id} // later user_id
-        Emit : 
+        Emit :
             COMMAND_STARTED = {
                 jap_event_id,
                 table_id,
@@ -192,11 +198,13 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info("Command started on table " + data['table_id'] + " received from " + data['user_id'])
+        app.logger.info("Command started on table " +
+                        data['table_id'] + " received from " + data['user_id'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
             # data = start_command_service(data)
-            emit(socket_messages['COMMAND_STARTED'], data, room=data['table_id'])
+            emit(socket_messages['COMMAND_STARTED'],
+                 data, room=data['table_id'])
 
     def on_end_command(self, data):
         """Call on message END_COMMAND.
@@ -205,7 +213,7 @@ class SocketServer(Namespace):
 
         Args :
             data = {user_id, jap_event_id, table_id} // later user_id
-        Emit : 
+        Emit :
             COMMAND_ENDED = {
                 jap_event_id,
                 table_id,
@@ -222,7 +230,6 @@ class SocketServer(Namespace):
                         data['table_id'] + " received from " + data['nom'])
 
         if 'is_jap_master' in data and data['is_jap_master']:
-            # data = end_command_service(data)
             emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
 
     def on_next_item(self, data):
@@ -244,13 +251,14 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info("Next item on table " +
-                        data['table_id'] + " received from " + data['nom'])
+        app.logger.info(
+            f"Next item on table {data['table_id']} received from {data['username']}")
         if 'is_jap_master' in data and data['is_jap_master']:
             # data = next_item_service(data)
-            print(data)
-            # emit(socket_messages['ITEM_CHANGED'], data, room=data['room])
-            emit(socket_messages['ITEM_CHANGED'], data, broadcast=True)
+            command = CommandService.create_command(
+                data['item_id'], data['table_id'])
+            data['command_id'] = command.id
+            emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
 
     def on_choose_item(self, data):
         """Call on message CHOOSE_ITEM.
@@ -273,6 +281,10 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
         app.logger.info(
-            "New item" + data['item_id'] + " chosen on table " + data['table_id'] + " received from " + data['nom'])
-        # data = choose_item_service(data)
+            f"New item {data['item_id']} chosen on table {data['table_id']} received from {data['username']}")
+        CommandService.add_user_order_to_command(
+            data['command_id'], data['user_id'], data['item_id'], data["individual"])
+        data['accumulated'] = CommandService.get_accumulated_order_amount(
+            data['command_id'])
         emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
+        emit(socket_messages['ITEM_CHOSEN'], data, room=data['user_id'])
