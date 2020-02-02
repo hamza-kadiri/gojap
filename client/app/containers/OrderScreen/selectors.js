@@ -39,7 +39,11 @@ const makeSelectCurrentItem = () =>
     selectOrderDomain,
     substate => substate.currentItem
   );
-
+const makeSelectCurrentCommandId = () =>
+  createSelector(
+    selectOrderDomain,
+    substate => substate.currentCommandId
+  );
 const makeSelectOrdersList = () =>
   createSelector(
     selectOrdersListDomain,
@@ -52,4 +56,5 @@ export {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
   makeSelectOrdersList,
+  makeSelectCurrentCommandId,
 };

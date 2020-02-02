@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*
  *
  * OrdersList reducer
@@ -8,6 +9,7 @@ import {
   LOAD_ORDERS,
   LOAD_ORDERS_SUCCESS,
   LOAD_ORDERS_ERROR,
+  CHANGE_ORDER_QUANTITY_SUCCESS,
 } from './constants';
 
 export const initialState = { orders: [], loading: true, error: false };
@@ -30,6 +32,14 @@ const ordersListReducer = (state = initialState, action) =>
       case LOAD_ORDERS_ERROR:
         draft.error = action.error;
         draft.loading = false;
+        break;
+      case CHANGE_ORDER_QUANTITY_SUCCESS:
+        draft.orders = state.orders;
+        draft.orders[action.itemId] = {
+          ...draft.orders[action.itemId],
+          individual: action.individual,
+          accumulated: action.accumulated,
+        };
         break;
     }
   });

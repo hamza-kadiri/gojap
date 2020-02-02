@@ -18,11 +18,22 @@ flask_sqlalchemy = "*"
 pydash = "*"
 pyOpenSSL = "*"
 python-dotenv = "*"
+Flask-Migrate = "*"
+flask_jwt_extended = "*"
+authlib = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
+tests="python -m pytest"
+db-init="python -m flask db init"
+stamp-head="python -m flask db stamp head"
+migrate="python -m flask db migrate"
+upgrade="python -m flask db upgrade"
+downgrade="python -m flask db downgrade"
 flask-dev="gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --reload --log-level DEBUG"

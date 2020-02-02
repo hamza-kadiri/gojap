@@ -33,6 +33,7 @@ import GoJap from 'images/gojap.png';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/MembersList/selectors';
+import { makeSelectJapId } from 'containers/User/selectors';
 import makeSelectJapScreen from './selectors';
 import reducer from './reducer';
 import saga from './saga';
@@ -83,7 +84,7 @@ const Ellipsis = ({ setIsClamped }) => (
     </ButtonBase>
   </React.Fragment>
 );
-export function JapScreen({ dispatch, members }) {
+export function JapScreen({ dispatch, members, japId }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
 
@@ -110,7 +111,7 @@ export function JapScreen({ dispatch, members }) {
 
   const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
-    dispatch(changeTitle('Jap du jour'));
+    dispatch(changeTitle(japId));
     dispatch(changeSubtitle(createdBy));
     dispatch(changeMoreMenu(moreMenu));
   }, []);
@@ -221,6 +222,7 @@ JapScreen.propTypes = {
 const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
   members: makeSelectMembers(),
+  japId: makeSelectJapId(),
 });
 
 function mapDispatchToProps(dispatch) {

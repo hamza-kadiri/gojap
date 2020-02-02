@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 
 const selectRouter = state => state.router;
+const selectUser = state => state.user;
 
 const makeSelectLocation = () =>
   createSelector(
@@ -8,4 +9,9 @@ const makeSelectLocation = () =>
     routerState => routerState.location
   );
 
-export { makeSelectLocation };
+const makeSelectUser = () =>
+  createSelector(
+    selectUser,
+    routerState => routerState.user
+  );
+export { makeSelectLocation, makeSelectUser };

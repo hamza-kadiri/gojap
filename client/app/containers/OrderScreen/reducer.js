@@ -29,7 +29,8 @@ const orderReducer = (state = initialState.order, action) =>
         draft.currentItem = { index: 0 };
         break;
       case CHANGE_CURRENT_ITEM_SUCCESS:
-        draft.currentItem = { index: action.payload };
+        draft.currentItem = { index: action.itemId };
+        draft.currentCommandId = action.commandId;
         break;
     }
   });

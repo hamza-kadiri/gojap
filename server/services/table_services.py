@@ -1,89 +1,114 @@
 """Building services for table management."""
-
-from models.model import Table, User, db
-
-
-def create_table_service(data):
-    """
-    Create a new table.
-
-    Args :
-        data = {user_id, jap_event_id}
-    """
-    table = Table(emperor=data['user_id'],
-                  jap_event_id=data['jap_event_id'],
-                  status=0)
-    db.session.add(table)
-    db.session.commit()
-    return table
+from models.model import Table, User, db, JapEvent, table_members
+from sqlalchemy import and_
 
 
-def get_table_service(data):
-    """
-    Get user infos.
+class TableService:
+    """Table Service class."""
 
-    Args :
-        id : id de la table à get.
-    """
-    table = Table.query.filter_by(id=data['id']).first()
-    return table
+    @staticmethod
+    def create_table(user_id: int, jap_event_id: int):
+        """
+        Create a new table.
 
-
-def remove_table_service(data):
-    """
-    Delete table.
-
-    Args :
-        id : id de la table à delete.
-
-    Return :
-        {Table}
-    """
-    table = Table.query.filter_by(id=data['id']).first()
-    if table:
-        db.session.delete(table)
+        Args :
+            data = {user_id, jap_event_id}
+        """
+        table = Table(emperor=user_id,
+                      jap_event_id=jap_event_id,
+                      status=0)
+        db.session.add(table)
         db.session.commit()
         return table
-    else:
-        return None
 
+    @staticmethod
+    def get_table(table_id):
+        """
+        Get user infos.
 
-def add_user_to_table_service(data):
-    """
-    Add a user to a table.
+        Args :
+            id : id de la table à get.
+        """
+        table = Table.query.filter_by(id=table_id).first()
+        return table
 
-    Args :
-        id_table : id de la table à get.
-        id_user : id de l'user à ajouter.
+    @staticmethod
+    def remove_table(data):
+        """
+        Delete table.
 
-    Return :
-        {Table}
-    """
-    table = User.query.filter_by(id=data['id']).first()
-    user = User.query.filter_by(id=data['user_id']).first()
-    table.users.append(user)
-    db.session.add(table)
-    db.session.commit()
+        Args :
+            id : id de la table à delete.
 
-    return table
+        Return :
+            {Table}
+        """
+        table = Table.query.filter_by(id=data['id']).first()
+        if table:
+            db.session.delete(table)
+            db.session.commit()
+            return table
+        else:
+            return None
 
+    @staticmethod
+    def add_user_to_table(table_id: int, user_ids):
+        """
+        Add a user to a table.
 
-def set_table_status_service(data):
-    """
-    Add a user to a table.
+        Args :
+            id_table : id de la table à get
+            user_ids : liste des users a rajouter
 
-    Arg :
-        id_table : id de la table à get.
-        status : nouveau statut.
+        Return :
+            {Table}
+        """
+        table = Table.query.filter_by(id=table_id).first()
 
-    Return :
-        {Table}
-    """
-    table = User.query.filter_by(id=data['id']).first()
-    table.status = data['status']
+        members = User.query.filter(
+            User.id.in_(user_ids)
+        ).all()
 
-    db.session.commit()
+        for member in members:
+            if member not in table.members:
+                table.members += members
 
-    return table
+        db.session.add(table)
+        db.session.commit()
 
+        return table
 
+    @staticmethod
+    def set_table_status(table_id: int, status: int):
+        """
+        Update status of a table.
+
+        Arg :
+            table_id : id de la table à get.
+            status : new status
+
+        Return :
+            {Table}
+        """
+        table = Table.query.filter_by(id=table_id).first()
+        table.status = status
+
+        db.session.commit()
+
+        return table
+
+    @staticmethod
+    def get_user_table(user_id: int):
+        """
+        Get a user table.
+
+        Arg :
+            user_id : id du user
+
+        Return :
+            {Table}
+        """
+        table_id = db.session.query(table_members).filter(table_members.c.user_id == user_id).one().table_id
+        table = Table.query.filter_by(id=table_id).first()
+
+        return table
