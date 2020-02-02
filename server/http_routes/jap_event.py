@@ -18,7 +18,7 @@ def get_jap_event(jap_event_id):
         { jap_event }
     """
     jap_event = JapEventService.get_jap_event(jap_event_id)
-    return jsonify({"event": jap_event})
+    return jsonify(jap_event)
 
 @jap_event_blueprint.route('/all', methods=['GET'])
 def get_all_jap_events():
