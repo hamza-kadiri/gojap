@@ -3,6 +3,7 @@
 from models.model import JapEvent, User, jap_event_members, db, Table
 import datetime
 from dataclasses import asdict
+from .table_services import TableService
 
 
 class JapEventService:
@@ -13,6 +14,12 @@ class JapEventService:
         """Get all japs."""
         jap_events = JapEvent.query.all()
         return jap_events
+
+    @staticmethod
+    def get_jap_event(jap_event_id):
+        """Get jap event with it's id."""
+        jap_event = JapEvent.query.get(jap_event_id)
+        return jap_event
 
     @staticmethod
     def add_members_to_jap_event(jap_event_id, user_ids):
@@ -60,7 +67,7 @@ class JapEventService:
     @staticmethod
     def create_jap_event(event_name, description, jap_place_id, created_by, date):
         """
-        Create a new jap event.
+        Create a new jap event. And add a default table to this jap event with the creator as emperor.
 
         Args :
             data = {event_name, description, jap_place_id, created_by, date}
@@ -72,6 +79,9 @@ class JapEventService:
                              date=date)
 
         db.session.add(jap_event)
+        db.session.commit()
+        table = TableService.create_table(created_by, jap_event.id)
+        db.session.add(table)
         db.session.commit()
 
         JapEventService.join_jap_event(jap_event.id, created_by)

@@ -30,6 +30,8 @@ migrate_db:
     - cd ./server
     - pipenv install
     - pipenv run upgrade
+  only:
+    - master
 
 deploy_server:
   image: ruby:2.2
