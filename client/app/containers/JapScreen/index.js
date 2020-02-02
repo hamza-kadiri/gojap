@@ -34,9 +34,11 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/MembersList/selectors';
 import { makeSelectJapId } from 'containers/User/selectors';
+import { makeSelectJaps } from 'containers/HomePage/selectors';
 import makeSelectJapScreen from './selectors';
 import reducer from './reducer';
 import saga from './saga';
+import { getJap } from './actions';
 
 moment.locale('fr');
 
@@ -84,7 +86,7 @@ const Ellipsis = ({ setIsClamped }) => (
     </ButtonBase>
   </React.Fragment>
 );
-export function JapScreen({ dispatch, members, japId }) {
+export function JapScreen({ dispatch, japId, members, jap }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
 
@@ -111,23 +113,12 @@ export function JapScreen({ dispatch, members, japId }) {
 
   const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
-    dispatch(changeTitle(japId));
+    dispatch(changeTitle(jap && jap.event_name));
     dispatch(changeSubtitle(createdBy));
     dispatch(changeMoreMenu(moreMenu));
   }, []);
 
-  const loremIpsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-  interdum et ante hendrerit venenatis. Aliquam non tellus vel nunc
-  egestas rhoncus. Integer dictum nulla consectetur nunc pretium
-  suscipit. Cras mi tortor, tincidunt nec dolor vitae, efficitur
-  ullamcorper dolor. In sed aliquet mauris. In ut euismod risus, et
-  tempor purus. Vestibulum vehicula aliquam sapien non tristique. Nunc
-  volutpat ipsum ut justo lobortis tincidunt. Vestibulum a placerat
-  diam, eu pretium purus. Duis at vestibulum leo, vitae dignissim
-  eros. Phasellus odio nulla, pulvinar eu nulla quis, hendrerit mattis
-  est. Curabitur mauris justo, semper sit amet justo et, porta egestas
-  nunc. Quisque nec auctor leo. Nulla a fringilla magna. Cras suscipit
-  turpis ut risus laoreet ultrices.`;
+  const loremIpsum = jap && jap.description;
 
   return (
     <div>
@@ -187,7 +178,7 @@ export function JapScreen({ dispatch, members, japId }) {
       </CardFluid>
       <CardFluid>
         <StyledCardHeader
-          title={`${members.length} Participants`}
+          title={`${members ? members.length : 0} Participants`}
           titleTypographyProps={{
             variant: 'subtitle1',
             color: 'primary',
@@ -217,12 +208,14 @@ export function JapScreen({ dispatch, members, japId }) {
 
 JapScreen.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  jap: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
   members: makeSelectMembers(),
   japId: makeSelectJapId(),
+  jap: getJap(),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -6,6 +6,7 @@ import { initialState } from './reducer';
  */
 
 const selectJapScreenDomain = state => state.japScreen || initialState;
+const globalDomain = state => state;
 
 /**
  * Other specific selectors

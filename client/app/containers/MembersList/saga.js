@@ -4,7 +4,7 @@ import { LOAD_MEMBERS } from './constants';
 import { membersLoaded, membersLoadingError } from './actions';
 
 export function* getMembers() {
-  const requestUrl = 'members';
+  const requestUrl = 'user/all';
 
   try {
     // Call our request helper (see 'utils/request')
