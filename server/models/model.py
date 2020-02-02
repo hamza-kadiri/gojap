@@ -44,7 +44,7 @@ class User(db.Model):
     Defines a new user in the database.
 
     Defined variables :
-        {id, username, email, phone, calorie, jap_events, achievments}
+        {id, username, email, phone, calorie, jap_events, achievements}
     """
 
     id: int
@@ -347,6 +347,7 @@ class Table(db.Model):
     emperor: int
     status: int
     members: list
+    jap_event_id: int
 
     _tablename_ = 'table'
     id = db.Column(db.Integer, primary_key=True)

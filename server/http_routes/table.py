@@ -15,12 +15,12 @@ def create_table():
         {user_id, jap_event_id}
 
     Returns :
-        {nom, description, jap_place_id, user_id, date}
+        {table}
     """
     data = request.json
-    table = TableService.create_table(data)
+    table = TableService.create_table(**data)
 
-    return jsonify({table: table.as_dict()})
+    return jsonify(table)
 
 
 @table_blueprint.route('<int:table_id>', methods=['GET'])
@@ -35,7 +35,7 @@ def get_table(table_id):
     """
     table = TableService.get_table(table_id)
 
-    return jsonify({"table": table})
+    return jsonify(table)
 
 
 @table_blueprint.route('', methods=['DELETE'])
@@ -56,31 +56,45 @@ def remove_table():
     return json.dumps(table.as_dict())
 
 
-@table_blueprint.route('', methods=['POST'])
-def add_user_to_table():
+@table_blueprint.route('add_members/<int:table_id>', methods=['POST'])
+def add_user_to_table(table_id: int):
     """Create a new table.
 
     Returns :
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
-    table = TableService.add_user_to_table(data)
+    table = TableService.add_user_to_table(table_id, data['user_ids'])
 
-    return json.dumps(table.as_dict())
+    return jsonify(table)
 
 
-@table_blueprint.route('set_status', methods=['POST'])
-def set_table_status():
-    """Create a new table.
+@table_blueprint.route('/<int:table_id>/status/<int:status>', methods=['PUT'])
+def set_table_status(table_id, status):
+    """Update status of a table.
 
     Arg :
-        id : id_table de la table à changer.
-        status : nouveau statut de la table.
+        table_id : id_table de la table à changer.
+        status : new status of the table.
 
     Returns :
         {table}
     """
-    data = request.json
-    table = TableService.add_user_to_table(data)
+    table = TableService.set_table_status(table_id, status)
 
-    return json.dumps(table.as_dict())
+    return jsonify(table)
+
+
+@table_blueprint.route('/user/<int:user_id>', methods=['GET'])
+def get_user_table(user_id):
+    """Create a new table.
+
+    Args :
+        id_table : id de la table à get.
+
+    Returns :
+        {table}
+    """
+    table = TableService.get_user_table(user_id)
+
+    return jsonify(table)
