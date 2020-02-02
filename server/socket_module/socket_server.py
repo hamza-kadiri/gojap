@@ -7,6 +7,7 @@ from services import UserService
 from .socket_messages import socket_messages
 from services.jap_event_services import JapEventService
 from services.command_service import CommandService
+from services.table_services import TableService
 from dataclasses import asdict
 
 
@@ -41,20 +42,18 @@ class SocketServer(Namespace):
     def remove_from_event(self, user_id, room):
         """Remove a user from list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
-            print(self.connected_by_jap_event[room])
             self.connected_by_jap_event[room] = [
                 user for user in self.connected_by_jap_event[room] if user.get('id') != user_id]
-            print(self.connected_by_jap_event[room])
         else:
             app.logger.info(
                 "Should not happen: User left jap_event but was not on it")
 
     def add_to_table(self, user, table):
         """Add a user to list of people on a given table."""
-        if table in self.connected_by_jap_event.keys():
-            self.connected_at_table[table].append(asdict(user))
+        if table.id in self.connected_by_jap_event.keys():
+            self.connected_at_table[table.id].append(asdict(user))
         else:
-            self.connected_at_table[table] = [asdict(user)]
+            self.connected_at_table[table.id] = [asdict(user)]
 
     def remove_from_table(self, user_id, table):
         """Remove a user from list of people on a given table."""
@@ -92,7 +91,25 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        new_member = UserService.get_user(data['user_id'])
+        user_id = data['user_id']
+        jap_event_id = data["jap_event_id"]
+
+        jap_event = JapEventService.get_jap_event(jap_event_id)
+        
+        # if it's the jap_creator, join table is called instantly for default table
+        if jap_event.created_by == user_id:
+            # Default table is the table containing the creator of the event
+            default_table = None
+            for table in jap_event.tables:
+                if user_id == table.emperor:
+                    default_table = table 
+                    break
+            if default_table:
+                self.on_join_table({"user_id": user_id, "jap_event_id": jap_event_id, "table_id": default_table.id})
+            else :
+                raise(Exception("Error at jap creation for jap creator, not added to a table"))
+
+        new_member = UserService.get_user(user_id)
         room = "jap_event/"+str(data['jap_event_id'])
         join_room(room)
         self.add_to_event(new_member, room)
@@ -171,13 +188,21 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info(
-            f"Join table {data['table_id']} received from {data['username']}")
+        # app.logger.info(
+        #     f"Join table {data['table_id']} received from {data['username']}")
+        table_room = "table/" + str(data['table_id'])
+        user_room = "user/" + str(data['user_id'])
+        
 
-        join_room(data['table_id'])
-        join_room(data['user_id'])
+        table = TableService.get_table(data['table_id'])
+        user = UserService.get_user(data['user_id'])
 
-        emit(socket_messages['USER_JOINED_TABLE'], data, room=data['table_id'])
+        self.add_to_table(user, table)
+
+        join_room(table_room)
+        join_room(user_room)
+
+        emit(socket_messages['USER_JOINED_TABLE'], data, room=table_room)
 
     def on_start_command(self, data):
         """Call on message START_COMMAND.
