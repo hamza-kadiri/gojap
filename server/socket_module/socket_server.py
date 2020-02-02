@@ -30,12 +30,14 @@ class SocketServer(Namespace):
         super().__init__()
 
     def add_to_event(self, user, room):
+        """Add a user to list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
             self.connected_by_jap_event[room].append(asdict(user))
         else:
             self.connected_by_jap_event[room] = [asdict(user)]
 
     def remove_from_event(self, user_id, room):
+        """Remove a user from list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
             print(self.connected_by_jap_event[room])
             self.connected_by_jap_event[room] = [user for user in self.connected_by_jap_event[room] if user.get('id') != user_id]
@@ -44,12 +46,14 @@ class SocketServer(Namespace):
             app.logger.info("Should not happen: User left jap_event but was not on it")
 
     def add_to_table(self, user, table):
+        """Add a user to list of people on a given table."""
         if table in self.connected_by_jap_event.keys():
             self.connected_at_table[table].append(asdict(user))
         else:
             self.connected_at_table[table] = [asdict(user)]
 
     def remove_from_table(self, user_id, table):
+        """Remove a user from list of people on a given table."""
         if table in self.connected_at_table.keys():
             self.connected_at_table[table] = list(filter(
                 lambda x: x["id"] == user_id,
