@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
 
+
 class CommandService():
     """Command service."""
 
@@ -96,7 +97,7 @@ class CommandService():
         Args :
             data = {table_id}
         """
-        command = CommandUser.query.filter_by(table_id=table_id).all()
+        command = UserCommand.query.filter_by(table_id=table_id).all()
         return command
 
     @staticmethod
@@ -107,6 +108,20 @@ class CommandService():
         Args :
             data = {user_id, table_id}
         """
-        command = CommandUser.query.filter_by(table_id=data['table_id'],
+        command = UserCommand.query.filter_by(table_id=data['table_id'],
                                               user_id=data['user_id']).all()
         return command
+
+    @staticmethod
+    def get_unique_command_by_table_id_and_item_id(table_id,item_id):
+        """
+        Get unique command for a table and an item.
+
+        Args :
+            data = {table_id, item_id}
+        """
+        print("hello")
+        command = CommandItem.query.filter_by(table_id=table_id,item_id=item_id).first()
+        print(command)
+        return command
+
