@@ -6,6 +6,7 @@ import { initialState } from './reducer';
  */
 
 const selectAddTablePageDomain = state => state.addTablePage || initialState;
+const globalDomain = state => state;
 
 /**
  * Other specific selectors
@@ -21,5 +22,11 @@ const makeSelectAddTablePage = () =>
     substate => substate
   );
 
+const makeSelectMembers = () =>
+  createSelector(
+    globalDomain,
+    globalState => globalState.membersList.members
+  );
+
 export default makeSelectAddTablePage;
-export { selectAddTablePageDomain };
+export { selectAddTablePageDomain, makeSelectMembers };

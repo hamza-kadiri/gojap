@@ -17,9 +17,10 @@ import styled from 'styled-components';
 import H1 from 'components/H1';
 import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
-import history from 'utils/history'
+import history from 'utils/history';
+import ContainerWrapper from 'components/ContainerWrapper';
 
-import makeSelectAddTablePage from './selectors';
+import makeSelectAddTablePage, { makeSelectMembers } from './selectors';
 import reducer from './reducer';
 
 export function AddTablePage({ dispatch, members }) {
@@ -30,24 +31,6 @@ export function AddTablePage({ dispatch, members }) {
     // dispatch(loadMembers()); /// Code the action
     dispatch(changeTitle('Ajouter une table'));
   }, []);
-
-  const Wrapper = styled.div`
-    width: 100%;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-  `;
-  const testmembers = [
-    { id: 4, name: { first: 'Annelo', last: 'delo' } },
-    { id: 5, name: { first: 'Smo', last: 'Koko' } },
-    { id: 6, name: { first: 'Smo', last: 'Koko' } },
-    { id: 7, name: { first: 'Annelo', last: 'delo' } },
-    { id: 8, name: { first: 'Smo', last: 'Koko' } },
-    { id: 9, name: { first: 'Smo', last: 'Koko' } },
-    { id: 10, name: { first: 'Annelo', last: 'delo' } },
-    { id: 11, name: { first: 'Smo', last: 'Koko' } },
-    { id: 12, name: { first: 'Smo', last: 'Koko' } },
-  ];
 
   const handleClickOnMember = item => {
     console.log('click on member', item);
@@ -60,7 +43,7 @@ export function AddTablePage({ dispatch, members }) {
   const membersListProps = {
     loading: false,
     error: false,
-    items: testmembers,
+    items: members,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnMember,
@@ -69,7 +52,7 @@ export function AddTablePage({ dispatch, members }) {
   const emperorListProps = {
     loading: false,
     error: false,
-    items: testmembers,
+    items: members,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnEmperor,
@@ -81,7 +64,7 @@ export function AddTablePage({ dispatch, members }) {
   };
 
   return (
-    <Wrapper>
+    <ContainerWrapper>
       <H1>Ajouter une table:</H1>
       <TextField
         label="Nom de la table"
@@ -89,11 +72,11 @@ export function AddTablePage({ dispatch, members }) {
         onChange={event => setName(event.target.value)}
       />
       <p>Empereur:</p>
-      <ListWrapper {...membersListProps} />
-      <p>Membres:</p>
       <ListWrapper {...emperorListProps} />
+      <p>Membres:</p>
+      <ListWrapper {...membersListProps} />
       <StyledButton onClick={handleClickValidate}> Créer la table </StyledButton>
-    </Wrapper>
+    </ContainerWrapper>
   );
 }
 
@@ -101,10 +84,12 @@ export function AddTablePage({ dispatch, members }) {
 
 AddTablePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   addTablePage: makeSelectAddTablePage(),
+  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {
