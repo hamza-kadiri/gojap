@@ -4,7 +4,6 @@ from models.model import UserCommand, db, User, CommandItem
 from sqlalchemy.exc import IntegrityError
 
 
-
 class CommandService():
     """Command service."""
 
