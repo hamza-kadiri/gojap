@@ -4,21 +4,24 @@ import io from 'socket.io-client';
 import {
   makeSelectJapId,
   makeSelectUsername,
+  makeSelectUserId,
   makeSelectTableId,
 } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
+import { makeSelectCurrentCommandId } from './selectors';
 import { START_ORDER } from './constants';
 import { changedCurrentItem } from './actions';
 import { changedOrderQuantity } from '../OrdersList/actions';
 
-function connect(username, japId, tableId) {
+function connect(username, userId, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
   return new Promise(resolve => {
     socket.on('connect', () => {
       socket.emit(MESSAGES.JOIN_TABLE, {
-        pseudo: username,
+        username,
+        user_id: userId,
         jap_id: japId,
-        table_id: tableId,
+        table_id: 1,
         is_jap_master: true,
       });
       resolve(socket);
@@ -41,12 +44,11 @@ export function* writeNextItem(socket) {
     const japId = yield select(makeSelectJapId());
     const tableId = yield select(makeSelectTableId());
     socket.emit(MESSAGES.NEXT_ITEM, {
-      pseudo: username,
+      username,
       jap_id: japId,
-      table_id: tableId,
+      table_id: 1,
       is_jap_master: true,
-      item_id: 'pneu',
-      index: payload,
+      item_id: payload,
     });
   }
 }
@@ -57,12 +59,16 @@ export function* writeChangeQuantity(socket) {
       MESSAGES.CHOOSE_ITEM
     );
     const username = yield select(makeSelectUsername());
+    const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
     const tableId = yield select(makeSelectTableId());
+    const commandId = yield select(makeSelectCurrentCommandId());
     socket.emit(MESSAGES.CHOOSE_ITEM, {
-      pseudo: username,
+      username,
+      user_id: userId,
       jap_id: japId,
-      table_id: tableId,
+      command_id: commandId,
+      table_id: 1,
       item_id: itemId,
       individual,
       accumulated,
@@ -72,11 +78,13 @@ export function* writeChangeQuantity(socket) {
 
 export function* subscribe(socket) {
   return eventChannel(emit => {
-    const updateItem = data => emit(changedCurrentItem(data.index));
-    const updateOrderQuantity = data =>
+    const updateItem = data => emit(changedCurrentItem(data));
+    const updateOrderQuantity = data => {
+      console.log(data);
       emit(
-        changedOrderQuantity(data.itemId, data.individual, data.accumulated)
+        changedOrderQuantity(data.item_id, data.individual, data.accumulated)
       );
+    };
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
     socket.on(MESSAGES.USER_JOINED_TABLE, data => console.log(data));
     socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
@@ -86,9 +94,10 @@ export function* subscribe(socket) {
 // Individual exports for testing
 export function* OrderScreenSaga() {
   const username = yield select(makeSelectUsername());
+  const userId = yield select(makeSelectUserId());
   const japId = yield select(makeSelectJapId());
   const tableId = yield select(makeSelectTableId());
-  const socket = yield call(connect, username, japId, tableId);
+  const socket = yield call(connect, username, userId, japId, tableId);
   yield fork(read, socket);
   yield fork(writeNextItem, socket);
   yield fork(writeChangeQuantity, socket);

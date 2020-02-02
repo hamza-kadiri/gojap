@@ -20,6 +20,7 @@ export const initialState = {
       Math.random()
         .toString(36)
         .substring(2, 15),
+    userId: Math.ceil(Math.random() * 6),
   },
   japId: '',
   tableId: '',

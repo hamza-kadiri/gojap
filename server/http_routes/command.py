@@ -62,7 +62,6 @@ def add_user_order_to_command(command_id):
 
     command = CommandService.add_user_order_to_command(
         command_id=command_id, user_id=data["user_id"], item_id=data["item_id"], order_amount=data["order_amount"])
-
     return jsonify({"command": command})
 
 

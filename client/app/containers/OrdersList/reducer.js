@@ -35,7 +35,6 @@ const ordersListReducer = (state = initialState, action) =>
         break;
       case CHANGE_ORDER_QUANTITY_SUCCESS:
         draft.orders = state.orders;
-        console.log(action.itemId);
         draft.orders[action.itemId] = {
           ...draft.orders[action.itemId],
           individual: action.individual,
