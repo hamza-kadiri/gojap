@@ -9,7 +9,7 @@ import { japsLoaded, japLoadingError } from './actions';
 export function* getJaps() {
   // Select username from store
 
-  const requestURL = 'japs';
+  const requestURL = 'jap_event/all';
 
   try {
     // Call our request helper (see 'utils/request')

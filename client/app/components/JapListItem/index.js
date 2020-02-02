@@ -25,23 +25,14 @@ export function JapListItem(props) {
         onClickItem(item.alias);
       }}
     >
-      {item.name ? (
+      {item.event_name ? (
         <Grid container justify="space-between">
           <Grid item>
-            <ListItemText
-              primary={item.name}
-              secondary={
-                isBrowser &&
-                item.location &&
-                item.location.display_address &&
-                item.location.display_address.join(', ')
-              }
-            />
+            <ListItemText primary={item.event_name} secondary={item.date} />
           </Grid>
           <Grid item>
             <ListItemText
-              primary={item.display_phone}
-              secondary={`${Math.round(item.distance / 10) * 10} m`}
+              primary={`${item.members.length} participants`}
               secondaryTypographyProps={{ align: 'right' }}
             />
           </Grid>

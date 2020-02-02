@@ -23,7 +23,7 @@ const homePageReducer = (state = initialState, action) =>
         break;
 
       case LOAD_JAPS_SUCCESS:
-        draft.japs = action.japs.businesses;
+        draft.japs = action.japs;
         draft.loading = false;
         break;
 
