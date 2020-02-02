@@ -2,7 +2,6 @@
 
 from models.model import UserCommand, db, User, CommandItem
 from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
 
 
 
@@ -21,7 +20,7 @@ class CommandService():
             command = CommandItem(item_id=item_id, table_id=table_id)
             db.session.add(command)
             db.session.commit()
-        except (UniqueViolation, IntegrityError):
+        except IntegrityError:
             db.session.rollback()
             return CommandItem.query.filter_by(table_id=table_id, item_id=item_id).first()
         return command
@@ -71,7 +70,7 @@ class CommandService():
             db.session.merge(command)
             db.session.commit()
             pass
-        except (UniqueViolation, IntegrityError):
+        except IntegrityError:
             db.session.rollback()
 
         return command
