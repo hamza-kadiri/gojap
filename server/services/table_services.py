@@ -1,4 +1,6 @@
 """Building services for table management."""
+import sqlalchemy
+
 from models.model import Table, User, db, JapEvent, table_members
 from sqlalchemy import and_
 from services.command_service import CommandService
@@ -18,6 +20,10 @@ class TableService:
         table = Table(emperor=user_id,
                       jap_event_id=jap_event_id,
                       status=0)
+        member = User.query.filter(
+            User.id.__eq__(user_id)
+        ).first()
+        table.members.append(member)
         db.session.add(table)
         db.session.commit()
         table_id = table.id
@@ -118,7 +124,7 @@ class TableService:
         return table
 
     @staticmethod
-    def get_user_table(user_id: int):
+    def get_user_table(user_id: int, jap_event_id: int):
         """
         Get a user table.
 
@@ -128,10 +134,20 @@ class TableService:
         Return :
             {Table}
         """
-        table_id = db.session.query(table_members).filter(
-            table_members.c.user_id == user_id).one().table_id
-        table = Table.query.filter_by(id=table_id).first()
-
+        tables = JapEvent.query.filter(
+            JapEvent.id.__eq__(jap_event_id)
+        ).first().tables
+        table_ids = []
+        for table in tables:
+            table_ids.append(table.id)
+        try:
+            table_id = db.session.query(table_members).filter(
+                and_(table_members.c.user_id == user_id,
+                     table_members.c.table_id.in_(table_ids))
+            ).one().table_id
+            table = Table.query.filter_by(id=table_id).first()
+        except sqlalchemy.orm.exc.NoResultFound:
+            table = None
         return table
 
     @staticmethod

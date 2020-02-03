@@ -85,8 +85,8 @@ def set_table_status(table_id, status):
     return jsonify(table)
 
 
-@table_blueprint.route('/user/<int:user_id>', methods=['GET'])
-def get_user_table(user_id):
+@table_blueprint.route('/user/<int:user_id>/<int:jap_event_id>', methods=['GET'])
+def get_user_table(user_id, jap_event_id):
     """Create a new table.
 
     Args :
@@ -95,6 +95,6 @@ def get_user_table(user_id):
     Returns :
         {table}
     """
-    table = TableService.get_user_table(user_id)
+    table = TableService.get_user_table(user_id, jap_event_id)
 
     return jsonify(table)

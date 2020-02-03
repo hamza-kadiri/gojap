@@ -115,19 +115,13 @@ class SocketServer(Namespace):
 
         jap_event = JapEventService.get_jap_event(jap_event_id)
 
-        # if it's the jap_creator, join table is called instantly for default table
-        if jap_event.created_by == user_id:
-            # Default table is the table containing the creator of the event
-            default_table = None
-            for table in jap_event.tables:
-                if user_id == table.emperor:
-                    default_table = table
-                    break
-            if default_table:
-                self.on_join_table(
-                    {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": default_table.id})
-            else:
-                raise(
+        table = TableService.get_user_table(user_id, jap_event_id)
+        if table:
+            self.on_join_table(
+                {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": table.id})
+        else:
+            if jap_event.created_by == user_id:
+                raise (
                     Exception("Error at jap creation for jap creator, not added to a table"))
 
         new_member = UserService.get_user(user_id)
