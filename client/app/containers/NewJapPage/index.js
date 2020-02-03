@@ -16,7 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { createStructuredSelector } from 'reselect';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import moment from 'moment';
+import history from 'utils/history';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -46,7 +46,6 @@ export function NewJapPage({ dispatch, japPlaces }) {
   const [name, setName] = React.useState('');
   const [selectedJapPlace, setJapPlace] = React.useState(1);
   const [description, setDescription] = React.useState('');
-  const [hasBeenCreated, setHasBeenCreated] = React.useState(false);
 
   useInjectReducer({ key: 'newJapPage', reducer });
   useInjectSaga({ key: 'newJapPage', saga });
@@ -60,10 +59,10 @@ export function NewJapPage({ dispatch, japPlaces }) {
   const handleClick = () => {
     // Call back to create jap
     dispatch(createJapEvent(name, description, date, selectedJapPlace));
-    setHasBeenCreated(true);
+    history.goBack();
   };
 
-  return !hasBeenCreated ? (
+  return (
     <ContainerWrapper>
       <H1>Créer un nouveau Jap</H1>
       <TextField
@@ -105,10 +104,6 @@ export function NewJapPage({ dispatch, japPlaces }) {
         </Select>
       </StyledFormControl>
       <StyledButton onClick={handleClick}>Créer le jap</StyledButton>
-    </ContainerWrapper>
-  ) : (
-    <ContainerWrapper>
-      <H1>Félicitations, tu as créé un jap !</H1>
     </ContainerWrapper>
   );
 }

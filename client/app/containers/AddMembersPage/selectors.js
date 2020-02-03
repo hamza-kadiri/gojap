@@ -22,5 +22,11 @@ const makeSelectAddMembersPage = () =>
     substate => substate
   );
 
+const makeSelectUsers = () =>
+  createSelector(
+    selectAddMembersPageDomain,
+    substate => substate.users && substate.users.users
+  );
+
 export default makeSelectAddMembersPage;
-export { selectAddMembersPageDomain };
+export { selectAddMembersPageDomain, makeSelectUsers };

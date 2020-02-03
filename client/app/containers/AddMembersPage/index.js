@@ -12,21 +12,23 @@ import { compose } from 'redux';
 import ListWrapper from 'components/ListWrapper';
 import MembersListItem from 'components/MembersListItem';
 import StyledButton from 'components/Button';
-import history from 'utils/history'
+import history from 'utils/history';
 import { changeTitle } from 'containers/Header/actions';
+import { makeSelectJapId } from 'containers/User/selectors';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import { makeSelectMembers } from 'containers/AddTablePage/selectors';
 
 import styled from 'styled-components';
 import H1 from 'components/H1';
 
-import makeSelectAddMembersPage from './selectors';
+import makeSelectAddMembersPage, { makeSelectUsers } from './selectors';
 import reducer from './reducer';
-import { loadUsers } from './actions';
+import { loadUsers, addMembersToJap } from './actions';
 import saga from './saga';
 
-export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
+export function AddMembersPage({ dispatch, users, japId }) {
   useInjectReducer({ key: 'addMembersPage', reducer });
   useInjectSaga({ key: 'addMembersPage', saga });
   const [membersList, setMembersList] = React.useState([]);
@@ -56,28 +58,15 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
 
   const handleClickValidate = () => {
     if (membersList.length !== 0) {
-      console.log('validate'); // do an action
+      dispatch(addMembersToJap(membersList, japId));
     }
     history.goBack();
   };
 
-
-  const testmembers = [
-    { id: 4, name: { first: 'Annelo', last: 'delo' } },
-    { id: 5, name: { first: 'Smo', last: 'Koko' } },
-    { id: 6, name: { first: 'Smo', last: 'Koko' } },
-    { id: 7, name: { first: 'Annelo', last: 'delo' } },
-    { id: 8, name: { first: 'Smo', last: 'Koko' } },
-    { id: 9, name: { first: 'Smo', last: 'Koko' } },
-    { id: 10, name: { first: 'Annelo', last: 'delo' } },
-    { id: 11, name: { first: 'Smo', last: 'Koko' } },
-    { id: 12, name: { first: 'Smo', last: 'Koko' } },
-  ];
-
   const membersListProps = {
     loading: false,
     error: false,
-    items: testmembers,
+    items: users,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,
@@ -87,7 +76,13 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
     <Wrapper>
       <H1>Ajouter un membre:</H1>
       <ListWrapper {...membersListProps} />
-      <StyledButton disable={membersList.length === 0 ? 'true' : 'false'} onClick={handleClickValidate}> Valider </StyledButton>
+      <StyledButton
+        disable={membersList.length === 0 ? 'true' : 'false'}
+        onClick={handleClickValidate}
+      >
+        {' '}
+        Valider{' '}
+      </StyledButton>
     </Wrapper>
   );
 }
@@ -95,10 +90,13 @@ export function AddMembersPage({ dispatch, users, error }) { //addMembersPage) {
 AddMembersPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   users: PropTypes.array,
+  japId: PropTypes.number,
 };
 
 const mapStateToProps = createStructuredSelector({
   addMembersPage: makeSelectAddMembersPage(),
+  users: makeSelectUsers(),
+  japId: makeSelectJapId(),
 });
 
 function mapDispatchToProps(dispatch) {

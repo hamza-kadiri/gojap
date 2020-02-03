@@ -7,7 +7,7 @@
 import {
   DEFAULT_ACTION,
   LOAD_USERS,
-  ADD_MEMBER_TO_JAP,
+  ADD_MEMBERS_TO_JAP,
   LOAD_USERS_SUCCESS,
   LOAD_USERS_ERROR,
 } from './constants';
@@ -38,11 +38,11 @@ export function loadUsersError(error) {
   };
 }
 
-export function addMemberToJap(memberId, japEventId) {
+export function addMembersToJap(members, japEventId) {
   return {
-    type: ADD_MEMBER_TO_JAP,
+    type: ADD_MEMBERS_TO_JAP,
     payload: {
-      memberId,
+      members,
       japEventId,
     },
   };
