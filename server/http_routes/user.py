@@ -21,7 +21,6 @@ def get_user(user_id: int):
     Returns :
         {username, id, email, phone, calorie}
     """
-    data = request.json
     user = UserService.get_user(user_id)
 
     if not user:

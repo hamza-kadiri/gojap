@@ -14,7 +14,7 @@ class UserService():
         Create a new user.
 
         Args :
-            data = {username, email, phone}
+            data = {username, email, phone, avatar_url}
         """
         old_user = db.session.query(User).filter(
             or_(User.email == email, User.phone == phone)).first()
