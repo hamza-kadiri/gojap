@@ -9,32 +9,57 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import ContainerWrapper from 'components/ContainerWrapper';
+import { useInjectSaga } from 'utils/injectSaga';
+import { useInjectReducer } from 'utils/injectReducer';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import { createStructuredSelector } from 'reselect';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
+  KeyboardDateTimePicker,
 } from '@material-ui/pickers';
+import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
 import H1 from 'components/H1';
+import styled from 'styled-components';
 import StyledButton from 'components/Button';
-import { changeMoreMenu, changeTitle } from 'containers/Header/actions';
 
-export function NewJapPage({ dispatch }) {
+import { changeMoreMenu, changeTitle } from 'containers/Header/actions';
+import { makeSelectJapPlaces } from './selectors';
+import { getJapPlaces, createJapEvent } from './actions';
+import reducer from './reducer';
+import saga from './saga';
+
+const StyledFormControl = styled(FormControl)`
+  margin: 10px 0;
+`;
+
+const StyledKeyboardDateTimePicker = styled(KeyboardDateTimePicker)`
+  margin: 30px 0 0 0;
+`;
+
+export function NewJapPage({ dispatch, japPlaces }) {
   const [date, setDate] = React.useState(Date.now());
-  const [time, setTime] = React.useState(0);
-  const [name, setName] = React.useState();
-  const [description, setDescription] = React.useState();
+  const [name, setName] = React.useState('');
+  const [selectedJapPlace, setJapPlace] = React.useState(1);
+  const [description, setDescription] = React.useState('');
   const [hasBeenCreated, setHasBeenCreated] = React.useState(false);
+
+  useInjectReducer({ key: 'newJapPage', reducer });
+  useInjectSaga({ key: 'newJapPage', saga });
 
   useEffect(() => {
     dispatch(changeTitle('Créer un nouveau Jap'));
     dispatch(changeMoreMenu([]));
+    dispatch(getJapPlaces());
   }, []);
 
   const handleClick = () => {
     // Call back to create jap
-    console.log(name, description, time, date);
+    dispatch(createJapEvent(name, description, date, selectedJapPlace));
     setHasBeenCreated(true);
   };
 
@@ -53,33 +78,44 @@ export function NewJapPage({ dispatch }) {
         onChange={event => setDescription(event.target.value)}
       />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
-          format="MM/dd/yyyy"
-          label="Date"
-          margin="normal"
-          variant="inline"
-          value={date}
-          onChange={newdate => setDate(newdate)}
-        />
-        <KeyboardTimePicker
-          label="Horaire"
+        <StyledKeyboardDateTimePicker
           variant="inline"
           ampm={false}
-          value={time}
-          onChange={newtime => setTime(newtime)}
+          label="With keyboard"
+          value={date}
+          onChange={event => setDate(event.target.value)}
+          disablePast
+          format="yyyy/MM/dd HH:mm"
         />
       </MuiPickersUtilsProvider>
+      <StyledFormControl>
+        <InputLabel id="restaurant">Choisir le Jap</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedJapPlace}
+          onChange={event => setJapPlace(event.target.value)}
+        >
+          {japPlaces &&
+            japPlaces.map(japPlace => (
+              <MenuItem key={japPlace.id} value={japPlace.id}>
+                {japPlace && japPlace.name}
+              </MenuItem>
+            ))}
+        </Select>
+      </StyledFormControl>
       <StyledButton onClick={handleClick}>Créer le jap</StyledButton>
     </ContainerWrapper>
   ) : (
     <ContainerWrapper>
-      <H1>Félicitations, tu as crée un jap !</H1>
+      <H1>Félicitations, tu as créé un jap !</H1>
     </ContainerWrapper>
   );
 }
 
 NewJapPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  japPlaces: PropTypes.array,
 };
 
 function mapDispatchToProps(dispatch) {
@@ -88,8 +124,12 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const mapStateToProps = createStructuredSelector({
+  japPlaces: makeSelectJapPlaces(),
+});
+
 const withConnect = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 );
 

@@ -37,11 +37,7 @@ def get_all_jap_places():
         list of jap places
     """
     jap_places = JapPlaceService.get_all_jap_places()
-    dict_jap_places = {}
-    for jap_place in jap_places:
-        # TODO : delete jap_events from response
-        dict_jap_places[jap_place.id] = jap_place
-    return jsonify(dict_jap_places)
+    return jsonify({"jap_places" : jap_places})
 
 
 @jap_place_blueprint.route('<int:jap_place_id>', methods=['GET'])
