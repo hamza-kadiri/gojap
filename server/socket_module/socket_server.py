@@ -198,8 +198,11 @@ class SocketServer(Namespace):
                 "members": self.connected_at_table[table.id],
                 "new_member": new_member,
                 "current_command": current_command,
+                "command_id": current_command['id'],
+                "item_id": current_command['item_id'],
                 "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
-                "individual": CommandService.get_individual_order_amount(current_command['id'], new_member['id'])
+                "individual": CommandService.get_individual_order_amount(current_command['id'], new_member['id']),
+                "summary": asdict(CommandService.get_command(current_command['id']))
             },
             room=table_room
         )
