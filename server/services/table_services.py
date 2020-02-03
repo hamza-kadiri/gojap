@@ -133,3 +133,9 @@ class TableService:
         table = Table.query.filter_by(id=table_id).first()
 
         return table
+
+    @staticmethod
+    def is_emperor(user_id, table_id):
+        """Check if a user is emperor."""
+        table = Table.query.get(table_id)
+        return table.emperor == user_id

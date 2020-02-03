@@ -8,6 +8,7 @@ socket_messages = {
     'NEXT_ITEM': 'next_item',
     # user -> table
     'CHOOSE_ITEM': 'choose_item',
+    'JOIN_COMMAND': 'join_command',
     # user -> jap
     'JOIN_JAP': 'join_jap',
     'LEAVE_JAP': 'leave_jap',
