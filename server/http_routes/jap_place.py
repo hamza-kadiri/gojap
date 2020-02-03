@@ -16,7 +16,7 @@ def create_jap_place():
         data = {name, address, phone, opening_hours, menu_id}
 
     Returns :
-        {name, address, phone, opening_hours, menu_id}
+        {jap_place}
     """
     data = request.json
     old_jap_place = JapPlaceService.get_jap_place_by_name(data['name'])
@@ -30,11 +30,8 @@ def create_jap_place():
 def get_all_jap_places():
     """Display all jap places.
 
-    Args :
-        None
-
     Returns :
-        list of jap places
+        list of serialized jap places
     """
     jap_places = JapPlaceService.get_all_jap_places()
     return jsonify({"jap_places" : jap_places})
@@ -44,11 +41,8 @@ def get_all_jap_places():
 def get_jap_place(jap_place_id: int):
     """Find a given jap_place.
 
-    Args :
-        data = {id}
-
     Returns :
-        {name, address, phone, opening_hours, menu_id}
+        {jap_place : name, address, phone, opening_hours, menu_id}
     """
     jap_place = JapPlaceService.get_jap_place(jap_place_id)
 
@@ -60,9 +54,6 @@ def get_jap_place(jap_place_id: int):
 @jap_place_blueprint.route('/menu/<int:jap_place_id>', methods=['GET'])
 def get_jap_place_menu(jap_place_id: int):
     """Find the menu of a given jap_place.
-
-    Args :
-        data = {id}
 
     Returns :
         {menu}

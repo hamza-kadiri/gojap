@@ -12,7 +12,9 @@ class JapPlaceService():
         Create a new jap_place.
 
         Args :
-            data = {name, address, phone, opening_hours}
+            data = {name, address, phone, opening_hours, menu_id}
+        Returns :
+            jap_place
         """
         jap_place = JapPlace(name=name,
                             address=address,
@@ -25,12 +27,7 @@ class JapPlaceService():
 
     @staticmethod
     def get_all_jap_places():
-        """
-        Display all jap places.
-
-        Args :
-            None
-        """
+        """Display all jap places."""
         places = JapPlace.query.all()
         return places
 
@@ -40,7 +37,7 @@ class JapPlaceService():
         Get jap_place infos.
 
         Args :
-            id : id du jap à get.
+            id : jap_id.
         """
         jap_place = JapPlace.query.filter_by(id=id).first()
         return jap_place
@@ -81,7 +78,7 @@ class JapPlaceService():
         Get jap_place menu.
 
         Args :
-            id : id du jap dont on veut get le menu.
+            id : jap_id.
         """
         jap_place = JapPlace.query.filter_by(id=id).first()
 

@@ -10,7 +10,7 @@ class CommandService():
     @staticmethod
     def create_command(item_id, table_id):
         """
-        Create a new command for an item.
+        Create a new command for an item and a table.
 
         Args :
             data = {item_id, table_id}
@@ -47,12 +47,12 @@ class CommandService():
         return commands
 
     @staticmethod
-    def add_user_order_to_command(command_id, user_id, item_id, order_amount):
+    def add_user_order_to_command(command_id, user_id, order_amount):
         """
-        Add a new item to the command of a user.
+        Add a new item for a user on the command of a table.
 
         Args :
-            data = {command_id, user_id, item_id, order_amount}
+            data = {command_id, user_id, order_amount}
         """
         user = db.session.query(User).get(user_id)
         user_command = UserCommand.query.filter_by(
@@ -80,6 +80,8 @@ class CommandService():
         Get accumulated order amount for a command.
 
         Args :
+            data = {command_id}
+        Returns :
             accumulated: integer
         """
         accumulated = db.session.query(
@@ -118,6 +120,8 @@ class CommandService():
         Get individual order amount for a command and a given user.
 
         Args :
+            data = {command_id, user_id}
+        Returns :
             individual: integer
         """
         user_command = UserCommand.query.filter_by(

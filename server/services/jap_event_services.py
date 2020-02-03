@@ -27,7 +27,7 @@ class JapEventService:
 
         Args :
             jap_event_id: int,
-            members: [ id1, id2 ]
+            users_ids: [ id1, id2 ]
 
         Returns :
             User[] // Array of User objects in the Jap Event
@@ -49,7 +49,7 @@ class JapEventService:
     def join_jap_event(jap_event_id, user_id):
         """Process join jap request.
 
-        Return update data after changing entries in flash memory or DB
+        Return updated data after changing entries in flash memory or DB
 
         Args :
             data = {user_id, jap_event_id}
@@ -71,6 +71,8 @@ class JapEventService:
 
         Args :
             data = {event_name, description, jap_place_id, created_by, date}
+        Returns :
+            jap_event
         """
         jap_event = JapEvent(event_name=event_name,
                              description=description,
@@ -81,8 +83,6 @@ class JapEventService:
         db.session.add(jap_event)
         db.session.commit()
         table = TableService.create_table(created_by, jap_event.id)
-        db.session.add(table)
-        db.session.commit()
 
         JapEventService.join_jap_event(jap_event.id, created_by)
 
@@ -96,7 +96,7 @@ class JapEventService:
             user_id: int
 
         Returns :
-            { jap_events }
+            jap_events
         """
         jap_events = JapEvent.query.filter(
             JapEvent.members.any(User.id.__eq__(user_id))
@@ -111,7 +111,7 @@ class JapEventService:
             user_id: int
 
         Returns :
-            { jap_events }
+            jap_events
         """
         current_time = datetime.date.today()
         jap_events = JapEvent.query.filter(
@@ -129,7 +129,7 @@ class JapEventService:
             status: int
 
         Returns :
-            { jap_event }
+            jap_event
         """
         jap_event = JapEvent.query.filter(
             JapEvent.id.__eq__(jap_event_id)
@@ -148,7 +148,7 @@ class JapEventService:
             jap_event_id: int
 
         Returns :
-            { Tables list }
+            list of tables
         """
         tables = Table.query.filter(
             Table.jap_event_id.__eq__(jap_event_id)
