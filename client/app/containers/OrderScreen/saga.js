@@ -21,10 +21,17 @@ function connect(username, userId, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
   return new Promise(resolve => {
     socket.on('connect', () => {
+      socket.emit(MESSAGES.JOIN_COMMAND, {
+        username,
+        user_id: userId,
+        jap_event_id: japId,
+        table_id: 1,
+        is_jap_master: true,
+      });
       socket.emit(MESSAGES.JOIN_TABLE, {
         username,
         user_id: userId,
-        jap_id: japId,
+        jap_event_id: japId,
         table_id: 1,
         is_jap_master: true,
       });
@@ -45,10 +52,13 @@ export function* writeNextItem(socket) {
   while (true) {
     const { payload } = yield take(MESSAGES.NEXT_ITEM);
     const username = yield select(makeSelectUsername());
+    const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
-    const tableId = yield select(makeSelectTableId());
+    const commandId = yield select(makeSelectCurrentCommandId());
     socket.emit(MESSAGES.NEXT_ITEM, {
       username,
+      user_id: userId,
+      command_id: commandId,
       jap_id: japId,
       table_id: 1,
       is_jap_master: true,
@@ -92,10 +102,10 @@ export function* subscribe(socket) {
     };
     const userJoinedTable = data => {
       emit(joinedTable(data));
-      emit(initializeOrderQuantity(data));
+      emit(changedOrderQuantity(data, userId));
     };
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
-    socket.on(MESSAGES.USER_JOINED_TABLE, data => userJoinedTable(data));
+    socket.on(MESSAGES.COMMAND_STARTED, data => userJoinedTable(data));
     socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
     return () => {};
   });
