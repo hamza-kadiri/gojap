@@ -92,8 +92,8 @@ def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
     Returns :
         {command: id, item_id, table_id, users}
     """
-    print("route")
-    command = CommandService.get_unique_command_by_table_id_and_item_id(table_id, item_id)
+    command = CommandService.get_unique_command_by_table_id_and_item_id(
+        table_id, item_id)
     if not command:
         return json_abort(404, f"Command not found")
 

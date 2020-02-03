@@ -13,10 +13,12 @@ import {
   TOGGLE_RECAP,
   CHANGE_CURRENT_ITEM_SUCCESS,
   START_ORDER,
+  JOINED_TABLE,
+  CHANGE_ORDER_QUANTITY_SUCCESS,
 } from './constants';
 
 export const initialState = {
-  order: { currentItem: { index: 0 } },
+  order: { currentItem: { index: 1 } },
   ordersList: ordersListInitialState,
   recap: { recapOpen: false },
 };
@@ -26,10 +28,23 @@ const orderReducer = (state = initialState.order, action) =>
   produce(state, draft => {
     switch (action.type) {
       case START_ORDER:
-        draft.currentItem = { index: 0 };
+        draft.currentItem = { index: 1 };
+        draft.currentCommandId = 1;
+        break;
+      case JOINED_TABLE:
+        draft.currentItem = { index: action.itemId };
+        draft.currentCommandId = action.commandId;
         break;
       case CHANGE_CURRENT_ITEM_SUCCESS:
         draft.currentItem = { index: action.itemId };
+        draft.currentCommandId = action.commandId;
+        break;
+      case CHANGE_ORDER_QUANTITY_SUCCESS:
+        draft.currentItem = {
+          index: action.itemId,
+          individual: action.individual,
+          accumulated: action.accumulated,
+        };
         draft.currentCommandId = action.commandId;
         break;
     }

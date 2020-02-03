@@ -41,11 +41,6 @@ export default function Navigation(props) {
         onClick={() => history.push('/profile')}
         icon={<PersonIcon />}
       />
-      <BottomNavigationAction
-        label="Socket Test"
-        onClick={() => history.push('/socket')}
-        icon={<PersonIcon />}
-      />
     </StyledBottomNavigation>
   );
 }

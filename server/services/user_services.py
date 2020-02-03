@@ -40,7 +40,6 @@ class UserService():
             id : id de l'user à get.
         """
         user = User.query.filter_by(id=user_id).first()
-        print(user.jap_events)
         return user
 
     @staticmethod
