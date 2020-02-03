@@ -92,11 +92,9 @@ class TestSocketServer(TestClassWithClient):
         # test user joined table message
         assert user_joined_table["name"] == socket_messages['USER_JOINED_TABLE']
         assert user_joined_table["namespace"] == "/"
-        answer = user_joined_table["args"][0]
 
     def test_join_table(self):
         """Test join jap table."""
-        initial_length = len(TableService.get_table(self.default_table_id).members)
         self.client.emit(socket_messages["JOIN_TABLE"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
         received = self.client.get_received()
         assert len(received) == 1
@@ -108,6 +106,42 @@ class TestSocketServer(TestClassWithClient):
         assert answer["new_member"]["username"] == "TestUser"
         assert len(answer["members"]) == 2
         assert answer["new_member"]["id"] in [member["id"] for member in answer["members"]]
+
+    def test_fail_start_command(self):
+        """Test that a simple suer cannot start the command."""
+        self.client.emit(socket_messages["START_COMMAND"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
+        received = self.client.get_received()
+        assert len(received) == 0
+
+    def test_fail_join_command(self):
+        """Test join the command fail if table status is 0 or 2."""
+        self.client.emit(socket_messages["JOIN_COMMAND"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
+        received = self.client.get_received()
+        assert len(received) == 0
+
+    def test_start_command(self):
+        """Test emperor can start the command."""
+        self.client.emit(socket_messages["START_COMMAND"], {"user_id": self.jap_creator_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
+        received = self.client.get_received()
+        assert len(received) == 1
+        received = received[0]
+        assert received["name"] == socket_messages['COMMAND_STARTED']
+        assert received["namespace"] == "/"
+        answer = received["args"][0]
+        assert list(answer.keys()) == ["current_command", "command_id", "item_id", "accumulated", "summary"]
+        assert TableService.get_table(self.default_table_id).status == 1
+
+    def test_join_command(self):
+        """Test join command."""
+        self.client.emit(socket_messages["JOIN_COMMAND"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.default_table_id})
+        received = self.client.get_received()
+        assert len(received) == 1
+        received = received[0]
+        assert received["name"] == socket_messages['COMMAND_STARTED']
+        assert received["namespace"] == "/"
+        answer = received["args"][0]
+        assert list(answer.keys()) == ["current_command", "command_id", "item_id", "accumulated", "summary"]
+        
 
     def test_leave_jap(self):
         """Test leave jap."""
@@ -123,8 +157,3 @@ class TestSocketServer(TestClassWithClient):
         assert list(answer.keys()) == ["user_id", "jap_event_id", "members"]
         assert answer["user_id"] == self.user_id
         assert answer["user_id"] not in [member["id"] for member in answer["members"]]
-
-
-
-    # def test_start_command(self):
-    #     self.client.emit(socket_messages["START_COMMAND"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id, "table_id": self.table})

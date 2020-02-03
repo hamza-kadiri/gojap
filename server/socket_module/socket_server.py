@@ -70,6 +70,21 @@ class SocketServer(Namespace):
             app.logger.info(
                 "Should not happen: User left table but was not on it")
 
+    @staticmethod
+    def emit_command_started(current_command, room):
+        """Emit command started message after START_COMMAND and JOIN_COMMAND."""
+        emit(
+            socket_messages['COMMAND_STARTED'],
+            {
+                "current_command": current_command,
+                "command_id": current_command['id'],
+                "item_id": current_command['item_id'],
+                "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
+                "summary": asdict(CommandService.get_command(current_command['id']))
+            },
+            room=room
+        )
+
     def on_connect(self):
         """Call when a connection socket is set with a client."""
         app.logger.info("Connection establish in socket with a client")
@@ -180,6 +195,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         # app.logger.info(
         #     f"Join table {data['table_id']} received from {data['username']}")
+        jap_event_room = "jap_event/" + str(data['jap_event_id'])
         table_room = "table/" + str(data['table_id'])
         user_room = "user/" + str(data['user_id'])
 
@@ -190,21 +206,15 @@ class SocketServer(Namespace):
 
         join_room(table_room)
         join_room(user_room)
-        current_command = asdict(table)['current_command']
+
         new_member = asdict(user)
         emit(
             socket_messages['USER_JOINED_TABLE'],
             {
                 "members": self.connected_at_table[table.id],
                 "new_member": new_member,
-                "current_command": current_command,
-                "command_id": current_command['id'],
-                "item_id": current_command['item_id'],
-                "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
-                "individual": CommandService.get_individual_order_amount(current_command['id'], new_member['id']),
-                "summary": asdict(CommandService.get_command(current_command['id']))
             },
-            room=table_room
+            room=jap_event_room
         )
 
     def on_start_command(self, data):
@@ -226,13 +236,33 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info("Command started on table " +
-                        data['table_id'] + " received from " + data['user_id'])
+        table_room = "table/" + str(data['table_id'])
+        
+        if TableService.is_emperor(data["user_id"], data["table_id"]):
+            # Make the command start for this table
+            TableService.set_table_status(data['table_id'], 1)
 
-        if 'is_jap_master' in data and data['is_jap_master']:
-            # data = start_command_service(data)
-            emit(socket_messages['COMMAND_STARTED'],
-                 data, room=data['table_id'])
+            table = TableService.get_table(data['table_id'])
+            current_command = asdict(table)['current_command']
+            self.emit_command_started(current_command, table_room)
+
+    def on_join_command(self, data):
+        """Call on message START_COMMAND.
+
+        Emit COMMAND_STARTED in the room 'table_id'.
+
+        Args :
+            data = {user_id, jap_event_id, table_id} // later user_id
+        Emit :
+            COMMAND_STARTED = {}
+        """
+        app.logger.debug(data)
+        user_room = "user/" + str(data['user_id'])
+
+        table = TableService.get_table(data['table_id'])
+        if table.status == 1:
+            current_command = asdict(table)['current_command']
+            self.emit_command_started(current_command, user_room)
 
     def on_end_command(self, data):
         """Call on message END_COMMAND.
