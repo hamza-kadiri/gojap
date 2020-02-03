@@ -1,3 +1,5 @@
+"""Service for auth management."""
+
 from services import UserService
 
 
@@ -6,7 +8,7 @@ class AuthService:
 
     @staticmethod
     def login(username):
-        """Logs a user in, using his username.
+        """Log a user in, using his username.
 
         Args :
             username: string
@@ -18,7 +20,7 @@ class AuthService:
 
     @staticmethod
     def register(username):
-        """Registers a new user, with his username.
+        """Register a new user, with his username.
 
         Args :
             username: string
