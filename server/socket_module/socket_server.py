@@ -59,12 +59,12 @@ class SocketServer(Namespace):
         else:
             self.connected_at_table[table.id] = [asdict(user)]
 
-    def remove_from_table(self, user_id, table):
+    def remove_from_table(self, user_id, table_id):
         """Remove a user from list of people on a given table."""
-        if table in self.connected_at_table.keys():
-            self.connected_at_table[table] = list(filter(
+        if table_id in self.connected_at_table.keys():
+            self.connected_at_table[table_id] = list(filter(
                 lambda x: x["id"] == user_id,
-                self.connected_at_table[table]
+                self.connected_at_table[table_id]
             ))
         else:
             app.logger.info(
@@ -158,20 +158,22 @@ class SocketServer(Namespace):
 
         room = "jap_event/"+str(data['jap_event_id'])
         self.remove_from_event(data["user_id"], room)
-
-        emit(
-            socket_messages['USER_LEFT_JAP'],
-            {
+        answer = {
                 **data,
                 "members": self.connected_by_jap_event[room]
-            },
+            }
+        
+        if "table_id" in data:
+            self.remove_from_table(data["user_id"], data["table_id"])
+            answer["table_members"] = self.connected_at_table[data['table_id']]
+
+        
+        emit(
+            socket_messages['USER_LEFT_JAP'],
+            answer,
             room=room
         )
         leave_room(room)
-
-        if 'table_id' in data:
-            leave_room(data['table_id'])
-            self.remove_from_table(data["user_id"], data['table_id'])
 
     def on_join_table(self, data):
         """Call on message JOIN_TABLE.
@@ -303,10 +305,7 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info(
-            f"Next item on table {data['table_id']} received from {data['username']}")
-        if 'is_jap_master' in data and data['is_jap_master']:
-            # data = next_item_service(data)
+        if TableService.is_emperor(data['user_id'], data['table_id']):
             command = CommandService.create_command(
                 data['item_id'], data['table_id'])
             data['command_id'] = command.id

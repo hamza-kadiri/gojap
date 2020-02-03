@@ -145,13 +145,10 @@ class TestSocketServer(TestClassWithClient):
 
     def test_leave_jap(self):
         """Test leave jap."""
-        self.client.emit(socket_messages["JOIN_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
         self.client.emit(socket_messages["LEAVE_JAP"], {"user_id": self.user_id, "jap_event_id": self.jap_event_id})
 
         received = self.client.get_received()
-        assert received[0]["name"] == socket_messages['USER_JOINED_JAP']
-
-        received = received[1]
+        received = received[0]
         assert received["name"] == socket_messages['USER_LEFT_JAP']
         answer = received["args"][0]
         assert list(answer.keys()) == ["user_id", "jap_event_id", "members"]
