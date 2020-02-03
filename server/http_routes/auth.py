@@ -1,6 +1,6 @@
 """Auth blueprint."""
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from services.auth_service import AuthService
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/auth')
@@ -18,4 +18,4 @@ def login():
     """
     data = request.json
     user = AuthService.login(data["username"])
-    return user
+    return jsonify(user)
