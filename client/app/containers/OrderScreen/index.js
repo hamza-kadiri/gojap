@@ -139,21 +139,21 @@ function OrderScreen({
             )}
           </CenteredDiv>
 
-          <OrdersWrapper>
+          {/* <OrdersWrapper>
             {array.map(x => (
               <OrderCard key={x} />
             ))}
-          </OrdersWrapper>
+          </OrdersWrapper> */}
           <CenteredDiv>
             <OrderNumber
               title="Cumulé"
               big
-              number={orders[currentItem.index].accumulated || 0}
+              number={currentItem.accumulated || 0}
             />
             <Divider orientation="vertical" />
             <OrderNumber
               title="Ma commande"
-              number={orders[currentItem.index].individual || 0}
+              number={currentItem.individual || 0}
             />
           </CenteredDiv>
           <Numbers

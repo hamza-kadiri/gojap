@@ -10,8 +10,12 @@ import {
 import MESSAGES from 'utils/socketMessages';
 import { makeSelectCurrentCommandId } from './selectors';
 import { START_ORDER } from './constants';
-import { changedCurrentItem } from './actions';
-import { changedOrderQuantity } from '../OrdersList/actions';
+import {
+  changedCurrentItem,
+  joinedTable,
+  initializeOrderQuantity,
+  changedOrderQuantity,
+} from './actions';
 
 function connect(username, userId, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
@@ -77,16 +81,21 @@ export function* writeChangeQuantity(socket) {
 }
 
 export function* subscribe(socket) {
+  const userId = yield select(makeSelectUserId());
   return eventChannel(emit => {
-    const updateItem = data => emit(changedCurrentItem(data));
+    const updateItem = data => {
+      emit(changedCurrentItem(data));
+      emit(changedOrderQuantity(data, userId));
+    };
     const updateOrderQuantity = data => {
-      console.log(data);
-      emit(
-        changedOrderQuantity(data.item_id, data.individual, data.accumulated)
-      );
+      emit(changedOrderQuantity(data, userId));
+    };
+    const userJoinedTable = data => {
+      emit(joinedTable(data));
+      emit(initializeOrderQuantity(data));
     };
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
-    socket.on(MESSAGES.USER_JOINED_TABLE, data => console.log(data));
+    socket.on(MESSAGES.USER_JOINED_TABLE, data => userJoinedTable(data));
     socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
     return () => {};
   });

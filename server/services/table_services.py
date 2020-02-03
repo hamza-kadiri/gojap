@@ -1,6 +1,7 @@
 """Building services for table management."""
 from models.model import Table, User, db, JapEvent, table_members
 from sqlalchemy import and_
+from services.command_service import CommandService
 
 
 class TableService:
@@ -19,6 +20,11 @@ class TableService:
                       status=0)
         db.session.add(table)
         db.session.commit()
+        table_id = table.id
+        command = CommandService.create_command(1, table_id)
+        table.current_command_id = command.id
+        db.session.add(table, command)
+        db.session.commit()
         return table
 
     @staticmethod
@@ -30,6 +36,20 @@ class TableService:
             id : id de la table à get.
         """
         table = Table.query.filter_by(id=table_id).first()
+        return table
+
+    @staticmethod
+    def set_current_command_id(table_id: int, current_command_id: int):
+        """
+        Set the new current command ID when the emperor changes the item.
+
+        Args :
+            data = {table_id, current_command_id}
+        """
+        table = TableService.get_table(table_id)
+        table.current_command_id = current_command_id
+        db.session.add(table)
+        db.session.commit()
         return table
 
     @staticmethod
@@ -108,7 +128,8 @@ class TableService:
         Return :
             {Table}
         """
-        table_id = db.session.query(table_members).filter(table_members.c.user_id == user_id).one().table_id
+        table_id = db.session.query(table_members).filter(
+            table_members.c.user_id == user_id).one().table_id
         table = Table.query.filter_by(id=table_id).first()
 
         return table

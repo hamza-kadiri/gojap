@@ -80,12 +80,14 @@ class CommandService():
         Get accumulated order amount for a command.
 
         Args :
-            data = {command_id}
+            accumulated: integer
         """
         accumulated = db.session.query(
             db.func.sum(UserCommand.order_amount).label("accumulated")).group_by(UserCommand.command_id).filter_by(command_id=command_id).first()
-
-        return accumulated[0]
+        if accumulated:
+            return accumulated[0]
+        else:
+            return 0
 
     @staticmethod
     def get_all_command_by_table_id(table_id):
@@ -95,31 +97,32 @@ class CommandService():
         Args :
             data = {table_id}
         """
-        command = UserCommand.query.filter_by(table_id=table_id).all()
+        command = CommandItem.query.filter_by(table_id=table_id).all()
         return command
 
     @staticmethod
-    def get_command_by_user(data):
-        """
-        Get command for a user in a table.
-
-        Args :
-            data = {user_id, table_id}
-        """
-        command = UserCommand.query.filter_by(table_id=data['table_id'],
-                                              user_id=data['user_id']).all()
-        return command
-
-    @staticmethod
-    def get_unique_command_by_table_id_and_item_id(table_id,item_id):
+    def get_unique_command_by_table_id_and_item_id(table_id, item_id):
         """
         Get unique command for a table and an item.
 
         Args :
             data = {table_id, item_id}
         """
-        print("hello")
-        command = CommandItem.query.filter_by(table_id=table_id,item_id=item_id).first()
-        print(command)
+        command = CommandItem.query.filter_by(
+            table_id=table_id, item_id=item_id).first()
         return command
 
+    @staticmethod
+    def get_individual_order_amount(command_id, user_id):
+        """
+        Get individual order amount for a command and a given user.
+
+        Args :
+            individual: integer
+        """
+        user_command = UserCommand.query.filter_by(
+            command_id=command_id, user_id=user_id).first()
+        if user_command:
+            return user_command.order_amount
+        else:
+            return 0

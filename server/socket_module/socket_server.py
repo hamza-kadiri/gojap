@@ -52,7 +52,10 @@ class SocketServer(Namespace):
         """Add a user to list of people on a given table."""
         print("ADD TO TABLE")
         if table.id in self.connected_at_table.keys():
-            self.connected_at_table[table.id].append(asdict(user))
+            dict_user = asdict(user)
+            table_members = self.connected_at_table[table.id]
+            if dict_user not in table_members:
+                table_members.append(dict_user)
         else:
             self.connected_at_table[table.id] = [asdict(user)]
 
@@ -96,19 +99,21 @@ class SocketServer(Namespace):
         jap_event_id = data["jap_event_id"]
 
         jap_event = JapEventService.get_jap_event(jap_event_id)
-        
+
         # if it's the jap_creator, join table is called instantly for default table
         if jap_event.created_by == user_id:
             # Default table is the table containing the creator of the event
             default_table = None
             for table in jap_event.tables:
                 if user_id == table.emperor:
-                    default_table = table 
+                    default_table = table
                     break
             if default_table:
-                self.on_join_table({"user_id": user_id, "jap_event_id": jap_event_id, "table_id": default_table.id})
-            else :
-                raise(Exception("Error at jap creation for jap creator, not added to a table"))
+                self.on_join_table(
+                    {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": default_table.id})
+            else:
+                raise(
+                    Exception("Error at jap creation for jap creator, not added to a table"))
 
         new_member = UserService.get_user(user_id)
         room = "jap_event/"+str(data['jap_event_id'])
@@ -177,7 +182,6 @@ class SocketServer(Namespace):
         #     f"Join table {data['table_id']} received from {data['username']}")
         table_room = "table/" + str(data['table_id'])
         user_room = "user/" + str(data['user_id'])
-        
 
         table = TableService.get_table(data['table_id'])
         user = UserService.get_user(data['user_id'])
@@ -186,12 +190,16 @@ class SocketServer(Namespace):
 
         join_room(table_room)
         join_room(user_room)
-        print(self.connected_at_table)
+        current_command = asdict(table)['current_command']
+        new_member = asdict(user)
         emit(
             socket_messages['USER_JOINED_TABLE'],
             {
                 "members": self.connected_at_table[table.id],
-                "new_member": asdict(user)
+                "new_member": new_member,
+                "current_command": current_command,
+                "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
+                "individual": CommandService.get_individual_order_amount(current_command['id'], new_member['id'])
             },
             room=table_room
         )
@@ -275,7 +283,14 @@ class SocketServer(Namespace):
             command = CommandService.create_command(
                 data['item_id'], data['table_id'])
             data['command_id'] = command.id
-            emit(socket_messages['ITEM_CHANGED'], data, room=data['table_id'])
+            data['accumulated'] = CommandService.get_accumulated_order_amount(
+                data['command_id'])
+            data['summary'] = asdict(CommandService.get_unique_command_by_table_id_and_item_id(
+                data['table_id'], data['item_id']))
+        TableService.set_current_command_id(
+            data['table_id'], data['command_id'])
+        emit(socket_messages['ITEM_CHANGED'], data,
+             room="table/" + str(data['table_id']))
 
     def on_choose_item(self, data):
         """Call on message CHOOSE_ITEM.
@@ -303,5 +318,7 @@ class SocketServer(Namespace):
             data['command_id'], data['user_id'], data['item_id'], data["individual"])
         data['accumulated'] = CommandService.get_accumulated_order_amount(
             data['command_id'])
-        emit(socket_messages['ITEM_CHOSEN'], data, room=data['table_id'])
-        emit(socket_messages['ITEM_CHOSEN'], data, room=data['user_id'])
+        data['summary'] = asdict(CommandService.get_unique_command_by_table_id_and_item_id(
+            data['table_id'], data['item_id']))
+        emit(socket_messages['ITEM_CHOSEN'], data,
+             room="table/" + str(data['table_id']))

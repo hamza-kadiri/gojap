@@ -348,6 +348,7 @@ class Table(db.Model):
     status: int
     members: list
     jap_event_id: int
+    current_command: CommandItem
 
     _tablename_ = 'table'
     id = db.Column(db.Integer, primary_key=True)
@@ -359,3 +360,6 @@ class Table(db.Model):
                               backref=db.backref('table', lazy=True))
     jap_event_id = db.Column(db.Integer, db.ForeignKey(
         'jap_event.id'), nullable=False)
+    current_command_id = db.Column(db.Integer)
+    current_command = db.relationship(
+        'CommandItem', primaryjoin='remote(CommandItem.id) == foreign(Table.current_command_id)')
