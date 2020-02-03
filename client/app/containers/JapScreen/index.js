@@ -113,11 +113,14 @@ export function JapScreen({ dispatch, japId, members, jap }) {
 
   const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
+    dispatch(getJap());
+  }, []);
+
+  useEffect(() => {
     dispatch(changeTitle(jap && jap.event_name));
     dispatch(changeSubtitle(createdBy));
     dispatch(changeMoreMenu(moreMenu));
-    dispatch(getJap());
-  }, []);
+  }, [jap]);
 
   const loremIpsum = jap ? jap.description : '';
 

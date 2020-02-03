@@ -13,6 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import { PersistGate } from 'redux-persist/lib/integration/react';
 import history from 'utils/history';
 import 'sanitize.css/sanitize.css';
 
@@ -31,15 +32,17 @@ import configureStore from './configureStore';
 
 // Create redux store with history
 const initialState = {};
-const store = configureStore(initialState, history);
+const [store, persistor] = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <App />
-      </ConnectedRouter>
+      <PersistGate persistor={persistor}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </PersistGate>
     </Provider>,
     MOUNT_NODE
   );

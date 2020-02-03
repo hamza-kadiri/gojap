@@ -11,6 +11,7 @@ const MESSAGES = {
   LEAVE_JAP: 'leave_jap',
   SEND_EVENT: 'send_event',
   JOIN_TABLE: 'join_table',
+  JOIN_COMMAND: 'join_command',
 
   //   CLIENTS <---> SERVER
 

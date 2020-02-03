@@ -174,15 +174,14 @@ class SocketServer(Namespace):
         room = self.get_jap_event_room(data['jap_event_id'])
         self.remove_from_event(data["user_id"], room)
         answer = {
-                **data,
-                "members": self.connected_by_jap_event[room]
-            }
-        
+            **data,
+            "members": self.connected_by_jap_event[room]
+        }
+
         if "table_id" in data:
             self.remove_from_table(data["user_id"], data["table_id"])
             answer["table_members"] = self.connected_at_table[data['table_id']]
 
-        
         emit(
             socket_messages['USER_LEFT_JAP'],
             answer,
@@ -252,7 +251,7 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
         table_room = self.get_table_room(data['table_id'])
-        
+
         if TableService.is_emperor(data["user_id"], data["table_id"]):
             # Make the command start for this table
             TableService.set_table_status(data['table_id'], 1)
@@ -301,7 +300,8 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         if TableService.is_emperor(data['user_id'], data['table_id']):
             _ = TableService.set_table_status(data['table_id'], 2)
-            emit(socket_messages['COMMAND_ENDED'], data, room=self.get_table_room(data['table_id']))
+            emit(socket_messages['COMMAND_ENDED'], data,
+                 room=self.get_table_room(data['table_id']))
 
     def on_next_item(self, data):
         """Call on message NEXT_ITEM.
