@@ -25,7 +25,10 @@ const makeSelectAddTablePage = () =>
 const makeSelectMembers = () =>
   createSelector(
     globalDomain,
-    globalState => globalState.membersList.members
+    globalState =>
+      globalState.japScreen &&
+      globalState.japScreen.jap &&
+      globalState.japScreen.jap.members
   );
 
 export default makeSelectAddTablePage;

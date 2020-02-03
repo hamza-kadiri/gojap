@@ -21,11 +21,5 @@ const makeSelectMembersList = () =>
     substate => substate
   );
 
-const makeSelectMembers = () =>
-  createSelector(
-    selectMembersListDomain,
-    globalState => globalState.members
-  );
-
 export default makeSelectMembersList;
-export { selectMembersListDomain, makeSelectMembers };
+export { selectMembersListDomain };

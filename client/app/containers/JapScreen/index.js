@@ -32,7 +32,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GoJap from 'images/gojap.png';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
-import { makeSelectMembers } from 'containers/MembersList/selectors';
+import { makeSelectMembers } from 'containers/AddTablePage/selectors';
 import { makeSelectJapId } from 'containers/User/selectors';
 import { makeSelectJaps } from 'containers/HomePage/selectors';
 import makeSelectJapScreen, { makeSelectJap } from './selectors';
