@@ -32,6 +32,21 @@ class SocketServer(Namespace):
         self.connected_at_table = {}
         super().__init__()
 
+    @staticmethod
+    def get_table_room(table_id):
+        """Generate table room route."""
+        return "table/" + str(table_id)
+
+    @staticmethod
+    def get_user_room(user_id):
+        """Generate user room route."""
+        return "user/" + str(user_id)
+
+    @staticmethod
+    def get_jap_event_room(jap_event_id):
+        """Generate jap event room route."""
+        return "jap_event/" + str(jap_event_id)
+
     def add_to_event(self, user, room):
         """Add a user to list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
@@ -125,7 +140,7 @@ class SocketServer(Namespace):
                     Exception("Error at jap creation for jap creator, not added to a table"))
 
         new_member = UserService.get_user(user_id)
-        room = "jap_event/"+str(data['jap_event_id'])
+        room = self.get_jap_event_room(data['jap_event_id'])
         join_room(room)
         self.add_to_event(new_member, room)
 
@@ -156,7 +171,7 @@ class SocketServer(Namespace):
             " received from " + str(data['user_id'])
         )
 
-        room = "jap_event/"+str(data['jap_event_id'])
+        room = self.get_jap_event_room(data['jap_event_id'])
         self.remove_from_event(data["user_id"], room)
         answer = {
                 **data,
@@ -175,6 +190,10 @@ class SocketServer(Namespace):
         )
         leave_room(room)
 
+        if 'table_id' in data:
+            leave_room(room)
+            self.remove_from_table(data["user_id"], data['table_id'])
+
     def on_join_table(self, data):
         """Call on message JOIN_TABLE.
 
@@ -191,9 +210,9 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         # app.logger.info(
         #     f"Join table {data['table_id']} received from {data['username']}")
-        jap_event_room = "jap_event/" + str(data['jap_event_id'])
-        table_room = "table/" + str(data['table_id'])
-        user_room = "user/" + str(data['user_id'])
+        jap_event_room = self.get_jap_event_room(data['jap_event_id'])
+        table_room = self.get_table_room(data['table_id'])
+        user_room = self.get_user_room(data['user_id'])
 
         table = TableService.get_table(data['table_id'])
         user = UserService.get_user(data['user_id'])
@@ -232,7 +251,7 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        table_room = "table/" + str(data['table_id'])
+        table_room = self.get_table_room(data['table_id'])
         
         if TableService.is_emperor(data["user_id"], data["table_id"]):
             # Make the command start for this table
@@ -253,7 +272,7 @@ class SocketServer(Namespace):
             COMMAND_STARTED = {}
         """
         app.logger.debug(data)
-        user_room = "user/" + str(data['user_id'])
+        user_room = self.get_user_room(data['user_id'])
 
         table = TableService.get_table(data['table_id'])
         if table.status == 1:
@@ -280,11 +299,9 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
-        app.logger.info("Command ended on table " +
-                        data['table_id'] + " received from " + data['nom'])
-
-        if 'is_jap_master' in data and data['is_jap_master']:
-            emit(socket_messages['COMMAND_ENDED'], data, room=data['table_id'])
+        if TableService.is_emperor(data['user_id'], data['table_id']):
+            _ = TableService.set_table_status(data['table_id'], 2)
+            emit(socket_messages['COMMAND_ENDED'], data, room=self.get_table_room(data['table_id']))
 
     def on_next_item(self, data):
         """Call on message NEXT_ITEM.
@@ -305,6 +322,7 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
+
         if TableService.is_emperor(data['user_id'], data['table_id']):
             command = CommandService.create_command(
                 data['item_id'], data['table_id'])
