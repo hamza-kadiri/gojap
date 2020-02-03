@@ -36,7 +36,7 @@ def create_jap_event():
     """Create a new jap_event.
 
     Body args : 
-        {event_name, description, jap_place_id, user_id, date}
+        {event_name, description, jap_place_id, created_by, date}
 
     Returns :
         {event_name, description, jap_place_id, created_by, date}
@@ -46,7 +46,7 @@ def create_jap_event():
         data["event_name"],
         data["description"],
         data["jap_place_id"],
-        data["user_id"],
+        data["created_by"],
         data["date"]
     )
 
