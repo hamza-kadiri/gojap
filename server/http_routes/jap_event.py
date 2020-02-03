@@ -11,11 +11,8 @@ jap_event_blueprint = Blueprint(
 def get_jap_event(jap_event_id):
     """Get jap event for a given event id.
 
-    Args :
-        data = {jap_event_id}
-
     Returns :
-        { jap_event }
+        {serialized jap_event}
     """
     jap_event = JapEventService.get_jap_event(jap_event_id)
     return jsonify(jap_event)
@@ -25,7 +22,7 @@ def get_all_jap_events():
     """Get all jap events.
 
     Returns :
-        {JapEvent}
+        list of serialized jap_event
     """
     jap_events = JapEventService.get_all_jap_events()
     return jsonify(jap_events)
@@ -39,7 +36,7 @@ def create_jap_event():
         {event_name, description, jap_place_id, created_by, date}
 
     Returns :
-        {event_name, description, jap_place_id, created_by, date}
+        {serialized jap_event}
     """
     data = request.json
     jap_event = JapEventService.create_jap_event(
@@ -58,10 +55,10 @@ def get_events_for_user(user_id):
     """Get all jap_events for a given user.
 
     Args :
-        data = {user_id}
+        user_id
 
     Returns :
-        { jap_events }
+        list of serialized jap_events
     """
     jap_events = JapEventService.get_jap_events_for_user(user_id)
     return jsonify({"events": jap_events})
@@ -75,7 +72,7 @@ def get_upcoming_events_for_user(user_id):
         user_id: int
 
     Returns :
-        { jap_events }
+        list of serialized jap_events
     """
     jap_events = JapEventService.get_upcoming_jap_events_for_user(user_id)
     return jsonify(jap_events)
@@ -101,10 +98,10 @@ def update_status(jap_event_id: int, status: int):
     """Update status of a jap event.
 
     Args :
-        data = {jap_event_id, status}
+        jap_event_id, status
 
     Returns :
-        { jap_event }
+        serialized jap_event
     """
     jap_event = JapEventService.update_status(jap_event_id, status)
     return jsonify(jap_event)
@@ -115,10 +112,10 @@ def get_tables_jap_event(jap_event_id: int):
     """Add members to a jap event.
 
     Args :
-        data = { jap_event_id, members: [{ username }] }
+        jap_event_id
 
     Returns :
-        { members: [User] }
+        list of serialized tables
     """
     tables = JapEventService.get_tables_for_a_jap(jap_event_id)
     return jsonify(tables)

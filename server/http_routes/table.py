@@ -25,7 +25,7 @@ def create_table():
 
 @table_blueprint.route('<int:table_id>', methods=['GET'])
 def get_table(table_id):
-    """Create a new table.
+    """Get a given table.
 
     Args :
         id_table : id de la table à get.
@@ -40,7 +40,7 @@ def get_table(table_id):
 
 @table_blueprint.route('', methods=['DELETE'])
 def remove_table():
-    """Delete a user.
+    """Delete a table.
 
     Args :
         data = {id}
@@ -49,11 +49,11 @@ def remove_table():
         {table}
     """
     data = request.json
-    table = TableService.remove_table(data)
+    table = TableService.remove_table(**data)
     if not table:
-        abort(404, f"User not found")
+        abort(404, f"Table not found")
 
-    return json.dumps(table.as_dict())
+    return jsonify(table)
 
 
 @table_blueprint.route('add_members/<int:table_id>', methods=['POST'])

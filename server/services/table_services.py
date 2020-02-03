@@ -36,10 +36,10 @@ class TableService:
     @staticmethod
     def get_table(table_id):
         """
-        Get user infos.
+        Get a table.
 
         Args :
-            id : id de la table à get.
+            id : table_id .
         """
         table = Table.query.filter_by(id=table_id).first()
         return table
@@ -59,18 +59,19 @@ class TableService:
         return table
 
     @staticmethod
-    def remove_table(data):
+    def remove_table(id: int):
         """
         Delete table.
 
         Args :
-            id : id de la table à delete.
+            id : table_id.
 
         Return :
             {Table}
         """
-        table = Table.query.filter_by(id=data['id']).first()
+        table = Table.query.filter_by(id=id).first()
         if table:
+            # solution qui a l'air de marcher : table = Table.query.filter_by(id=id).delete()
             db.session.delete(table)
             db.session.commit()
             return table
@@ -83,8 +84,8 @@ class TableService:
         Add a user to a table.
 
         Args :
-            id_table : id de la table à get
-            user_ids : liste des users a rajouter
+            id_table : id of the table
+            user_ids : list of users to add
 
         Return :
             {Table}
@@ -110,7 +111,7 @@ class TableService:
         Update status of a table.
 
         Arg :
-            table_id : id de la table à get.
+            table_id : id of the table
             status : new status
 
         Return :
@@ -126,10 +127,11 @@ class TableService:
     @staticmethod
     def get_user_table(user_id: int, jap_event_id: int):
         """
-        Get a user table.
+        Get a user's table.
 
         Arg :
-            user_id : id du user
+            user_id : id of the user
+            jap_event_id
 
         Return :
             {Table}

@@ -14,13 +14,9 @@ command_blueprint = Blueprint(
 def get_command(command_id: int):
     """Find a given command.
 
-    Args :
-        data = {command_id}
-
     Returns :
-        {command : id, user_id, table_id}
+        {command : id, item_id, table_id, users }
     """
-    data = request.json
     command = CommandService.get_command(command_id)
 
     if not command:
@@ -36,7 +32,7 @@ def create_command():
         data = {item_id, table_id}
 
     Returns :
-        {command: id, item_id, table_id}
+        {command : id, item_id, table_id, users }
     """
     data = request.json
     if not data or "item_id" not in data or "table_id" not in data:
@@ -48,13 +44,13 @@ def create_command():
 
 @command_blueprint.route('<int:command_id>/add', methods=['POST'])
 def add_user_order_to_command(command_id):
-    """Create a new command.
+    """Add a user to a command with an item and an order amount.
 
     Args :
-        data = {command_id, user_id, item_id, order_amount}
+        data = {user_id, item_id, order_amount}
 
     Returns :
-        {command}
+        {command : id, item_id, table_id, users }
     """
     data = request.json
     if not data or "order_amount" not in data or "user_id" not in data or "item_id" not in data:
@@ -69,9 +65,6 @@ def add_user_order_to_command(command_id):
 def get_command_by_table_id(table_id: int):
     """Get commands for a table.
 
-    Args :
-        data = {id}
-
     Returns :
         {command: id, user_id, table_id}
     """
@@ -85,9 +78,6 @@ def get_command_by_table_id(table_id: int):
 @command_blueprint.route('table/<int:table_id>/item/<int:item_id>', methods=['GET'])
 def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
     """Get a unique command for a table_id and item_id.
-
-    Args :
-        data = {table_id, item_id}
 
     Returns :
         {command: id, item_id, table_id, users}

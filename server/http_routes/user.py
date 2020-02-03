@@ -15,11 +15,8 @@ user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
 def get_user(user_id: int):
     """Find a given user.
 
-    Args :
-        data = {id}
-
     Returns :
-        {username, id, email, phone, calorie}
+        {user : id, username, email, phone, calorie}
     """
     user = UserService.get_user(user_id)
 
@@ -36,7 +33,7 @@ def create_user():
         data = {username, email, phone, ?avatar_url}
 
     Returns :
-        {id, username, email, phone, calorie}
+        {user : id, username, email, phone, calorie}
     """
     data = request.json
     avatar_url = data["avatar_url"] if "avatar_url" in data else ""
@@ -50,9 +47,6 @@ def create_user():
 @user_blueprint.route('<int:user_id>', methods=['DELETE'])
 def remove_user(user_id: int):
     """Delete a user.
-
-    Args :
-        data = {id}
 
     Returns :
         {username, email, phone, calorie}
@@ -68,11 +62,8 @@ def remove_user(user_id: int):
 def get_all_users():
     """Display all users.
 
-    Args :
-        None
-
     Returns :
-        list of users
+        list of serialized users
     """
     users = UserService.get_all_users()
     return jsonify({"users": users})

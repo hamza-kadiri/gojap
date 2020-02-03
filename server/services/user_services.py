@@ -37,7 +37,7 @@ class UserService():
         Get user infos.
 
         Args :
-            id : id de l'user à get.
+            id : id of the user
         """
         user = User.query.filter_by(id=user_id).first()
         return user
@@ -45,7 +45,7 @@ class UserService():
     @staticmethod
     def get_user_by_name(user_name):
         """
-        Get user infos. TEST PURPOSE.
+        Get user infos with the name given.
 
         Args :
             user_name : name of the user to get.
@@ -59,7 +59,7 @@ class UserService():
         Delete user.
 
         Args :
-            id : id de l'user à delete.
+            id : id of the user to delete.
         """
         user = User.query.filter_by(id=user_id).first()
 
@@ -72,11 +72,6 @@ class UserService():
 
     @staticmethod
     def get_all_users():
-        """
-        Display all users.
-
-        Args :
-            None
-        """
+        """Display all users."""
         users = User.query.all()
         return users
