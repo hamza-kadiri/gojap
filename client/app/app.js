@@ -32,13 +32,13 @@ import configureStore from './configureStore';
 
 // Create redux store with history
 const initialState = {};
-const [store, persistor] = configureStore(initialState, history);
+const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('app');
 
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate persistor={store.persistor}>
         <ConnectedRouter history={history}>
           <App />
         </ConnectedRouter>

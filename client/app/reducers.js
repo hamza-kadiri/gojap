@@ -8,10 +8,12 @@ import userReducer from 'containers/User/reducer';
 import { persistReducer } from 'redux-persist';
 import history from 'utils/history';
 import storage from 'redux-persist/lib/storage';
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 
-const userPersistConfig = {
-  key: 'user',
+const rootPersistConfig = {
+  key: 'root',
   storage,
+  whitelist: ['user'],
 };
 
 const injectedReducerPersistConfig = injectedReducers => {
@@ -36,8 +38,8 @@ export default function createReducer(injectedReducers = {}) {
   const persistedReducers = injectedReducerPersistConfig(injectedReducers);
   const rootReducer = combineReducers({
     router: connectRouter(history),
-    user: persistReducer(userPersistConfig, userReducer),
+    user: userReducer,
     ...persistedReducers,
   });
-  return rootReducer;
+  return persistReducer(rootPersistConfig, rootReducer);
 }
