@@ -3,7 +3,12 @@ import request, { api } from 'utils/request';
 import { makeSelectJapId, makeSelectUserId } from 'containers/User/selectors';
 
 import { GET_TABLES, JOIN_TABLE } from './constants';
-import { getTablesSuccess, getTablesError } from './actions';
+import {
+  getTablesSuccess,
+  getTablesError,
+  joinTableError,
+  joinTableSuccess,
+} from './actions';
 
 export function* getTables() {
   const japId = yield select(makeSelectJapId());
@@ -26,9 +31,10 @@ export function* joinTable(action) {
   const body = { user_ids: [userId] };
 
   try {
-    yield call(request, api.post, requestUrl, { json: body });
+    const response = yield call(request, api.post, requestUrl, { json: body });
+    yield put(joinTableSuccess(response));
   } catch (err) {
-    yield put(getTablesError(err));
+    yield put(joinTableError(err));
   }
 }
 

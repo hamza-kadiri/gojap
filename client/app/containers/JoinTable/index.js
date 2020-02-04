@@ -32,7 +32,6 @@ export function JoinTable({ dispatch, tables }) {
   }, []);
 
   const handleCickOnTable = table => {
-    console.log('join table: ', table);
     dispatch(joinTable(table.id));
     history.goBack();
   };

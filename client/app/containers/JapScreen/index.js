@@ -34,7 +34,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/AddTablePage/selectors';
 import { makeSelectJapId } from 'containers/User/selectors';
-import { makeSelectJaps } from 'containers/HomePage/selectors';
+import { changeJapId } from 'containers/User/actions';
 import makeSelectJapScreen, { makeSelectJap } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
@@ -116,7 +116,9 @@ export function JapScreen({ dispatch, japId, members, jap }) {
   ];
 
   useEffect(() => {
-    dispatch(getJap(japId));
+    const japEventId = history.location.pathname.split('/jap/')[1];
+    dispatch(changeJapId(japEventId));
+    dispatch(getJap(japEventId));
   }, []);
 
   useEffect(() => {

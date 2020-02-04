@@ -1,5 +1,6 @@
-import { takeLatest, call, put } from 'redux-saga/effects';
+import { takeLatest, call, put, select } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
+import { makeSelectUserId } from 'containers/User/selectors';
 import { LOAD_JAPS } from './constants';
 import { japsLoaded, japLoadingError } from './actions';
 
@@ -8,8 +9,8 @@ import { japsLoaded, japLoadingError } from './actions';
  */
 export function* getJaps() {
   // Select username from store
-
-  const requestURL = 'jap_event/all';
+  const userId = yield select(makeSelectUserId());
+  const requestURL = `jap_event/user/${userId}`;
 
   try {
     // Call our request helper (see 'utils/request')

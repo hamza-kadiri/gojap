@@ -9,6 +9,7 @@ import {
   GET_JAP,
   GET_JAP_SUCCESS,
   GET_JAP_ERROR,
+  CHANGE_JAP_MEMBERS,
 } from './constants';
 
 export const initialState = {
@@ -32,6 +33,9 @@ const japScreenReducer = (state = initialState, action) =>
       case GET_JAP_ERROR:
         draft.error = action.error;
         break;
+      case CHANGE_JAP_MEMBERS:
+        draft.onlineMembers = action.payload.members;
+        draft.lastMember = action.payload.new_member;
     }
   });
 

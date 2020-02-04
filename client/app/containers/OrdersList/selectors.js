@@ -31,7 +31,7 @@ const makeSelectOrders = () =>
 const makeSelectJapPlaceId = () =>
   createSelector(
     selectJapScreenDomain,
-    globalState => (globalState.jap && globalState.jap.jap_place_id) || 3
+    globalState => (globalState.jap && globalState.jap.jap_place_id) || 1
   );
 
 export default makeSelectOrdersList;
