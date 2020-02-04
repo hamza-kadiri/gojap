@@ -15,11 +15,10 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 function OrderListItem(props) {
   const { item, index, onClickItem } = props;
-
   // Put together the content of the Jap
   // Render the content into a list item
   return (
-    item.alt_description != null && (
+    item.name != null && (
       <ListItem
         divider
         button
@@ -28,13 +27,13 @@ function OrderListItem(props) {
         <Grid container justify="space-evenly">
           <Grid item>
             <ListItemAvatar>
-              <MediumAvatar src={item.urls.thumb} alt={item.alt_description} />
+              <MediumAvatar src={item.icon.thumbnail_url} alt={item.name} />
             </ListItemAvatar>
           </Grid>
           <Grid item>
             <ListItemText
-              primary={`Cumulé : ${item.height}`}
-              secondary={`Individuel : ${item.likes}`}
+              primary={`Cumulé : ${8}`}
+              secondary={`Individuel : ${8}`}
             />
           </Grid>
         </Grid>

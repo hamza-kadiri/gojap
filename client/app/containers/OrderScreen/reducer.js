@@ -28,20 +28,21 @@ const orderReducer = (state = initialState.order, action) =>
   produce(state, draft => {
     switch (action.type) {
       case START_ORDER:
-        draft.currentItem = { index: 1 };
+        draft.currentItem = { index: 0 };
         draft.currentCommandId = 1;
         break;
       case JOINED_TABLE:
-        draft.currentItem = { index: action.itemId };
+        draft.currentItem = { index: action.index, itemId: action.itemId };
         draft.currentCommandId = action.commandId;
         break;
       case CHANGE_CURRENT_ITEM_SUCCESS:
-        draft.currentItem = { index: action.itemId };
+        draft.currentItem = { index: action.index, itemId: action.itemId };
         draft.currentCommandId = action.commandId;
         break;
       case CHANGE_ORDER_QUANTITY_SUCCESS:
         draft.currentItem = {
-          index: action.itemId,
+          itemId: action.itemId,
+          index: action.index,
           individual: action.individual,
           accumulated: action.accumulated,
         };

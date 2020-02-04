@@ -82,4 +82,4 @@ class JapPlaceService():
         """
         jap_place = JapPlace.query.filter_by(id=id).first()
 
-        return jap_place.menu
+        return jap_place.menu if jap_place else None

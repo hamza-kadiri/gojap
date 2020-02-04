@@ -5,36 +5,34 @@
  */
 
 import MESSAGES from 'utils/socketMessages';
-import {
-  LOAD_ORDERS,
-  LOAD_ORDERS_SUCCESS,
-  LOAD_ORDERS_ERROR,
-} from './constants';
+import { LOAD_MENU, LOAD_MENU_SUCCESS, LOAD_MENU_ERROR } from './constants';
 
-export function loadOrders() {
+export function loadMenu(japPlaceId) {
   return {
-    type: LOAD_ORDERS,
+    type: LOAD_MENU,
+    japPlaceId,
   };
 }
-export function ordersLoaded(orders) {
+export function menuLoaded(menu) {
   return {
-    type: LOAD_ORDERS_SUCCESS,
-    orders: orders.results,
+    type: LOAD_MENU_SUCCESS,
+    menu,
   };
 }
 
-export function ordersLoadingError(error) {
+export function menuLoadingError(error) {
   return {
-    type: LOAD_ORDERS_ERROR,
+    type: LOAD_MENU_ERROR,
     error,
   };
 }
 
-export function changeOrderQuantity(itemId, individual, accumulated) {
+export function changeOrderQuantity(itemId, index, individual, accumulated) {
   return {
     type: MESSAGES.CHOOSE_ITEM,
     itemId,
     individual,
     accumulated,
+    index,
   };
 }
