@@ -350,7 +350,7 @@ class SocketServer(Namespace):
                 command : {
                     command_id,
                     command_status,
-                    command_number,
+                    command_number,on
                     summary : { item_id : {name, amount, icon_url}, ... }
                 }
             }
@@ -359,7 +359,7 @@ class SocketServer(Namespace):
         app.logger.info(
             f"New item {data['item_id']} chosen on table {data['table_id']} received from {data['username']}")
         CommandService.add_user_order_to_command(
-            data['command_id'], data['user_id'], data['item_id'], data["individual"])
+            data['command_id'], data['user_id'], data["individual"])
         data['accumulated'] = CommandService.get_accumulated_order_amount(
             data['command_id'])
         data['summary'] = asdict(CommandService.get_unique_command_by_table_id_and_item_id(
