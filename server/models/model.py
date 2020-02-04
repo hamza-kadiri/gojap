@@ -85,7 +85,8 @@ class JapEvent(db.Model):
     description: str
     date: datetime.datetime
     created_at: datetime.datetime
-    created_by: int
+    creator_id: int
+    created_by: User
     jap_place_id: int
     status: int
     tables: list
@@ -98,7 +99,8 @@ class JapEvent(db.Model):
     date = db.Column(db.DateTime(), unique=False, nullable=False)
     created_at = db.Column(db.DateTime(), unique=False,
                            nullable=True, default=datetime.datetime.now())
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.relationship('User')
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
@@ -217,6 +219,7 @@ class Photo(db.Model):
         'jap_event.id'), nullable=False)
 
 
+@dataclass
 class Item(db.Model):
     """
     Defines a new Item in the database.
@@ -225,11 +228,17 @@ class Item(db.Model):
         {id, name, points_amount, icon_id}
     """
 
+    id: int
+    name: str
+    points_amount: int
+    icon: Icon
     _tablename_ = 'item'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     points_amount = db.Column(db.Integer, nullable=False)
-    icon_id = db.Column(db.Integer, db.ForeignKey('icon.id'), nullable=False)
+    icon_id = db.Column(db.Integer, db.ForeignKey(
+        'icon.id'), nullable=False)
+    icon = db.relationship('Icon', backref='items', uselist=False)
 
 
 @dataclass
@@ -303,7 +312,8 @@ item_menus = db.Table('item_menus',
                       db.Column('item_id', db.Integer, db.ForeignKey(
                           'item.id'), primary_key=True),
                       db.Column('menu_id', db.Integer, db.ForeignKey(
-                          'menu.id'), primary_key=True)
+                          'menu.id'), primary_key=True),
+                      db.Column('index_in_menu', db.Integer)
                       )
 
 
@@ -327,11 +337,9 @@ class Menu(db.Model):
 
 
 table_members = db.Table('table_members',
-                         db.Column('table_id', db.Integer, db.ForeignKey(
-                             'table.id'), primary_key=True),
-                         db.Column('user_id', db.Integer, db.ForeignKey(
-                             'user.id'), primary_key=True)
-                         )
+                     db.Column('table_id', db.Integer, db.ForeignKey('table.id'), primary_key=True),
+                     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+                     )
 
 
 @dataclass
