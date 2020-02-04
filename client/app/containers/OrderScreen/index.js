@@ -29,7 +29,7 @@ import {
 } from 'containers/Header/actions';
 import { makeSelectTableId } from 'containers/User/selectors';
 import OrderNumber from 'components/OrderNumber';
-import ordersSaga from 'containers/OrdersList/saga';
+import menuSaga from 'containers/OrdersList/saga';
 import { changeOrderQuantity } from 'containers/OrdersList/actions';
 import {
   makeSelectRecapOpen,
@@ -39,6 +39,7 @@ import {
 import reducer from './reducer';
 import saga from './saga';
 import { toggleRecap, changeCurrentItem, startOrder } from './actions';
+import { makeSelectJapPlaceId } from '../OrdersList/selectors';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -70,13 +71,13 @@ function OrderScreen({
   ordersList,
   currentItem,
   tableId,
+  japPlaceId,
 }) {
   useInjectReducer({ key: 'orderScreen', reducer });
   useInjectSaga({ key: 'orderScreen', saga });
-  useInjectSaga({ key: 'ordersList', saga: ordersSaga });
+  useInjectSaga({ key: 'ordersList', saga: menuSaga });
 
-  const { loading, orders } = ordersList;
-
+  const { loading, menu } = ordersList;
   const [number, setNumber] = useState(0);
   const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
@@ -89,7 +90,7 @@ function OrderScreen({
     dispatch(changeTitle(tableId));
     dispatch(changeSubtitle(members.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
-    dispatch(startOrder());
+    dispatch(startOrder(japPlaceId));
     const timeOut = setTimeout(() => disappearOrder(array), 1500);
     return () => clearTimeout(timeOut);
   }, []);
@@ -110,6 +111,7 @@ function OrderScreen({
     component: OrdersList,
   };
 
+  const { items } = menu;
   return (
     <ContainerWrapper>
       <Helmet>
@@ -120,19 +122,19 @@ function OrderScreen({
         <LoadingIndicator />
       ) : (
         <React.Fragment>
-          <H1>Commande : {orders[currentItem.index].id}</H1>
+          <H1>{items[currentItem.index].name}</H1>
           <CenteredDiv flex="2 1 0">
-            {orders[currentItem.index + 1] && <OffsetDiv />}
+            {items[currentItem.index + 1] && <OffsetDiv />}
             <CurrentJapaneseItemIcon
-              src={orders[currentItem.index].urls.regular}
+              src={items[currentItem.index].icon.thumbnail_url}
             />
-            {orders[currentItem.index + 1] && (
+            {items[currentItem.index + 1] && (
               <NextJapaneseItemIcon
                 size="medium"
-                src={orders[currentItem.index + 1].urls.regular}
+                src={items[currentItem.index + 1].icon.thumbnail_url}
                 onClick={() => {
                   dispatch(
-                    changeCurrentItem((currentItem.index + 1) % orders.length)
+                    changeCurrentItem((currentItem.index + 1) % items.length)
                   );
                 }}
               />
@@ -160,9 +162,10 @@ function OrderScreen({
             handleSelect={selectedNumber =>
               dispatch(
                 changeOrderQuantity(
+                  currentItem.itemId,
                   currentItem.index,
                   selectedNumber,
-                  orders[currentItem.index].accumulated || 0
+                  items[currentItem.index].accumulated || 0
                 )
               )
             }
@@ -179,6 +182,7 @@ OrderScreen.propTypes = {
   recapOpen: PropTypes.bool,
   ordersList: PropTypes.object,
   currentItem: PropTypes.object,
+  japPlaceId: PropTypes.number,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -186,6 +190,7 @@ const mapStateToProps = createStructuredSelector({
   ordersList: makeSelectOrdersList(),
   currentItem: makeSelectCurrentItem(),
   tableId: makeSelectTableId(),
+  japPlaceId: makeSelectJapPlaceId(),
 });
 
 function mapDispatchToProps(dispatch) {

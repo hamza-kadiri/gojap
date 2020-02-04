@@ -18,7 +18,7 @@ const selectUserDomain = state => state.user || initialState;
 const makeSelectUser = () =>
   createSelector(
     selectUserDomain,
-    substate => substate
+    substate => substate.user
   );
 
 const makeSelectUsername = () =>
@@ -30,7 +30,7 @@ const makeSelectUsername = () =>
 const makeSelectUserId = () =>
   createSelector(
     selectUserDomain,
-    substate => substate.user.userId
+    substate => substate.user.id
   );
 
 const makeSelectJapId = () =>

@@ -62,14 +62,14 @@ export function* writeNextItem(socket) {
       jap_id: japId,
       table_id: 1,
       is_jap_master: true,
-      item_id: payload,
+      index: payload,
     });
   }
 }
 
 export function* writeChangeQuantity(socket) {
   while (true) {
-    const { itemId, individual, accumulated } = yield take(
+    const { itemId, index, individual, accumulated } = yield take(
       MESSAGES.CHOOSE_ITEM
     );
     const username = yield select(makeSelectUsername());
@@ -84,6 +84,7 @@ export function* writeChangeQuantity(socket) {
       command_id: commandId,
       table_id: 1,
       item_id: itemId,
+      index,
       individual,
       accumulated,
     });

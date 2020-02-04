@@ -18,8 +18,11 @@ import {
 export function* createJap(action) {
   // Select username from store
   const { name, description, date, japPlace } = action.payload;
+  console.log(action);
   const requestURL = 'jap_event';
   const userId = yield select(makeSelectUserId());
+  console.log('SAGA');
+  console.log(userId);
   const body = {
     event_name: name,
     description,
@@ -41,6 +44,7 @@ export function* getJapPlaces() {
 
   try {
     const japPlaces = yield call(request, api, requestURL);
+    console.log(japPlaces);
     yield put(getJapPlacesSuccess(japPlaces));
   } catch (err) {
     yield put(getJapPlacesError(err));

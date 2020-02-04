@@ -45,7 +45,7 @@ const defaultHeader = (title, subtitle) => (
   <TitleHeader title={title} subtitle={subtitle} />
 );
 
-export function Header({ dispatch, title, subtitle, moreMenu }) {
+export function Header({ title, subtitle, moreMenu }) {
   useInjectReducer({ key: 'header', reducer });
 
   const [anchorEl, setAnchorEl] = React.useState(null);

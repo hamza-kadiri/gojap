@@ -3,6 +3,7 @@
 from flask_socketio import Namespace, emit, join_room, leave_room
 from flask import current_app as app
 
+from helpers.db_selectors import get_item_id_from_table_id_and_index, get_item_index_from_table_id_and_id
 from services import UserService
 from .socket_messages import socket_messages
 from services.jap_event_services import JapEventService
@@ -68,7 +69,6 @@ class SocketServer(Namespace):
 
     def add_to_table(self, user, table):
         """Add a user to list of people on a given table."""
-        print("ADD TO TABLE")
         if table.id in self.connected_at_table.keys():
             dict_user = asdict(user)
             table_members = self.connected_at_table[table.id]
@@ -91,12 +91,14 @@ class SocketServer(Namespace):
     @staticmethod
     def emit_command_started(current_command, room):
         """Emit command started message after START_COMMAND and JOIN_COMMAND."""
+        item_index = get_item_index_from_table_id_and_id(current_command["table_id"], current_command['item_id'])
         emit(
             socket_messages['COMMAND_STARTED'],
             {
                 "current_command": current_command,
                 "command_id": current_command['id'],
                 "item_id": current_command['item_id'],
+                "index": item_index,
                 "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
                 "summary": asdict(CommandService.get_command(current_command['id']))
             },
@@ -329,16 +331,18 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
 
+        item_id = get_item_id_from_table_id_and_index(data['table_id'], data['index'])
         if TableService.is_emperor(data['user_id'], data['table_id']):
             command = CommandService.create_command(
-                data['item_id'], data['table_id'])
+                item_id, data['table_id'])
             data['command_id'] = command.id
             data['accumulated'] = CommandService.get_accumulated_order_amount(
                 data['command_id'])
             data['summary'] = asdict(CommandService.get_unique_command_by_table_id_and_item_id(
-                data['table_id'], data['item_id']))
+                data['table_id'], item_id))
         TableService.set_current_command_id(
             data['table_id'], data['command_id'])
+        data['item_id'] = item_id
         emit(socket_messages['ITEM_CHANGED'], data,
              room="table/" + str(data['table_id']))
 
