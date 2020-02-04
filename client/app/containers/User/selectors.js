@@ -30,7 +30,7 @@ const makeSelectUsername = () =>
 const makeSelectUserId = () =>
   createSelector(
     selectUserDomain,
-    substate => substate.user.userId
+    substate => substate.user.id
   );
 
 const makeSelectJapId = () =>
