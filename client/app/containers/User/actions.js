@@ -10,6 +10,7 @@ import {
   LOGIN_SUCCESS,
   CHANGE_JAP_ID,
   CHANGE_TABLE_ID,
+  LOGOUT,
 } from './constants';
 
 export function login(username) {
@@ -18,6 +19,12 @@ export function login(username) {
     payload: {
       username,
     },
+  };
+}
+
+export function logout() {
+  return {
+    type: LOGOUT,
   };
 }
 
