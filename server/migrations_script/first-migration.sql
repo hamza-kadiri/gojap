@@ -7,7 +7,7 @@ ALTER TABLE "user" ADD COLUMN avatar_url VARCHAR(120);
 /* Migrate JAP_EVENT table */
 ALTER TABLE jap_event RENAME COLUMN nom TO event_name;
 ALTER TABLE jap_event ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT NOW();
-ALTER TABLE jap_event ADD COLUMN created_by INTEGER REFERENCES "user"(id);
+ALTER TABLE jap_event ADD COLUMN creator_id INTEGER REFERENCES "user"(id);
 
 /* MIGRATE JAP_PLACE table */
 ALTER TABLE jap_place RENAME COLUMN nom TO name;

@@ -111,17 +111,22 @@ export function JapScreen({ dispatch, japId, members, jap }) {
     },
   ];
 
-  const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
-    dispatch(getJap());
+    dispatch(getJap(japId));
   }, []);
 
   useEffect(() => {
-    dispatch(changeTitle(jap && jap.event_name));
-    dispatch(changeSubtitle(createdBy));
-    dispatch(changeMoreMenu(moreMenu));
+    if (jap) {
+      dispatch(changeTitle(jap.event_name));
+      const createdBy = `${
+        jap.created_by
+          ? `Créé par ${jap.created_by.username}, ${moment(jap.date).format('L')}`
+          : ''
+      }`;
+      dispatch(changeSubtitle(createdBy));
+      dispatch(changeMoreMenu(moreMenu));
+    }
   }, [jap]);
-
   const loremIpsum = jap ? jap.description : '';
 
   return (

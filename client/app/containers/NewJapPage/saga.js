@@ -17,7 +17,6 @@ import {
  */
 export function* createJap(action) {
   // Select username from store
-
   const { name, description, date, japPlace } = action.payload;
   const requestURL = 'jap_event';
   const userId = yield select(makeSelectUserId());
@@ -26,7 +25,7 @@ export function* createJap(action) {
     description,
     date: moment(date).format(),
     jap_place_id: japPlace,
-    created_by: userId,
+    creator_id: userId,
   };
 
   try {
@@ -51,7 +50,7 @@ export function* getJapPlaces() {
 /**
  * Root saga manages watcher lifecycle
  */
-export default function* watchSaga() {
+export default function* watchNewJapPage() {
   yield takeLatest(CREATE_JAP_EVENT, createJap);
   yield takeLatest(GET_JAP_PLACES, getJapPlaces);
 }

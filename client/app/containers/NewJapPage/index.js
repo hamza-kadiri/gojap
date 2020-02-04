@@ -58,6 +58,7 @@ export function NewJapPage({ dispatch, japPlaces }) {
 
   const handleClick = () => {
     // Call back to create jap
+    console.log('coucou');
     dispatch(createJapEvent(name, description, date, selectedJapPlace));
     history.goBack();
   };

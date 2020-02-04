@@ -10,10 +10,9 @@ import history from 'utils/history';
 import storage from 'redux-persist/lib/storage';
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 
-const rootPersistConfig = {
-  key: 'root',
+const userPersistConfig = {
+  key: 'user',
   storage,
-  whitelist: ['user'],
 };
 
 const injectedReducerPersistConfig = injectedReducers => {
@@ -35,11 +34,10 @@ const injectedReducerPersistConfig = injectedReducers => {
  * Merges the main reducer with the router state and dynamically injected reducers
  */
 export default function createReducer(injectedReducers = {}) {
-  const persistedReducers = injectedReducerPersistConfig(injectedReducers);
   const rootReducer = combineReducers({
     router: connectRouter(history),
-    user: userReducer,
-    ...persistedReducers,
+    user: persistReducer(userPersistConfig, userReducer),
+    ...injectedReducers,
   });
-  return persistReducer(rootPersistConfig, rootReducer);
+  return rootReducer;
 }

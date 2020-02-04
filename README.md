@@ -200,7 +200,7 @@ We must be able to:
 ##### POST `''`
 Create jap event
 
-Request body : `{"event_name", "description", "date", "jap_place_id", "created_by:}`
+Request body : `{"event_name", "description", "date", "jap_place_id", "creator_id:}`
 
 Server response : (serialized JapEvent Object)
 ```json
@@ -208,7 +208,7 @@ Server response : (serialized JapEvent Object)
   "jap_event" : 
     { 
       "id", "event_name", "description", "date", "jap_place_id", 
-      "created_by", "created_at", "status", "members"
+      "creator_id", "created_at", "status", "members"
     }
 }
 ```
@@ -223,7 +223,7 @@ Server response :
   "jap_events": 
     [
       { "id", "event_name", "description", "date", "jap_place_id", 
-        "created_by", "created_at", "status", "members"
+        "creator_id", "created_at", "status", "members"
       }, 
       ...
     ]
@@ -255,14 +255,14 @@ Server response :
   "user_jap_events": 
     [
       { "id", "event_name", "description", "date", "jap_place_id", 
-        "created_by", "created_at", "status", "members"
+        "creator_id", "created_at", "status", "members"
       }, 
       ...
     ], 
   "other_jap_events": 
     [
       { "id", "event_name", "description", "date", "jap_place_id", 
-        "created_by", "created_at", "status", "members"
+        "creator_id", "created_at", "status", "members"
       }, 
       ...
     ]
@@ -285,7 +285,7 @@ Server response (serialized JapEvent Object)
 { 
   "jap_event": 
     { "id", "event_name", "description", "date",    "jap_place_id", 
-      "created_by", "created_at", "status", "members"
+      "creator_id", "created_at", "status", "members"
     }
 }` 
 ```
@@ -297,7 +297,7 @@ Server response : (serialized JapEvent Object)
 ```json
 { 
   "id", "event_name", "description", "date", "jap_place_id", 
-  "created_by", "created_at", "status", "members"
+  "creator_id", "created_at", "status", "members"
 }
 ```
 
