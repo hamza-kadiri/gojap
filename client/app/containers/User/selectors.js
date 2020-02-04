@@ -18,7 +18,7 @@ const selectUserDomain = state => state.user || initialState;
 const makeSelectUser = () =>
   createSelector(
     selectUserDomain,
-    substate => substate
+    substate => substate.user
   );
 
 const makeSelectUsername = () =>

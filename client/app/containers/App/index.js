@@ -22,7 +22,7 @@ import routes from 'utils/routes';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
 import { makeSelectLocation } from './selectors';
-import { makeSelectLogin } from '../LoginContainer/selectors';
+import makeSelectUser from '../User/selectors';
 import { toggleRecap } from '../OrderScreen/actions';
 
 const AppWrapper = styled.div`
@@ -118,7 +118,7 @@ App.propTypes = {
 };
 const mapStateToProps = createStructuredSelector({
   router: makeSelectLocation(),
-  user: makeSelectLogin(),
+  user: makeSelectUser(),
 });
 
 function mapDispatchToProps(dispatch) {

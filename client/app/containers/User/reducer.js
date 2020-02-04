@@ -13,14 +13,13 @@ import {
 
 export const initialState = {
   user: {
-    username:
-      Math.random()
-        .toString(36)
-        .substring(2, 15) +
-      Math.random()
-        .toString(36)
-        .substring(2, 15),
-    userId: Math.ceil(Math.random() * 6),
+    username: null,
+    id: null,
+    achievements: null,
+    avatar_url: null,
+    phone: null,
+    email: null,
+    calorie: null,
   },
   japId: '',
   tableId: '',
