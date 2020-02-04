@@ -1,7 +1,6 @@
 """Format responses."""
 from flask import jsonify, abort
 
-
 def json_abort(status_code, message):
     """
     JSON abort function.
