@@ -1,4 +1,5 @@
 """Building services for user management."""
+
 from typing import Dict, Optional, List
 from flask import abort
 from models.model import db, User
