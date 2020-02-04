@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import { makeSelectJapId, makeSelectUserId } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
 import { GET_JAP } from './constants';
-import { getJapSuccess, getJapError } from './actions';
+import { getJapSuccess, getJapError, changeJapMembers } from './actions';
 
 function connect(userId, japId) {
   const socket = io(process.env.SOCKET_URL);
@@ -29,9 +29,10 @@ function* read(socket) {
 }
 
 export function* subscribe(socket) {
-  return eventChannel(emit => {
+  return eventChannel(dispatch => {
     const userJoinedJap = data => {
       console.log('joinedJap');
+      dispatch(changeJapMembers(data));
       // emit(changedOrderQuantity(data, userId));
     };
     const userJoinedTable = data => {
@@ -44,9 +45,8 @@ export function* subscribe(socket) {
   });
 }
 
-export function* getJap() {
-  const id = yield select(makeSelectJapId());
-  const requestURL = `jap_event/event/${id}`;
+export function* getJap({ japId }) {
+  const requestURL = `jap_event/event/${japId}`;
 
   try {
     // Call our request helper (see 'utils/request')
@@ -57,7 +57,7 @@ export function* getJap() {
   }
 }
 
-export function* JapScreenSaga() {
+export function* japEventFlow() {
   const userId = yield select(makeSelectUserId());
   const japId = yield select(makeSelectJapId());
   const socket = yield call(connect, userId, japId);
@@ -69,6 +69,6 @@ export function* JapScreenSaga() {
  */
 
 export default function* watchJapScreen() {
-  yield takeLatest(GET_JAP, JapScreenSaga);
   yield takeLatest(GET_JAP, getJap);
+  yield takeLatest(GET_JAP, japEventFlow);
 }

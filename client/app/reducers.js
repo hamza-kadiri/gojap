@@ -13,21 +13,7 @@ import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 const userPersistConfig = {
   key: 'user',
   storage,
-};
-
-const injectedReducerPersistConfig = injectedReducers => {
-  const persistedReducers = { ...injectedReducers };
-  const keys = Object.keys(injectedReducers);
-  const persistedReducerKeys = ['japScreen', 'orderScreen'];
-  keys.forEach(key => {
-    if (persistedReducerKeys.includes(key)) {
-      persistedReducers[key] = persistReducer(
-        { key, storage },
-        injectedReducers[key]
-      );
-    }
-  });
-  return persistedReducers;
+  whitelist: ['user'],
 };
 
 /**
