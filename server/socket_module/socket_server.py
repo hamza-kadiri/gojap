@@ -1,7 +1,7 @@
 """Socket entry point."""
 
 from flask_socketio import Namespace, emit, join_room, leave_room
-from flask import current_app as app
+from flask import current_app as app, request
 
 from helpers.db_selectors import get_item_id_from_table_id_and_index, get_item_index_from_table_id_and_id
 from services import UserService
@@ -31,6 +31,7 @@ class SocketServer(Namespace):
         """Create the Socket Server object."""
         self.connected_by_jap_event = {}
         self.connected_at_table = {}
+        self.session_id_user_id = {}
         super().__init__()
 
     @staticmethod
@@ -81,7 +82,7 @@ class SocketServer(Namespace):
         """Remove a user from list of people on a given table."""
         if table_id in self.connected_at_table.keys():
             self.connected_at_table[table_id] = list(filter(
-                lambda x: x["id"] == user_id,
+                lambda x: x["id"] != user_id,
                 self.connected_at_table[table_id]
             ))
         else:
@@ -109,13 +110,23 @@ class SocketServer(Namespace):
     def on_connect(self):
         """Call when a connection socket is set with a client."""
         app.logger.info("Connection establish in socket with a client")
-        print(self)
         emit('my response', {'data': 'Connected'})
 
     def on_disconnect(self):
         """Call when a connection socket is lost with a client."""
         app.logger.info("Connection socket lost with a client")
-        pass
+        app.logger.info("INFO")
+        app.logger.info(request.sid)
+        user_data = self.session_id_user_id.pop(request.sid) if request.sid in self.session_id_user_id else None
+        if user_data:
+            app.logger.info(user_data)
+            self.remove_from_event(user_data["user_id"], self.get_jap_event_room(user_data["jap_event_id"]))
+            if "table_id" in user_data:
+                self.remove_from_table(user_data["user_id"], user_data["table_id"])
+        app.logger.info(self.connected_by_jap_event)
+        app.logger.info(self.session_id_user_id)
+        app.logger.info(self.connected_at_table)
+
 
     def on_join_jap(self, data):
         """Call on message JOIN_JAP.
@@ -132,8 +143,13 @@ class SocketServer(Namespace):
             }
         """
         app.logger.debug(data)
+        app.logger.info("INFO")
+        app.logger.info(request.sid)
+        session_id = request.sid
         user_id = data['user_id']
         jap_event_id = data["jap_event_id"]
+
+        self.session_id_user_id[session_id] = {"user_id":user_id, "jap_event_id":jap_event_id}
 
         jap_event = JapEventService.get_jap_event(jap_event_id)
 
@@ -149,7 +165,7 @@ class SocketServer(Namespace):
         new_member = UserService.get_user(user_id)
         room = self.get_jap_event_room(data['jap_event_id'])
 
-        if asdict(new_member) not in self.connected_by_jap_event[room]:
+        if room not in self.connected_by_jap_event or asdict(new_member) not in self.connected_by_jap_event[room]:
             join_room(room)
             self.add_to_event(new_member, room)
             emit(
@@ -222,6 +238,8 @@ class SocketServer(Namespace):
 
         table = TableService.get_table(data['table_id'])
         user = UserService.get_user(data['user_id'])
+
+        self.session_id_user_id[request.sid]["table_id"] = table.id
 
         self.add_to_table(user, table)
 
