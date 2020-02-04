@@ -4,25 +4,26 @@ from models.model import JapEvent, User, jap_event_members, db, Table
 import datetime
 from dataclasses import asdict
 from .table_services import TableService
+from typing import Dict, Optional, List, Tuple
 
 
 class JapEventService:
     """Jap event service class."""
 
     @staticmethod
-    def get_all_jap_events():
+    def get_all_jap_events() -> List[JapEvent]:
         """Get all japs."""
         jap_events = JapEvent.query.all()
         return jap_events
 
     @staticmethod
-    def get_jap_event(jap_event_id):
+    def get_jap_event(jap_event_id: int) -> JapEvent:
         """Get jap event with it's id."""
         jap_event = JapEvent.query.get(jap_event_id)
         return jap_event
 
     @staticmethod
-    def add_members_to_jap_event(jap_event_id, user_ids):
+    def add_members_to_jap_event(jap_event_id: int, user_ids: list) -> List[User]:
         """Add multiple people to a jap event.
 
         Args :
@@ -46,7 +47,7 @@ class JapEventService:
         return jap_event.members
 
     @staticmethod
-    def join_jap_event(jap_event_id, user_id):
+    def join_jap_event(jap_event_id: int, user_id: int) -> Tuple[JapEvent, User]:
         """Process join jap request.
 
         Return updated data after changing entries in flash memory or DB
@@ -65,7 +66,7 @@ class JapEventService:
         return jap_event, new_member
 
     @staticmethod
-    def create_jap_event(event_name, description, jap_place_id, created_by, date):
+    def create_jap_event(event_name: str, description: str, jap_place_id: int, created_by: int, date: datetime.datetime) -> JapEvent:
         """
         Create a new jap event. And add a default table to this jap event with the creator as emperor.
 
@@ -89,7 +90,7 @@ class JapEventService:
         return jap_event
 
     @staticmethod
-    def get_jap_events_for_user(user_id):
+    def get_jap_events_for_user(user_id: int) -> List[JapEvent]:
         """Get all jap events for a given user.
 
         Args :
@@ -104,7 +105,7 @@ class JapEventService:
         return jap_events
 
     @staticmethod
-    def get_upcoming_jap_events_for_user(user_id):
+    def get_upcoming_jap_events_for_user(user_id: int) -> List[JapEvent]:
         """Get all upcoming jap events for a given user.
 
         Args :
@@ -121,7 +122,7 @@ class JapEventService:
         return jap_events
 
     @staticmethod
-    def update_status(jap_event_id, status):
+    def update_status(jap_event_id: int, status: int) -> JapEvent:
         """Update status for a given jap.
 
         Args :
@@ -141,7 +142,7 @@ class JapEventService:
         return jap_event
 
     @staticmethod
-    def get_tables_for_a_jap(jap_event_id):
+    def get_tables_for_a_jap(jap_event_id: int) -> List[Table]:
         """Get tables for a jap event id.
 
         Args :
