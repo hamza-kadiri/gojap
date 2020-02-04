@@ -1,6 +1,6 @@
 """User blueprint."""
 
-from flask import Blueprint, request, abort, jsonify
+from flask import Blueprint, request, abort, jsonify, Response
 # from sqlalchemy import or
 from typing import Dict, Optional, List
 from services.user_services import UserService
@@ -13,7 +13,7 @@ user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
 
 
 @user_blueprint.route('<int:user_id>', methods=['GET'])
-def get_user(user_id: int) -> Optional[{User}]:
+def get_user(user_id: int) -> Response:
     """Find a given user.
 
     Returns :
@@ -27,7 +27,7 @@ def get_user(user_id: int) -> Optional[{User}]:
 
 
 @user_blueprint.route('', methods=['POST'])
-def create_user() -> {User}:
+def create_user() -> Response:
     """Create a new user.
 
     Args :
@@ -46,7 +46,7 @@ def create_user() -> {User}:
 
 
 @user_blueprint.route('<int:user_id>', methods=['DELETE'])
-def remove_user(user_id: int) -> Optional[{User}]:
+def remove_user(user_id: int) -> Response:
     """Delete a user.
 
     Returns :
@@ -60,7 +60,7 @@ def remove_user(user_id: int) -> Optional[{User}]:
 
 
 @user_blueprint.route('/all', methods=['GET'])
-def get_all_users() -> List[{User}]:
+def get_all_users() -> Response:
     """Display all users.
 
     Returns :

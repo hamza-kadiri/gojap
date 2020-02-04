@@ -1,6 +1,6 @@
 """Building services for table management."""
 import sqlalchemy
-
+from typing import Dict, Optional, List
 from models.model import Table, User, db, JapEvent, table_members
 from sqlalchemy import and_
 from services.command_service import CommandService
@@ -10,7 +10,7 @@ class TableService:
     """Table Service class."""
 
     @staticmethod
-    def create_table(user_id: int, jap_event_id: int):
+    def create_table(user_id: int, jap_event_id: int) -> Table:
         """
         Create a new table.
 
@@ -34,7 +34,7 @@ class TableService:
         return table
 
     @staticmethod
-    def get_table(table_id):
+    def get_table(table_id: int) -> Table:
         """
         Get a table.
 
@@ -45,7 +45,7 @@ class TableService:
         return table
 
     @staticmethod
-    def set_current_command_id(table_id: int, current_command_id: int):
+    def set_current_command_id(table_id: int, current_command_id: int) -> Table:
         """
         Set the new current command ID when the emperor changes the item.
 
@@ -59,7 +59,7 @@ class TableService:
         return table
 
     @staticmethod
-    def remove_table(id: int):
+    def remove_table(id: int) -> Optional[Table]:
         """
         Delete table.
 
@@ -79,7 +79,7 @@ class TableService:
             return None
 
     @staticmethod
-    def add_user_to_table(table_id: int, user_ids):
+    def add_user_to_table(table_id: int, user_ids: list) -> Table:
         """
         Add a user to a table.
 
@@ -106,7 +106,7 @@ class TableService:
         return table
 
     @staticmethod
-    def set_table_status(table_id: int, status: int):
+    def set_table_status(table_id: int, status: int) -> Table:
         """
         Update status of a table.
 
@@ -125,7 +125,7 @@ class TableService:
         return table
 
     @staticmethod
-    def get_user_table(user_id: int, jap_event_id: int):
+    def get_user_table(user_id: int, jap_event_id: int) -> Optional[Table]:
         """
         Get a user's table.
 
@@ -153,7 +153,7 @@ class TableService:
         return table
 
     @staticmethod
-    def is_emperor(user_id, table_id):
+    def is_emperor(user_id, table_id) -> bool:
         """Check if a user is emperor."""
         table = Table.query.get(table_id)
         return True
