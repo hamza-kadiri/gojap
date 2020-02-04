@@ -12,57 +12,25 @@ import { compose } from 'redux';
 import { changeTitle } from 'containers/Header/actions';
 import { useInjectReducer } from 'utils/injectReducer';
 import { useInjectSaga } from 'utils/injectSaga';
-import TextField from '@material-ui/core/TextField';
 import StyledButton from 'components/Button';
 import H1 from 'components/H1';
-import MembersListItem from 'components/MembersListItem';
-import ListWrapper from 'components/ListWrapper';
 import history from 'utils/history';
 import ContainerWrapper from 'components/ContainerWrapper';
 
-import makeSelectAddTablePage, { makeSelectMembers } from './selectors';
+import makeSelectAddTablePage from './selectors';
 import { addTable } from './actions';
 import reducer from './reducer';
 import saga from './saga';
 
-export function AddTablePage({ dispatch, members }) {
+export function AddTablePage({ dispatch }) {
   useInjectReducer({ key: 'addTablePage', reducer });
   useInjectSaga({ key: 'addTablePage', saga });
-  const [name, setName] = React.useState();
 
   useEffect(() => {
-    // dispatch(loadMembers()); /// Code the action
     dispatch(changeTitle('Ajouter une table'));
   }, []);
 
-  const handleClickOnMember = item => {
-    console.log('click on member', item);
-  };
-
-  const handleClickOnEmperor = item => {
-    console.log('click on emperor', item);
-  };
-
-  const membersListProps = {
-    loading: false,
-    error: false,
-    items: members,
-    component: MembersListItem,
-    multiline: true,
-    onClickItem: handleClickOnMember,
-  };
-
-  const emperorListProps = {
-    loading: false,
-    error: false,
-    items: members,
-    component: MembersListItem,
-    multiline: true,
-    onClickItem: handleClickOnEmperor,
-  };
-
   const handleClickValidate = () => {
-    console.log('valider');
     dispatch(addTable());
     history.goBack();
   };
@@ -70,29 +38,17 @@ export function AddTablePage({ dispatch, members }) {
   return (
     <ContainerWrapper>
       <H1>Ajouter une table:</H1>
-      <TextField
-        label="Nom de la table"
-        value={name}
-        onChange={event => setName(event.target.value)}
-      />
-      <p>Empereur:</p>
-      <ListWrapper {...emperorListProps} />
-      <p>Membres:</p>
-      <ListWrapper {...membersListProps} />
       <StyledButton onClick={handleClickValidate}>Créer la table</StyledButton>
     </ContainerWrapper>
   );
 }
 
-
 AddTablePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   addTablePage: makeSelectAddTablePage(),
-  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {
