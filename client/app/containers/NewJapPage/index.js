@@ -82,7 +82,7 @@ export function NewJapPage({ dispatch, japPlaces }) {
           ampm={false}
           label="With keyboard"
           value={date}
-          onChange={event => setDate(event.target.value)}
+          onChange={event => setDate(event)}
           disablePast
           format="yyyy/MM/dd HH:mm"
         />

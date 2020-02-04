@@ -216,7 +216,7 @@ class Photo(db.Model):
     jap_event_id = db.Column(db.Integer, db.ForeignKey(
         'jap_event.id'), nullable=False)
 
-
+@dataclass
 class Item(db.Model):
     """
     Defines a new Item in the database.
