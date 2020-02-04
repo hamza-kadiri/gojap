@@ -10,7 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import styled, { ThemeProvider } from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
@@ -22,6 +22,7 @@ import routes from 'utils/routes';
 import GlobalStyle from '../../global-styles';
 import theme from '../../theme';
 import { makeSelectLocation } from './selectors';
+import { makeSelectLogin } from '../LoginContainer/selectors';
 import { toggleRecap } from '../OrderScreen/actions';
 
 const AppWrapper = styled.div`
@@ -36,7 +37,29 @@ const SwitchWrapper = styled.div`
   display: flex;
 `;
 
-function App({ router, dispatch }) {
+const PrivateRoute = ({ user, component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      user.id !== null ? (
+        <Component {...props} />
+      ) : (
+          <Redirect to="/login" />
+        )
+    }
+  />
+);
+
+const GuestRoute = ({ user, component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      <Component {...props} />
+    }
+  />
+);
+
+function App({ router, dispatch, user }) {
   const currentKey = router.pathname.split('/')[1] || '/';
   const handleOpenDrawer = () => {
     switch (currentKey) {
@@ -57,9 +80,23 @@ function App({ router, dispatch }) {
             <Header handleOpenDrawer={handleOpenDrawer} />
             <SwitchWrapper>
               <Switch>
-                {routes.map(({ path, Component }) => (
-                  <Route key={path} exact path={path} component={Component} />
-                ))}
+                {routes.map(({ path, Component }) => {
+                  return (
+                    path === '/login' ?
+                      <GuestRoute
+                        key={path}
+                        exact
+                        path={path}
+                        component={Component}
+                        user={user} /> :
+                      <PrivateRoute
+                        key={path}
+                        exact
+                        path={path}
+                        component={Component}
+                        user={user} />)
+                }
+                )}
                 <Route path="" component={NotFoundPage} />
               </Switch>
             </SwitchWrapper>
@@ -77,10 +114,13 @@ function App({ router, dispatch }) {
 App.propTypes = {
   router: PropTypes.object,
   dispatch: PropTypes.func,
+  user: PropTypes.object,
 };
 const mapStateToProps = createStructuredSelector({
   router: makeSelectLocation(),
+  user: makeSelectLogin(),
 });
+
 function mapDispatchToProps(dispatch) {
   return {
     dispatch,

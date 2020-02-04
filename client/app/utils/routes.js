@@ -9,8 +9,10 @@ import MembersList from 'containers/MembersList';
 import JoinJapPage from 'components/JoinJapPage';
 import AddMembersPage from 'containers/AddMembersPage';
 import AddTablePage from 'containers/AddTablePage';
+import LoginPage from 'containers/LoginContainer';
 
 const routes = [
+  { path: '/login', name: 'LoginPage', Component: LoginPage },
   { path: '/', name: 'HomePage', Component: HomePage },
   { path: '/dashboard', name: 'DashboardPage', Component: DashboardPage },
   { path: '/profile', name: 'ProfilePage', Component: ProfilePage },
