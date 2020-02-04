@@ -65,26 +65,26 @@ class JapEventService:
         return jap_event, new_member
 
     @staticmethod
-    def create_jap_event(event_name, description, jap_place_id, created_by, date):
+    def create_jap_event(event_name, description, jap_place_id, creator_id, date):
         """
         Create a new jap event. And add a default table to this jap event with the creator as emperor.
 
         Args :
-            data = {event_name, description, jap_place_id, created_by, date}
+            data = {event_name, description, jap_place_id, creator_id, date}
         Returns :
             jap_event
         """
         jap_event = JapEvent(event_name=event_name,
                              description=description,
                              jap_place_id=jap_place_id,
-                             created_by=created_by,
+                             creator_id=creator_id,
                              date=date)
 
         db.session.add(jap_event)
         db.session.commit()
-        table = TableService.create_table(created_by, jap_event.id)
+        table = TableService.create_table(creator_id, jap_event.id)
 
-        JapEventService.join_jap_event(jap_event.id, created_by)
+        JapEventService.join_jap_event(jap_event.id, creator_id)
 
         return jap_event
 

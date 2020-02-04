@@ -51,7 +51,10 @@ class SocketServer(Namespace):
     def add_to_event(self, user, room):
         """Add a user to list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
-            self.connected_by_jap_event[room].append(asdict(user))
+            dict_user = asdict(user)
+            event_members = self.connected_by_jap_event[room]
+            if dict_user not in event_members:
+                event_members.append(dict_user)
         else:
             self.connected_by_jap_event[room] = [asdict(user)]
 
@@ -137,7 +140,7 @@ class SocketServer(Namespace):
             self.on_join_table(
                 {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": table.id})
         else:
-            if jap_event.created_by == user_id:
+            if jap_event.creator_id == user_id:
                 raise (
                     Exception("Error at jap creation for jap creator, not added to a table"))
 
@@ -208,7 +211,6 @@ class SocketServer(Namespace):
                 members
             }
         """
-        app.logger.debug(data)
         # app.logger.info(
         #     f"Join table {data['table_id']} received from {data['username']}")
         jap_event_room = self.get_jap_event_room(data['jap_event_id'])
@@ -223,12 +225,16 @@ class SocketServer(Namespace):
         join_room(table_room)
         join_room(user_room)
 
+        app.logger.debug(data)
+        print(jap_event_room)
+
         new_member = asdict(user)
         emit(
             socket_messages['USER_JOINED_TABLE'],
             {
                 "members": self.connected_at_table[table.id],
                 "new_member": new_member,
+                "is_emperor": data["user_id"] == table.emperor
             },
             room=jap_event_room
         )

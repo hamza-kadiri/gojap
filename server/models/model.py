@@ -85,7 +85,8 @@ class JapEvent(db.Model):
     description: str
     date: datetime.datetime
     created_at: datetime.datetime
-    created_by: int
+    creator_id: int
+    created_by: User
     jap_place_id: int
     status: int
     tables: list
@@ -98,7 +99,8 @@ class JapEvent(db.Model):
     date = db.Column(db.DateTime(), unique=False, nullable=False)
     created_at = db.Column(db.DateTime(), unique=False,
                            nullable=True, default=datetime.datetime.now())
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.relationship('User')
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
