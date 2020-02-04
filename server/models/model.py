@@ -147,7 +147,7 @@ class Achievement(db.Model):
         """Representation method."""
         return '<Achievement %r>' % self.name
 
-
+@dataclass
 class Event(db.Model):
     """
     Defines a new Event in the database.
