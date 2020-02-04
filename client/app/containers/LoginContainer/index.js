@@ -17,10 +17,10 @@ import TextField from '@material-ui/core/TextField';
 import history from 'utils/history';
 import H1 from 'components/H1';
 import StyledButton from 'components/Button';
-import { makeSelectLogin } from './selectors';
-import { login } from './actions';
-import reducer from './reducer';
-import saga from './saga';
+import makeSelectUser from '../User/selectors';
+import { login } from '../User/actions';
+import reducer from '../User/reducer';
+import saga from '../User/saga';
 
 export function LoginContainer({ dispatch, user }) {
   useInjectReducer({ key: 'loginContainer', reducer });
@@ -58,7 +58,7 @@ LoginContainer.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  user: makeSelectLogin(),
+  user: makeSelectUser(),
 });
 
 function mapDispatchToProps(dispatch) {

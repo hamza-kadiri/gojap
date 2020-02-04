@@ -12,13 +12,16 @@ import {
   CHANGE_TABLE_ID,
 } from './constants';
 
-export function login() {
+export function login(username) {
   return {
     type: LOGIN,
+    payload: {
+      username,
+    },
   };
 }
 
-export function loginSucess(user) {
+export function loginSuccess(user) {
   return {
     type: LOGIN_SUCCESS,
     user,
