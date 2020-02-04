@@ -93,10 +93,10 @@ export function JapScreen({ dispatch, japId, members, jap }) {
   const [isDescriptionClamped, setIsDescriptionClamped] = useState(true);
 
   const moreMenu = [
-    {
+    /* {
       name: 'Modifier le jap',
       onClick: () => console.log('add-users'),
-    },
+    }, */
     {
       name: 'Ajouter des participants',
       onClick: () => history.push('/addmembers'),
