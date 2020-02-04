@@ -12,7 +12,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import { isBrowser } from 'react-device-detect';
 import history from 'utils/history';
+import moment from 'moment';
 
+moment.locale('fr');
 export function JapListItem(props) {
   const { item, onClickItem } = props;
   // Put together the content of the Jap
@@ -28,7 +30,10 @@ export function JapListItem(props) {
       {item.event_name ? (
         <Grid container justify="space-between">
           <Grid item>
-            <ListItemText primary={item.event_name} secondary={item.date} />
+            <ListItemText
+              primary={item.event_name}
+              secondary={moment(item.date).format('llll')}
+            />
           </Grid>
           <Grid item>
             <ListItemText

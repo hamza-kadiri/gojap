@@ -118,9 +118,7 @@ export function JapScreen({ dispatch, japId, members, jap }) {
   useEffect(() => {
     const japEventId = history.location.pathname.split('/jap/')[1];
     dispatch(changeJapId(japEventId));
-    console.log(japEventId);
     dispatch(getJap(japEventId));
-    return () => dispatch(changeJapId(null));
   }, []);
 
   useEffect(() => {

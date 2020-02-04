@@ -91,7 +91,8 @@ class SocketServer(Namespace):
     @staticmethod
     def emit_command_started(current_command, room):
         """Emit command started message after START_COMMAND and JOIN_COMMAND."""
-        item_index = get_item_index_from_table_id_and_id(current_command["table_id"], current_command['item_id'])
+        item_index = get_item_index_from_table_id_and_id(
+            current_command["table_id"], current_command['item_id'])
         emit(
             socket_messages['COMMAND_STARTED'],
             {
@@ -108,6 +109,7 @@ class SocketServer(Namespace):
     def on_connect(self):
         """Call when a connection socket is set with a client."""
         app.logger.info("Connection establish in socket with a client")
+        print(self)
         emit('my response', {'data': 'Connected'})
 
     def on_disconnect(self):
@@ -226,7 +228,6 @@ class SocketServer(Namespace):
         join_room(user_room)
 
         app.logger.debug(data)
-        print(jap_event_room)
 
         new_member = asdict(user)
         emit(
@@ -331,7 +332,8 @@ class SocketServer(Namespace):
         """
         app.logger.debug(data)
 
-        item_id = get_item_id_from_table_id_and_index(data['table_id'], data['index'])
+        item_id = get_item_id_from_table_id_and_index(
+            data['table_id'], data['index'])
         if TableService.is_emperor(data['user_id'], data['table_id']):
             command = CommandService.create_command(
                 item_id, data['table_id'])

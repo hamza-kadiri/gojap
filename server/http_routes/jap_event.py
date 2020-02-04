@@ -51,7 +51,7 @@ def create_jap_event():
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route('user/<int:user_id>', methods=['GET'])
 def get_events_for_user(user_id):
     """Get all jap_events for a given user.
 
@@ -62,7 +62,7 @@ def get_events_for_user(user_id):
         list of serialized jap_events
     """
     jap_events = JapEventService.get_jap_events_for_user(user_id)
-    return jsonify({"events": jap_events})
+    return jsonify(jap_events)
 
 
 @jap_event_blueprint.route('/upcoming/<int:user_id>', methods=['GET'])

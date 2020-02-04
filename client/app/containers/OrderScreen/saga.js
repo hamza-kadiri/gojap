@@ -35,6 +35,7 @@ function connect(username, userId, japId, tableId) {
         table_id: 1,
         is_jap_master: true,
       });
+      console.log(socket);
       resolve(socket);
     });
   });
@@ -108,7 +109,9 @@ export function* subscribe(socket) {
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
     socket.on(MESSAGES.COMMAND_STARTED, data => userJoinedTable(data));
     socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
-    return () => {};
+    return () => {
+      socket.off('newTask', () => console.log('coucou'));
+    };
   });
 }
 // Individual exports for testing

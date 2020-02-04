@@ -34,7 +34,6 @@ const japScreenReducer = (state = initialState, action) =>
         draft.error = action.error;
         break;
       case CHANGE_JAP_MEMBERS:
-        console.log(action);
         draft.onlineMembers = action.payload.members;
         draft.lastMember = action.payload.new_member;
     }

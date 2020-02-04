@@ -1,9 +1,18 @@
-import { takeLatest, call, put, select, take, fork } from 'redux-saga/effects';
+import {
+  takeLatest,
+  call,
+  put,
+  select,
+  take,
+  fork,
+  cancel,
+} from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 import { eventChannel } from 'redux-saga';
 import io from 'socket.io-client';
 import { makeSelectJapId, makeSelectUserId } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
+import { JOIN_TABLE_SUCCESS } from 'containers/JoinTable/constants';
 import { GET_JAP } from './constants';
 import { getJapSuccess, getJapError, changeJapMembers } from './actions';
 
@@ -35,12 +44,7 @@ export function* subscribe(socket) {
       dispatch(changeJapMembers(data));
       // emit(changedOrderQuantity(data, userId));
     };
-    const userJoinedTable = data => {
-      console.log('joinedTable');
-      // emit(changedOrderQuantity(data, userId));
-    };
     socket.on(MESSAGES.USER_JOINED_JAP, userJoinedJap);
-    socket.on(MESSAGES.USER_JOINED_TABLE, userJoinedTable);
     return () => {};
   });
 }
@@ -57,11 +61,29 @@ export function* getJap({ japId }) {
   }
 }
 
+export function* joinJapTableOnTableSuccess(socket) {
+  while (true) {
+    const { payload } = yield take(JOIN_TABLE_SUCCESS);
+    const userId = yield select(makeSelectUserId());
+    const japId = yield select(makeSelectJapId());
+    const tableId = 1;
+    console.log('emitting');
+    socket.emit(MESSAGES.JOIN_TABLE, {
+      user_id: userId,
+      jap_id: japId,
+      table_id: tableId,
+    });
+  }
+}
+
+export function* joinJap() {}
+
 export function* japEventFlow() {
   const userId = yield select(makeSelectUserId());
   const japId = yield select(makeSelectJapId());
   const socket = yield call(connect, userId, japId);
-  yield fork(read, socket);
+  const task = yield fork(read, socket);
+  yield fork(joinJapTableOnTableSuccess, socket);
 }
 
 /**
