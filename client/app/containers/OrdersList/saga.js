@@ -1,23 +1,21 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
-import { LOAD_ORDERS } from './constants';
-import { ordersLoaded, ordersLoadingError } from './actions';
+import { LOAD_MENU } from './constants';
+import { menuLoaded, menuLoadingError } from './actions';
 import { START_ORDER } from '../OrderScreen/constants';
 
 /**
- * Orders request/response handler
+ * Menu request/response handler
  */
-export function* getOrders() {
-  // Select username from store
-
-  const requestUrl = 'orders';
+export function* getMenu(action) {
+  const requestUrl = `jap_place/menu/${action.japPlaceId}`;
 
   try {
     // Call our request helper (see 'utils/request')
-    const orders = yield call(request, api, requestUrl, {});
-    yield put(ordersLoaded(orders));
+    const menu = yield call(request, api, requestUrl);
+    yield put(menuLoaded(menu));
   } catch (err) {
-    yield put(ordersLoadingError(err));
+    yield put(menuLoadingError(err));
   }
 }
 
@@ -25,6 +23,6 @@ export function* getOrders() {
  * Root saga manages watcher lifecycle
  */
 export default function* ordersData() {
-  yield takeLatest(LOAD_ORDERS, getOrders);
-  yield takeLatest(START_ORDER, getOrders);
+  yield takeLatest(LOAD_MENU, getMenu);
+  yield takeLatest(START_ORDER, getMenu);
 }

@@ -15,23 +15,22 @@ import { useInjectReducer } from 'utils/injectReducer';
 import OrderListItem from 'components/OrderListItem';
 import ListWrapper from 'components/ListWrapper';
 import Wrapper from 'components/FlexHeightWrapper';
-import makeSelectOrdersList from './selectors';
+import makeSelectOrdersList, { makeSelectJapPlaceId } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { loadOrders } from './actions';
+import { loadMenu } from './actions';
 
 const OrdersList = memo(
-  function OrdersList({ dispatch, ordersList, onClickItem }) {
+  function OrdersList({ dispatch, ordersList, onClickItem, japPlaceId }) {
     useInjectReducer({ key: 'ordersList', reducer });
     useInjectSaga({ key: 'ordersList', saga });
-
     useEffect(() => {
-      dispatch(loadOrders());
+      dispatch(loadMenu(japPlaceId));
     }, []);
 
     const ordersListProps = {
       ...ordersList,
-      items: ordersList.orders,
+      items: ordersList.menu.items,
       component: OrderListItem,
       multiline: true,
       onClickItem,
@@ -50,10 +49,12 @@ OrdersList.propTypes = {
   dispatch: PropTypes.func.isRequired,
   ordersList: PropTypes.object,
   onClickItem: PropTypes.func,
+  japPlaceId: PropTypes.number,
 };
 
 const mapStateToProps = createStructuredSelector({
   ordersList: makeSelectOrdersList(),
+  japPlaceId: makeSelectJapPlaceId(),
 });
 
 function mapDispatchToProps(dispatch) {
