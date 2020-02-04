@@ -31,6 +31,7 @@ export function joinedTable(data) {
   return {
     type: JOINED_TABLE,
     itemId: data.current_command.item_id,
+    index: data.index,
     commandId: data.current_command.id,
   };
 }
@@ -39,19 +40,20 @@ export function changedCurrentItem(data) {
   return {
     type: CHANGE_CURRENT_ITEM_SUCCESS,
     itemId: data.item_id,
+    index: data.index,
     commandId: data.command_id,
   };
 }
 
-export function startOrder(bool) {
+export function startOrder(japPlaceId) {
   return {
     type: START_ORDER,
-    payload: bool,
+    japPlaceId,
   };
 }
 
 export function changedOrderQuantity(
-  { item_id, accumulated, command_id, summary },
+  { item_id, index, accumulated, command_id, summary },
   userId
 ) {
   const userCommand = summary.users.filter(
@@ -61,6 +63,7 @@ export function changedOrderQuantity(
   return {
     type: CHANGE_ORDER_QUANTITY_SUCCESS,
     itemId: item_id,
+    index,
     commandId: command_id,
     accumulated,
     individual,

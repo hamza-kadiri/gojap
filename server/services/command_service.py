@@ -15,13 +15,11 @@ class CommandService():
         Args :
             data = {item_id, table_id}
         """
-        try:
+        command = CommandItem.query.filter_by(table_id=table_id, item_id=item_id).first()
+        if not command:
             command = CommandItem(item_id=item_id, table_id=table_id)
             db.session.add(command)
             db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            return CommandItem.query.filter_by(table_id=table_id, item_id=item_id).first()
         return command
 
     @staticmethod
@@ -65,13 +63,8 @@ class CommandService():
             command = CommandItem.query.filter_by(id=command_id).first()
             command.users.append(user_command)
 
-        try:
-            db.session.merge(command)
-            db.session.commit()
-            pass
-        except IntegrityError:
-            db.session.rollback()
-
+        db.session.merge(command)
+        db.session.commit()
         return command
 
     @staticmethod
