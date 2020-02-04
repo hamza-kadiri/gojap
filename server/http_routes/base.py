@@ -25,7 +25,7 @@ def get_japs():
     params = {'term': 'japonais a volonté', 'locale': 'fr_FR', 'latitude': 48.754190,
               'longitude': 2.301974, 'radius': 5000, 'categories': 'japanese', 'sort_by': 'distance'}
     headers = {'Authorization':
-               f"Bearer {app.config['YELP_BEARER_TOKEN']}",
+               "Bearer {app.config['YELP_BEARER_TOKEN']}",
                }
     r = requests.get(url, params=params, headers=headers)
     return jsonify(r.json())
