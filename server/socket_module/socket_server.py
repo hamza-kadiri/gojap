@@ -146,18 +146,19 @@ class SocketServer(Namespace):
 
         new_member = UserService.get_user(user_id)
         room = self.get_jap_event_room(data['jap_event_id'])
-        join_room(room)
-        self.add_to_event(new_member, room)
 
-        emit(
-            socket_messages['USER_JOINED_JAP'],
-            {
-                "jap_event_id": data['jap_event_id'],
-                "new_member": asdict(new_member),
-                "members": self.connected_by_jap_event[room]
-            },
-            room=room
-        )
+        if asdict(new_member) not in self.connected_by_jap_event[room]:
+            join_room(room)
+            self.add_to_event(new_member, room)
+            emit(
+                socket_messages['USER_JOINED_JAP'],
+                {
+                    "jap_event_id": data['jap_event_id'],
+                    "new_member": asdict(new_member),
+                    "members": self.connected_by_jap_event[room]
+                },
+                room=room
+            )
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.
@@ -226,18 +227,18 @@ class SocketServer(Namespace):
         join_room(user_room)
 
         app.logger.debug(data)
-        print(jap_event_room)
 
         new_member = asdict(user)
-        emit(
-            socket_messages['USER_JOINED_TABLE'],
-            {
-                "members": self.connected_at_table[table.id],
-                "new_member": new_member,
-                "is_emperor": data["user_id"] == table.emperor
-            },
-            room=jap_event_room
-        )
+        if user.id in [member.id for member in table.members]:
+            emit(
+                socket_messages['USER_JOINED_TABLE'],
+                {
+                    "members": self.connected_at_table[table.id],
+                    "new_member": new_member,
+                    "is_emperor": data["user_id"] == table.emperor
+                },
+                room=jap_event_room
+            )
 
     def on_start_command(self, data):
         """Call on message START_COMMAND.
@@ -260,7 +261,7 @@ class SocketServer(Namespace):
         app.logger.debug(data)
         table_room = self.get_table_room(data['table_id'])
 
-        if TableService.is_emperor(data["user_id"], data["table_id"]):
+        if TableService.is_emperor(data["user_id"], data["table_id"]) and TableService.get_table( data["table_id"]).status == 0:
             # Make the command start for this table
             TableService.set_table_status(data['table_id'], 1)
 
