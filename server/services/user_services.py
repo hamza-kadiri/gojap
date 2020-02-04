@@ -1,4 +1,5 @@
 """Building services for user management."""
+from typing import Dict, Optional, List
 from flask import abort
 from models.model import db, User
 from sqlalchemy import or_
@@ -9,7 +10,7 @@ class UserService():
     """UserService class."""
 
     @staticmethod
-    def create_user(username, email, phone, avatar_url):
+    def create_user(username: str, email: str, phone: str, avatar_url: str) -> User:
         """
         Create a new user.
 
@@ -32,7 +33,7 @@ class UserService():
         return user
 
     @staticmethod
-    def get_user(user_id):
+    def get_user(user_id: int) -> User:
         """
         Get user infos.
 
@@ -43,7 +44,7 @@ class UserService():
         return user
 
     @staticmethod
-    def get_user_by_name(user_name):
+    def get_user_by_name(user_name: str) -> User:
         """
         Get user infos with the name given.
 
@@ -54,7 +55,7 @@ class UserService():
         return user
 
     @staticmethod
-    def remove_user(user_id):
+    def remove_user(user_id: int) -> Optional[User]:
         """
         Delete user.
 
@@ -71,7 +72,7 @@ class UserService():
             return None
 
     @staticmethod
-    def get_all_users():
+    def get_all_users() -> List[User]:
         """Display all users."""
         users = User.query.all()
         return users
