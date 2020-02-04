@@ -11,9 +11,9 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import { changeTitle } from 'containers/Header/actions';
 import { useInjectReducer } from 'utils/injectReducer';
+import { useInjectSaga } from 'utils/injectSaga';
 import TextField from '@material-ui/core/TextField';
 import StyledButton from 'components/Button';
-import styled from 'styled-components';
 import H1 from 'components/H1';
 import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
@@ -21,10 +21,13 @@ import history from 'utils/history';
 import ContainerWrapper from 'components/ContainerWrapper';
 
 import makeSelectAddTablePage, { makeSelectMembers } from './selectors';
+import { addTable } from './actions';
 import reducer from './reducer';
+import saga from './saga';
 
 export function AddTablePage({ dispatch, members }) {
   useInjectReducer({ key: 'addTablePage', reducer });
+  useInjectSaga({ key: 'addTablePage', saga });
   const [name, setName] = React.useState();
 
   useEffect(() => {
@@ -60,6 +63,7 @@ export function AddTablePage({ dispatch, members }) {
 
   const handleClickValidate = () => {
     console.log('valider');
+    dispatch(addTable());
     history.goBack();
   };
 
@@ -75,12 +79,11 @@ export function AddTablePage({ dispatch, members }) {
       <ListWrapper {...emperorListProps} />
       <p>Membres:</p>
       <ListWrapper {...membersListProps} />
-      <StyledButton onClick={handleClickValidate}> Créer la table </StyledButton>
+      <StyledButton onClick={handleClickValidate}>Créer la table</StyledButton>
     </ContainerWrapper>
   );
 }
 
-// route /table/adduser
 
 AddTablePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
