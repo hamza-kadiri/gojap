@@ -106,6 +106,10 @@ export function JapScreen({ dispatch, japId, members, jap }) {
       onClick: () => history.push('/addtable'),
     },
     {
+      name: 'Rejoindre une table',
+      onClick: () => history.push('/jointable'),
+    },
+    {
       name: 'Commencer la commande',
       onClick: () => history.push('/order/test'),
     },

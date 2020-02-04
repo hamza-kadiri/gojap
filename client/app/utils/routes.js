@@ -9,6 +9,7 @@ import MembersList from 'containers/MembersList';
 import JoinJapPage from 'components/JoinJapPage';
 import AddMembersPage from 'containers/AddMembersPage';
 import AddTablePage from 'containers/AddTablePage';
+import JoinTable from 'containers/JoinTable';
 import LoginPage from 'containers/LoginContainer';
 
 const routes = [
@@ -24,6 +25,7 @@ const routes = [
   { path: '/addtable', name: 'AddTablePage', Component: AddTablePage },
   { path: '/joinjap', name: 'JoinJapPage', Component: JoinJapPage },
   { path: '/addmembers', name: 'AddMembersPage', Component: AddMembersPage },
+  { path: '/jointable', name: 'JoinTable', Component: JoinTable },
 ];
 
 export default routes;
