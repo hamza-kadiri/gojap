@@ -1,6 +1,7 @@
 """Building services for table management."""
 
 from models.model import UserCommand, db, User, CommandItem
+from typing import Dict, Optional, List, Tuple
 from sqlalchemy.exc import IntegrityError
 
 
@@ -8,7 +9,7 @@ class CommandService():
     """Command service."""
 
     @staticmethod
-    def create_command(item_id, table_id):
+    def create_command(item_id: int, table_id: int) -> CommandItem:
         """
         Create a new command for an item and a table.
 
@@ -23,7 +24,7 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_command(command_id):
+    def get_command(command_id: int) -> CommandItem:
         """
         Get command by id.
 
@@ -34,7 +35,7 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_command_by_table_id(table_id: int):
+    def get_command_by_table_id(table_id: int) -> List[CommandItem]:
         """
         Get command by table id.
 
@@ -45,7 +46,7 @@ class CommandService():
         return commands
 
     @staticmethod
-    def add_user_order_to_command(command_id, user_id, order_amount):
+    def add_user_order_to_command(command_id: int, user_id: int, order_amount: int) -> CommandItem:
         """
         Add a new item for a user on the command of a table.
 
@@ -68,7 +69,7 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_accumulated_order_amount(command_id):
+    def get_accumulated_order_amount(command_id: int) -> int:
         """
         Get accumulated order amount for a command.
 
@@ -87,7 +88,7 @@ class CommandService():
             return 0
 
     @staticmethod
-    def get_all_command_by_table_id(table_id):
+    def get_all_command_by_table_id(table_id: int) -> CommandItem:
         """
         Get all commands for a table.
 
@@ -98,7 +99,7 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_unique_command_by_table_id_and_item_id(table_id, item_id):
+    def get_unique_command_by_table_id_and_item_id(table_id: int, item_id: int) -> CommandItem:
         """
         Get unique command for a table and an item.
 
@@ -110,7 +111,7 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_individual_order_amount(command_id, user_id):
+    def get_individual_order_amount(command_id: int, user_id: int) -> int:
         """
         Get individual order amount for a command and a given user.
 
@@ -127,7 +128,7 @@ class CommandService():
             return 0
 
     @staticmethod
-    def get_command_by_user_and_table(user_id, table_id):
+    def get_command_by_user_and_table(user_id: int, table_id: int) -> List:
         """
         Get command by table id.
 
