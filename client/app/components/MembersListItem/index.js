@@ -51,6 +51,7 @@ function MembersListItem(props) {
 }
 MembersListItem.propTypes = {
   item: PropTypes.object,
+  onClickItem: PropTypes.func,
 };
 
 export default MembersListItem;
