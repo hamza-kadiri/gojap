@@ -332,7 +332,7 @@ class Menu(db.Model):
 
     _tablename_ = 'menu'
     id = db.Column(db.Integer, primary_key=True)
-    items = db.relationship('Item', secondary=item_menus, lazy='subquery',
+    items = db.relationship('Item', secondary=item_menus, order_by="item_menus.c.index_in_menu", lazy='subquery',
                             backref=db.backref('menus', lazy=True))
     jap_place = db.relationship("JapPlace", uselist=False, backref='menu')
 
