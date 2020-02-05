@@ -121,6 +121,23 @@ class JapEventService:
         return jap_events
 
     @staticmethod
+    def get_past_jap_events_for_user(user_id):
+        """Get all upcoming jap events for a given user.
+
+        Args :
+            user_id: int
+
+        Returns :
+            jap_events
+        """
+        current_time = datetime.date.today()
+        jap_events = JapEvent.query.filter(
+            JapEvent.members.any(User.id.__eq__(user_id)),
+            JapEvent.date <= current_time
+        ).all()
+        return jap_events
+
+    @staticmethod
     def update_status(jap_event_id, status):
         """Update status for a given jap.
 

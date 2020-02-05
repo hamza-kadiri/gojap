@@ -126,6 +126,20 @@ def get_tables_jap_event(jap_event_id: int):
     return jsonify(tables)
 
 
+@jap_event_blueprint.route('past/<int:user_id>', methods=['GET'])
+def get_jap_event_by_status(user_id: int):
+    """Get past jap events for a user.
+
+    Args :
+        user_id
+
+    Returns :
+        jap_events: list
+    """
+    jap_events = JapEventService.get_past_jap_events_for_user(user_id)
+    return jsonify(jap_events)
+
+
 @jap_event_blueprint.route('/table/<int:jap_event_id>/<int:user_id>', methods=['GET'])
 def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
     """Get table a user is in Jap Event.
