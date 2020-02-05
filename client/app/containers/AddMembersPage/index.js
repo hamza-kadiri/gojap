@@ -28,7 +28,7 @@ import reducer from './reducer';
 import { loadUsers, addMembersToJap } from './actions';
 import saga from './saga';
 
-export function AddMembersPage({ dispatch, users, japId }) {
+export function AddMembersPage({ dispatch, users, japId, members }) {
   useInjectReducer({ key: 'addMembersPage', reducer });
   useInjectSaga({ key: 'addMembersPage', saga });
   const [membersList, setMembersList] = React.useState([]);
@@ -63,10 +63,21 @@ export function AddMembersPage({ dispatch, users, japId }) {
     history.goBack();
   };
 
+  const customIncludes = (array, item) => {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i].id === item.id) {
+        return true;
+      }
+    };
+    return false;
+  };
+
+  const usersNotInMembers = users.filter(user => !customIncludes(members, user));
+
   const membersListProps = {
     loading: false,
     error: false,
-    items: users,
+    items: usersNotInMembers,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,
@@ -91,12 +102,14 @@ AddMembersPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   users: PropTypes.array,
   japId: PropTypes.number,
+  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   addMembersPage: makeSelectAddMembersPage(),
   users: makeSelectUsers(),
   japId: makeSelectJapId(),
+  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {
