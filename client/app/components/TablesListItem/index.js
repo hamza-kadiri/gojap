@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
-import Chip from '@material-ui/core/Chip';
 
 function TablesListItem(props) {
   const { item, onClickItem } = props;
