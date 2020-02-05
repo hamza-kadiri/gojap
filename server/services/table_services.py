@@ -146,7 +146,7 @@ class TableService:
             table_id = db.session.query(table_members).filter(
                 and_(table_members.c.user_id == user_id,
                      table_members.c.table_id.in_(table_ids))
-            ).one().table_id
+            ).first().table_id
             table = Table.query.filter_by(id=table_id).first()
         except sqlalchemy.orm.exc.NoResultFound:
             table = None

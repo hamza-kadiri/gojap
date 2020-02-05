@@ -33,12 +33,12 @@ import GoJap from 'images/gojap.png';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/AddTablePage/selectors';
-import { makeSelectJapId } from 'containers/User/selectors';
+import { makeSelectJapId, makeSelectTableId } from 'containers/User/selectors';
 import { changeJapId } from 'containers/User/actions';
 import makeSelectJapScreen, { makeSelectJap } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { getJap } from './actions';
+import { getJap, startCommand } from './actions';
 
 moment.locale('fr');
 
@@ -86,7 +86,7 @@ const Ellipsis = ({ setIsClamped }) => (
     </ButtonBase>
   </React.Fragment>
 );
-export function JapScreen({ dispatch, japId, members, jap }) {
+export function JapScreen({ dispatch, japId, tableId, members, jap }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
 
@@ -111,7 +111,7 @@ export function JapScreen({ dispatch, japId, members, jap }) {
     },
     {
       name: 'Commencer la commande',
-      onClick: () => history.push('/order/test'),
+      onClick: () => dispatch(startCommand()),
     },
   ];
 
@@ -230,6 +230,7 @@ const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
   members: makeSelectMembers(),
   japId: makeSelectJapId(),
+  tableId: makeSelectTableId(),
   jap: makeSelectJap(),
 });
 

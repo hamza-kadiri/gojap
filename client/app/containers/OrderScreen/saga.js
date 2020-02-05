@@ -21,21 +21,27 @@ function connect(username, userId, japId, tableId) {
   const socket = io(process.env.SOCKET_URL);
   return new Promise(resolve => {
     socket.on('connect', () => {
-      socket.emit(MESSAGES.JOIN_COMMAND, {
+      socket.emit(MESSAGES.JOIN_JAP, {
         username,
         user_id: userId,
         jap_event_id: japId,
-        table_id: 1,
+        table_id: tableId,
         is_jap_master: true,
       });
       socket.emit(MESSAGES.JOIN_TABLE, {
         username,
         user_id: userId,
         jap_event_id: japId,
-        table_id: 1,
+        table_id: tableId,
         is_jap_master: true,
       });
-      console.log(socket);
+      socket.emit(MESSAGES.JOIN_COMMAND, {
+        username,
+        user_id: userId,
+        jap_event_id: japId,
+        table_id: tableId,
+        is_jap_master: true,
+      });
       resolve(socket);
     });
   });
@@ -55,13 +61,14 @@ export function* writeNextItem(socket) {
     const username = yield select(makeSelectUsername());
     const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
+    const tableId = yield select(makeSelectTableId());
     const commandId = yield select(makeSelectCurrentCommandId());
     socket.emit(MESSAGES.NEXT_ITEM, {
       username,
       user_id: userId,
       command_id: commandId,
       jap_id: japId,
-      table_id: 1,
+      table_id: tableId,
       is_jap_master: true,
       index: payload,
     });
@@ -83,7 +90,7 @@ export function* writeChangeQuantity(socket) {
       user_id: userId,
       jap_id: japId,
       command_id: commandId,
-      table_id: 1,
+      table_id: tableId,
       item_id: itemId,
       index,
       individual,
@@ -103,15 +110,14 @@ export function* subscribe(socket) {
       emit(changedOrderQuantity(data, userId));
     };
     const userJoinedTable = data => {
+      console.log(data);
       emit(joinedTable(data));
       emit(changedOrderQuantity(data, userId));
     };
     socket.on(MESSAGES.ITEM_CHANGED, updateItem);
     socket.on(MESSAGES.COMMAND_STARTED, data => userJoinedTable(data));
     socket.on(MESSAGES.ITEM_CHOSEN, updateOrderQuantity);
-    return () => {
-      socket.off('newTask', () => console.log('coucou'));
-    };
+    return () => {};
   });
 }
 // Individual exports for testing
