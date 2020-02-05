@@ -26,9 +26,11 @@ const japScreenReducer = (state = initialState, action) =>
       case GET_JAP:
         draft.error = null;
         draft.jap = null;
+        draft.table = null;
         break;
       case GET_JAP_SUCCESS:
         draft.jap = action.jap;
+        draft.table = action.table;
         break;
       case GET_JAP_ERROR:
         draft.error = action.error;

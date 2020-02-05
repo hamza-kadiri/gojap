@@ -10,6 +10,8 @@ import {
   ADD_MEMBERS_TO_JAP,
   LOAD_USERS_SUCCESS,
   LOAD_USERS_ERROR,
+  ADD_MEMBERS_TO_JAP_SUCCESS,
+  ADD_MEMBERS_TO_JAP_ERROR,
 } from './constants';
 
 export function defaultAction() {
@@ -45,5 +47,18 @@ export function addMembersToJap(members, japEventId) {
       members,
       japEventId,
     },
+  };
+}
+
+export function addMembersToJapSuccess(members) {
+  return {
+    type: ADD_MEMBERS_TO_JAP_SUCCESS,
+    members,
+  };
+}
+export function addMembersToJapError(error) {
+  return {
+    type: ADD_MEMBERS_TO_JAP_ERROR,
+    error,
   };
 }

@@ -24,11 +24,19 @@ function MembersListItem(props) {
   };
 
   return (
-    <ListItem selected={isSelected} button={onClickItem} divider={onClickItem} onClick={() => (onClickItem ? handleClickItem() : null)}>
+    <ListItem
+      selected={isSelected}
+      button={onClickItem != null}
+      divider={onClickItem != null}
+      onClick={() => (onClickItem ? handleClickItem() : null)}
+    >
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemAvatar>
-            <MediumAvatar src={item.avatar_url && item.picture.medium} alt={item.username} />
+            <MediumAvatar
+              src={item.avatar_url && item.picture.medium}
+              alt={item.username}
+            />
           </ListItemAvatar>
         </Grid>
         <Grid item>

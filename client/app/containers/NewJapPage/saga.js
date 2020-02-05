@@ -3,6 +3,7 @@ import request, { api } from 'utils/request';
 import moment from 'moment';
 
 import { makeSelectUserId } from 'containers/User/selectors';
+import history from 'utils/history';
 import { CREATE_JAP_EVENT, GET_JAP_PLACES } from './constants';
 
 import {
@@ -18,11 +19,8 @@ import {
 export function* createJap(action) {
   // Select username from store
   const { name, description, date, japPlace } = action.payload;
-  console.log(action);
   const requestURL = 'jap_event';
   const userId = yield select(makeSelectUserId());
-  console.log('SAGA');
-  console.log(userId);
   const body = {
     event_name: name,
     description,
@@ -34,6 +32,7 @@ export function* createJap(action) {
   try {
     yield call(request, api.post, requestURL, { json: body });
     yield put(createJapEventSuccess());
+    history.push('/');
   } catch (err) {
     yield put(createJapEventError(err));
   }

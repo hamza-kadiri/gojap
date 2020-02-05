@@ -26,5 +26,11 @@ const makeSelectJap = () =>
     selectJapScreenDomain,
     substate => substate.jap
   );
+
+const makeSelectTable = () =>
+  createSelector(
+    selectJapScreenDomain,
+    substate => substate.table
+  );
 export default makeSelectJapScreen;
-export { selectJapScreenDomain, makeSelectJap };
+export { selectJapScreenDomain, makeSelectJap, makeSelectTable };

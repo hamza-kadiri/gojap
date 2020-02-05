@@ -28,7 +28,7 @@ import reducer from './reducer';
 import { loadUsers, addMembersToJap } from './actions';
 import saga from './saga';
 
-export function AddMembersPage({ dispatch, users, japId }) {
+export function AddMembersPage({ dispatch, users, japId, addMembersPage }) {
   useInjectReducer({ key: 'addMembersPage', reducer });
   useInjectSaga({ key: 'addMembersPage', saga });
   const [membersList, setMembersList] = React.useState([]);
@@ -60,12 +60,11 @@ export function AddMembersPage({ dispatch, users, japId }) {
     if (membersList.length !== 0) {
       dispatch(addMembersToJap(membersList, japId));
     }
-    history.goBack();
   };
 
   const membersListProps = {
-    loading: false,
-    error: false,
+    loading: addMembersPage.loading,
+    error: addMembersPage.error,
     items: users,
     component: MembersListItem,
     multiline: true,
@@ -76,13 +75,14 @@ export function AddMembersPage({ dispatch, users, japId }) {
     <Wrapper>
       <H1>Ajouter un membre:</H1>
       <ListWrapper {...membersListProps} />
-      <StyledButton
-        disable={membersList.length === 0 ? 'true' : 'false'}
-        onClick={handleClickValidate}
-      >
-        {' '}
-        Valider{' '}
-      </StyledButton>
+      {!addMembersPage.loading && (
+        <StyledButton
+          disable={membersList.length === 0 ? 'true' : 'false'}
+          onClick={handleClickValidate}
+        >
+          Valider
+        </StyledButton>
+      )}
     </Wrapper>
   );
 }

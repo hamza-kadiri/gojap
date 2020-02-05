@@ -1,5 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
+import history from 'utils/history';
 import { LOAD_USERS, ADD_MEMBERS_TO_JAP } from './constants';
 import { loadUsersSuccess, loadUsersError } from './actions';
 
@@ -31,6 +32,7 @@ export function* addMembersToJap(action) {
 
   try {
     yield call(request, api.post, requestURL, { json: body });
+    history.goBack();
   } catch (err) {
     yield put(loadUsersError(err));
   }

@@ -11,6 +11,7 @@ import {
   CHANGE_JAP_ID,
   CHANGE_TABLE_ID,
   LOGOUT,
+  CHANGE_IS_EMPEROR,
 } from './constants';
 
 export function login(username) {
@@ -53,5 +54,12 @@ export function changeTableId(id) {
   return {
     type: CHANGE_TABLE_ID,
     id,
+  };
+}
+
+export function changeIsEmperor(boolean) {
+  return {
+    type: CHANGE_IS_EMPEROR,
+    boolean,
   };
 }

@@ -21,7 +21,6 @@ import styled from 'styled-components';
 
 import AppBar from '@material-ui/core/AppBar';
 import SubPage from 'components/SubPage';
-import { changeJapId, changeTableId } from 'containers/User/actions';
 import history from 'utils/history';
 import reducer from './reducer';
 import saga from './saga';

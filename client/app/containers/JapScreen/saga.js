@@ -17,7 +17,7 @@ import {
 } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
 import { JOIN_TABLE_SUCCESS } from 'containers/JoinTable/constants';
-import { changeTableId } from 'containers/User/actions';
+import { changeTableId, changeJapId } from 'containers/User/actions';
 import history from 'utils/history';
 import {
   GET_JAP,
@@ -56,7 +56,6 @@ export function* subscribe(socket) {
       dispatch(changeTableId(data.table_id));
     };
     const redirectUser = data => {
-      console.log(history.location.pathname.split('/order'));
       if (history.location.pathname.split('/order').length == 1) {
         history.push(`/order/${data.table_id}`);
       }
@@ -75,6 +74,8 @@ export function* getJap({ japId }) {
     // Call our request helper (see 'utils/request')
     const jap = yield call(request, api, requestURL);
     yield put(getJapSuccess(jap));
+    yield put(changeJapId(jap.id));
+    // yield put(changeTableId(jap.jap_event_id))
   } catch (err) {
     yield put(getJapError(err));
   }
@@ -94,15 +95,23 @@ export function* joinJapTableOnTableSuccess(socket) {
   }
 }
 
-export function* joinJapEvent(socket) {
+export function* joinJapEventAndTable(socket) {
   while (true) {
     const { payload } = yield take(GET_JAP_SUCCESS);
     const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
+    const tableId = yield select(makeSelectTableId());
     socket.emit(MESSAGES.JOIN_JAP, {
       user_id: userId,
       jap_event_id: japId,
     });
+    if (tableId) {
+      socket.emit(MESSAGES.JOIN_TABLE, {
+        user_id: userId,
+        jap_event_id: japId,
+        table_id: tableId,
+      });
+    }
   }
 }
 
@@ -126,7 +135,7 @@ export function* japEventFlow() {
   const japId = yield select(makeSelectJapId());
   const socket = yield call(connect, userId, japId);
   yield fork(read, socket);
-  yield fork(joinJapEvent, socket);
+  yield fork(joinJapEventAndTable, socket);
   yield fork(joinJapTableOnTableSuccess, socket);
   yield fork(startCommand, socket);
 }
