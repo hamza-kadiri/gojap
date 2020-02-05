@@ -21,8 +21,8 @@ import styled from 'styled-components';
 
 import AppBar from '@material-ui/core/AppBar';
 import SubPage from 'components/SubPage';
-import { changeJapId, changeTableId } from 'containers/User/actions';
 import history from 'utils/history';
+
 import reducer from './reducer';
 import saga from './saga';
 
@@ -30,8 +30,9 @@ import makeSelectHomePage, {
   makeSelectJaps,
   makeSelectError,
   makeSelectLoading,
+  makeSelectPastJaps,
 } from './selectors';
-import { loadJaps } from './actions';
+import { loadJaps, loadPastJaps } from './actions';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -47,13 +48,14 @@ const StyledTab = styled(Tab)`
   margin: 0 5%;
 `;
 
-export function HomePage({ dispatch, loading, error, japs }) {
+export function HomePage({ dispatch, loading, error, japs, pastJaps }) {
   useInjectReducer({ key: 'homePage', reducer });
   useInjectSaga({ key: 'homePage', saga });
   const [value, setValue] = React.useState(0);
 
   useEffect(() => {
     dispatch(loadJaps());
+    dispatch(loadPastJaps());
   }, []);
 
   const handleJapClick = japId => {
@@ -65,6 +67,15 @@ export function HomePage({ dispatch, loading, error, japs }) {
     loading,
     error,
     items: japs,
+    component: JapListItem,
+    multiline: true,
+    onClickItem: handleJapClick,
+  };
+
+  const pastJapsListProps = {
+    loading,
+    error,
+    items: pastJaps,
     component: JapListItem,
     multiline: true,
     onClickItem: handleJapClick,
@@ -91,7 +102,7 @@ export function HomePage({ dispatch, loading, error, japs }) {
         <ListWrapper {...japsListProps} />
       </SubPage>
       <SubPage value={value} index={1}>
-        Take me Back
+        <ListWrapper {...pastJapsListProps} />
       </SubPage>
     </Wrapper>
   );
@@ -101,12 +112,14 @@ HomePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   japs: PropTypes.array,
+  pastJaps: PropTypes.array,
   error: PropTypes.any,
 };
 
 const mapStateToProps = createStructuredSelector({
   homePage: makeSelectHomePage(),
   japs: makeSelectJaps(),
+  pastJaps: makeSelectPastJaps(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });
