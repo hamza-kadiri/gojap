@@ -9,6 +9,7 @@ import {
   LOGIN_ERROR,
   CHANGE_TABLE_ID,
   CHANGE_JAP_ID,
+  LOGOUT,
 } from './constants';
 
 export const initialState = {
@@ -41,6 +42,11 @@ const userReducer = (state = initialState, action) =>
         break;
       case CHANGE_TABLE_ID:
         draft.tableId = action.id;
+        break;
+      case LOGOUT:
+        draft.user = initialState.user;
+        draft.japId = initialState.japId;
+        draft.tableId = initialState.ustableIder;
         break;
     }
   });

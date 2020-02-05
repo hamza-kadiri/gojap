@@ -87,22 +87,11 @@ function OrderScreen({
   const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
 
   useEffect(() => {
-    dispatch(changeTitle(tableId));
+    dispatch(changeTitle(`Table ${tableId}`));
     dispatch(changeSubtitle(members.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder(japPlaceId));
-    const timeOut = setTimeout(() => disappearOrder(array), 1500);
-    return () => clearTimeout(timeOut);
   }, []);
-
-  const disappearOrder = arr => {
-    const newArray = arr.slice(1);
-    setArray(newArray);
-
-    if (newArray.length > 0) {
-      setTimeout(() => disappearOrder(newArray), 1500);
-    }
-  };
 
   const drawerProps = {
     toggleDrawer: bool => dispatch(toggleRecap(bool)),

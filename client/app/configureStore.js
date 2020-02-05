@@ -55,19 +55,17 @@ export default function configureStore(initialState = {}, history) {
   store.injectedReducers = {}; // Reducer registry
   store.injectedSagas = {}; // Saga registry
 
-  const persistor = persistStore(store, { manualPersist: true });
+  const persistor = persistStore(store);
 
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */
   if (module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(createReducer(store.injectedReducers));
-      persistor.persist();
     });
   }
 
   store.persistor = persistor;
-  persistor.persist();
 
   return store;
 }

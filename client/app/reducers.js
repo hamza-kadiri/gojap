@@ -8,38 +8,20 @@ import userReducer from 'containers/User/reducer';
 import { persistReducer } from 'redux-persist';
 import history from 'utils/history';
 import storage from 'redux-persist/lib/storage';
-import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 
-const rootPersistConfig = {
-  key: 'root',
+const userPersistConfig = {
+  key: 'user',
   storage,
-  whitelist: ['user'],
-};
-
-const injectedReducerPersistConfig = injectedReducers => {
-  const persistedReducers = { ...injectedReducers };
-  const keys = Object.keys(injectedReducers);
-  const persistedReducerKeys = ['japScreen', 'orderScreen'];
-  keys.forEach(key => {
-    if (persistedReducerKeys.includes(key)) {
-      persistedReducers[key] = persistReducer(
-        { key, storage },
-        injectedReducers[key]
-      );
-    }
-  });
-  return persistedReducers;
 };
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
  */
 export default function createReducer(injectedReducers = {}) {
-  const persistedReducers = injectedReducerPersistConfig(injectedReducers);
   const rootReducer = combineReducers({
     router: connectRouter(history),
-    user: userReducer,
-    ...persistedReducers,
+    user: persistReducer(userPersistConfig, userReducer),
+    ...injectedReducers,
   });
-  return persistReducer(rootPersistConfig, rootReducer);
+  return rootReducer;
 }

@@ -1,7 +1,7 @@
 """Socket entry point."""
 
 from flask_socketio import Namespace, emit, join_room, leave_room
-from flask import current_app as app
+from flask import current_app as app, request
 
 from helpers.db_selectors import get_item_id_from_table_id_and_index, get_item_index_from_table_id_and_id
 from services import UserService
@@ -31,6 +31,7 @@ class SocketServer(Namespace):
         """Create the Socket Server object."""
         self.connected_by_jap_event = {}
         self.connected_at_table = {}
+        self.session_id_user_id = {}
         super().__init__()
 
     @staticmethod
@@ -51,7 +52,10 @@ class SocketServer(Namespace):
     def add_to_event(self, user, room):
         """Add a user to list of people in jap_event."""
         if room in self.connected_by_jap_event.keys():
-            self.connected_by_jap_event[room].append(asdict(user))
+            dict_user = asdict(user)
+            event_members = self.connected_by_jap_event[room]
+            if dict_user not in event_members:
+                event_members.append(dict_user)
         else:
             self.connected_by_jap_event[room] = [asdict(user)]
 
@@ -78,7 +82,7 @@ class SocketServer(Namespace):
         """Remove a user from list of people on a given table."""
         if table_id in self.connected_at_table.keys():
             self.connected_at_table[table_id] = list(filter(
-                lambda x: x["id"] == user_id,
+                lambda x: x["id"] != user_id,
                 self.connected_at_table[table_id]
             ))
         else:
@@ -88,17 +92,19 @@ class SocketServer(Namespace):
     @staticmethod
     def emit_command_started(current_command, room):
         """Emit command started message after START_COMMAND and JOIN_COMMAND."""
-        item_index = get_item_index_from_table_id_and_id(current_command["table_id"], current_command['item_id'])
+        app.logger.debug("COMMAND_STARTED")
+        item_index = get_item_index_from_table_id_and_id(
+            current_command["table_id"], current_command['item_id'])
         emit(
             socket_messages['COMMAND_STARTED'],
-            {
+            {"table_id": current_command["table_id"],
                 "current_command": current_command,
                 "command_id": current_command['id'],
                 "item_id": current_command['item_id'],
                 "index": item_index,
                 "accumulated": CommandService.get_accumulated_order_amount(current_command['id']),
                 "summary": asdict(CommandService.get_command(current_command['id']))
-            },
+             },
             room=room
         )
 
@@ -110,7 +116,21 @@ class SocketServer(Namespace):
     def on_disconnect(self):
         """Call when a connection socket is lost with a client."""
         app.logger.info("Connection socket lost with a client")
-        pass
+        app.logger.info("INFO")
+        sid = request.sid
+        app.logger.info(sid)
+        user_data = self.session_id_user_id.pop(
+            sid) if sid in self.session_id_user_id else None
+        if user_data:
+            app.logger.info(user_data)
+            self.remove_from_event(
+                user_data["user_id"], self.get_jap_event_room(user_data["jap_event_id"]))
+            if "table_id" in user_data:
+                self.remove_from_table(
+                    user_data["user_id"], user_data["table_id"])
+        app.logger.info(self.connected_by_jap_event)
+        app.logger.info(self.session_id_user_id)
+        app.logger.info(self.connected_at_table)
 
     def on_join_jap(self, data):
         """Call on message JOIN_JAP.
@@ -126,35 +146,42 @@ class SocketServer(Namespace):
                 "members": list(User)
             }
         """
-        app.logger.debug(data)
+        # app.logger.debug(data)
+        app.logger.info("JOIN_JAP")
+        app.logger.info(request.sid)
+        session_id = request.sid
         user_id = data['user_id']
         jap_event_id = data["jap_event_id"]
+
+        self.session_id_user_id[session_id] = {
+            "user_id": user_id, "jap_event_id": jap_event_id}
 
         jap_event = JapEventService.get_jap_event(jap_event_id)
 
         table = TableService.get_user_table(user_id, jap_event_id)
-        if table:
-            self.on_join_table(
-                {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": table.id})
-        else:
-            if jap_event.created_by == user_id:
-                raise (
-                    Exception("Error at jap creation for jap creator, not added to a table"))
 
         new_member = UserService.get_user(user_id)
         room = self.get_jap_event_room(data['jap_event_id'])
-        join_room(room)
-        self.add_to_event(new_member, room)
 
-        emit(
-            socket_messages['USER_JOINED_JAP'],
-            {
-                "jap_event_id": data['jap_event_id'],
-                "new_member": asdict(new_member),
-                "members": self.connected_by_jap_event[room]
-            },
-            room=room
-        )
+        if room not in self.connected_by_jap_event or asdict(new_member) not in self.connected_by_jap_event[room]:
+            join_room(room)
+            self.add_to_event(new_member, room)
+            emit(
+                socket_messages['USER_JOINED_JAP'],
+                {
+                    "jap_event_id": data['jap_event_id'],
+                    "new_member": asdict(new_member),
+                    "members": self.connected_by_jap_event[room]
+                },
+                room=room
+            )
+            if table:
+                self.on_join_table(
+                    {"user_id": user_id, "jap_event_id": jap_event_id, "table_id": table.id})
+            else:
+                if jap_event.creator_id == user_id:
+                    raise (
+                        Exception("Error at jap creation for jap creator, not added to a table"))
 
     def on_leave_jap(self, data):
         """Call on message LEAVE_JAP.
@@ -167,7 +194,7 @@ class SocketServer(Namespace):
         Emit :
             USER_LEFT_JAP = { jap_event_id, members : [{user_id, name}, ...]}
         """
-        app.logger.debug(data)
+        # app.logger.debug(data)
         app.logger.info(
             "Leave jap " + str(data['jap_event_id']) +
             " received from " + str(data['user_id'])
@@ -208,7 +235,6 @@ class SocketServer(Namespace):
                 members
             }
         """
-        app.logger.debug(data)
         # app.logger.info(
         #     f"Join table {data['table_id']} received from {data['username']}")
         jap_event_room = self.get_jap_event_room(data['jap_event_id'])
@@ -218,20 +244,27 @@ class SocketServer(Namespace):
         table = TableService.get_table(data['table_id'])
         user = UserService.get_user(data['user_id'])
 
+        self.session_id_user_id[request.sid]["table_id"] = table.id
+
         self.add_to_table(user, table)
 
         join_room(table_room)
         join_room(user_room)
 
+        app.logger.debug("JOIN_TABLE")
+
         new_member = asdict(user)
-        emit(
-            socket_messages['USER_JOINED_TABLE'],
-            {
-                "members": self.connected_at_table[table.id],
-                "new_member": new_member,
-            },
-            room=jap_event_room
-        )
+        if user.id in [member.id for member in table.members]:
+            emit(
+                socket_messages['USER_JOINED_TABLE'],
+                {
+                    "members": self.connected_at_table[table.id],
+                    "new_member": new_member,
+                    "table_id": table.id,
+                    "is_emperor": data["user_id"] == table.emperor
+                },
+                room=jap_event_room
+            )
 
     def on_start_command(self, data):
         """Call on message START_COMMAND.
@@ -251,10 +284,11 @@ class SocketServer(Namespace):
                 }
             }
         """
+        app.logger.debug("START COMMAND")
         app.logger.debug(data)
         table_room = self.get_table_room(data['table_id'])
 
-        if TableService.is_emperor(data["user_id"], data["table_id"]):
+        if TableService.is_emperor(data["user_id"], data["table_id"]) and TableService.get_table(data["table_id"]).status <= 1:
             # Make the command start for this table
             TableService.set_table_status(data['table_id'], 1)
 
@@ -272,11 +306,11 @@ class SocketServer(Namespace):
         Emit :
             COMMAND_STARTED = {}
         """
-        app.logger.debug(data)
+        app.logger.debug("JOIN COMMAND")
         user_room = self.get_user_room(data['user_id'])
 
         table = TableService.get_table(data['table_id'])
-        if table.status == 1:
+        if table.status <= 1:
             current_command = asdict(table)['current_command']
             self.emit_command_started(current_command, user_room)
 
@@ -299,7 +333,7 @@ class SocketServer(Namespace):
                 }
             }
         """
-        app.logger.debug(data)
+        app.logger.debug("END COMMAND")
         if TableService.is_emperor(data['user_id'], data['table_id']):
             _ = TableService.set_table_status(data['table_id'], 2)
             emit(socket_messages['COMMAND_ENDED'], data,
@@ -323,9 +357,10 @@ class SocketServer(Namespace):
                 }
             }
         """
-        app.logger.debug(data)
+        app.logger.debug("NEXT ITEM")
 
-        item_id = get_item_id_from_table_id_and_index(data['table_id'], data['index'])
+        item_id = get_item_id_from_table_id_and_index(
+            data['table_id'], data['index'])
         if TableService.is_emperor(data['user_id'], data['table_id']):
             command = CommandService.create_command(
                 item_id, data['table_id'])
@@ -359,7 +394,7 @@ class SocketServer(Namespace):
                 }
             }
         """
-        app.logger.debug(data)
+        app.logger.debug('CHOOSE ITEM')
         app.logger.info(
             f"New item {data['item_id']} chosen on table {data['table_id']} received from {data['username']}")
         CommandService.add_user_order_to_command(

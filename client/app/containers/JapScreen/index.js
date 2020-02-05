@@ -33,12 +33,12 @@ import GoJap from 'images/gojap.png';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/AddTablePage/selectors';
-import { makeSelectJapId } from 'containers/User/selectors';
-import { makeSelectJaps } from 'containers/HomePage/selectors';
+import { makeSelectJapId, makeSelectTableId } from 'containers/User/selectors';
+import { changeJapId } from 'containers/User/actions';
 import makeSelectJapScreen, { makeSelectJap } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { getJap } from './actions';
+import { getJap, startCommand } from './actions';
 
 moment.locale('fr');
 
@@ -86,7 +86,7 @@ const Ellipsis = ({ setIsClamped }) => (
     </ButtonBase>
   </React.Fragment>
 );
-export function JapScreen({ dispatch, japId, members, jap }) {
+export function JapScreen({ dispatch, japId, tableId, members, jap }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
 
@@ -106,22 +106,33 @@ export function JapScreen({ dispatch, japId, members, jap }) {
       onClick: () => history.push('/addtable'),
     },
     {
+      name: 'Rejoindre une table',
+      onClick: () => history.push('/jointable'),
+    },
+    {
       name: 'Commencer la commande',
-      onClick: () => history.push('/order/test'),
+      onClick: () => dispatch(startCommand()),
     },
   ];
 
-  const createdBy = `Créé par vous, ${moment(Date.now()).format('L')}`;
   useEffect(() => {
-    dispatch(getJap());
+    const japEventId = history.location.pathname.split('/jap/')[1];
+    dispatch(changeJapId(japEventId));
+    dispatch(getJap(japEventId));
   }, []);
 
   useEffect(() => {
-    dispatch(changeTitle(jap && jap.event_name));
-    dispatch(changeSubtitle(createdBy));
-    dispatch(changeMoreMenu(moreMenu));
+    if (jap) {
+      dispatch(changeTitle(jap.event_name));
+      const createdBy = `${
+        jap.created_by
+          ? `Créé par ${jap.created_by.username}, ${moment(jap.date).format('L')}`
+          : ''
+      }`;
+      dispatch(changeSubtitle(createdBy));
+      dispatch(changeMoreMenu(moreMenu));
+    }
   }, [jap]);
-
   const loremIpsum = jap ? jap.description : '';
 
   return (
@@ -219,6 +230,7 @@ const mapStateToProps = createStructuredSelector({
   japScreen: makeSelectJapScreen(),
   members: makeSelectMembers(),
   japId: makeSelectJapId(),
+  tableId: makeSelectTableId(),
   jap: makeSelectJap(),
 });
 

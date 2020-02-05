@@ -85,7 +85,8 @@ class JapEvent(db.Model):
     description: str
     date: datetime.datetime
     created_at: datetime.datetime
-    created_by: int
+    creator_id: int
+    created_by: User
     jap_place_id: int
     status: int
     tables: list
@@ -98,7 +99,8 @@ class JapEvent(db.Model):
     date = db.Column(db.DateTime(), unique=False, nullable=False)
     created_at = db.Column(db.DateTime(), unique=False,
                            nullable=True, default=datetime.datetime.now())
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.relationship('User')
     jap_place_id = db.Column(db.Integer, db.ForeignKey('jap_place.id'),
                              nullable=False)
     status = db.Column(db.Integer, nullable=False, default=0)
@@ -145,7 +147,7 @@ class Achievement(db.Model):
         """Representation method."""
         return '<Achievement %r>' % self.name
 
-
+@dataclass
 class Event(db.Model):
     """
     Defines a new Event in the database.
@@ -330,7 +332,7 @@ class Menu(db.Model):
 
     _tablename_ = 'menu'
     id = db.Column(db.Integer, primary_key=True)
-    items = db.relationship('Item', secondary=item_menus, lazy='subquery',
+    items = db.relationship('Item', secondary=item_menus, order_by="item_menus.c.index_in_menu", lazy='subquery',
                             backref=db.backref('menus', lazy=True))
     jap_place = db.relationship("JapPlace", uselist=False, backref='menu')
 

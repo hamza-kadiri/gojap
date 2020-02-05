@@ -17,6 +17,7 @@ def get_jap_event(jap_event_id: int) -> Response:
     jap_event = JapEventService.get_jap_event(jap_event_id)
     return jsonify(jap_event)
 
+
 @jap_event_blueprint.route('/all', methods=['GET'])
 def get_all_jap_events() -> Response:
     """Get all jap events.
@@ -33,7 +34,7 @@ def create_jap_event() -> Response:
     """Create a new jap_event.
 
     Body args : 
-        {event_name, description, jap_place_id, created_by, date}
+        {event_name, description, jap_place_id, creator_id, date}
 
     Returns :
         {serialized jap_event}
@@ -43,14 +44,14 @@ def create_jap_event() -> Response:
         data["event_name"],
         data["description"],
         data["jap_place_id"],
-        data["created_by"],
+        data["creator_id"],
         data["date"]
     )
 
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route('user/<int:user_id>', methods=['GET'])
 def get_events_for_user(user_id: int) -> Response:
     """Get all jap_events for a given user.
 
@@ -61,7 +62,7 @@ def get_events_for_user(user_id: int) -> Response:
         list of serialized jap_events
     """
     jap_events = JapEventService.get_jap_events_for_user(user_id)
-    return jsonify({"events": jap_events})
+    return jsonify(jap_events)
 
 
 @jap_event_blueprint.route('/upcoming/<int:user_id>', methods=['GET'])
@@ -89,7 +90,8 @@ def add_members(jap_event_id: int) -> Response:
         { members: [User] }
     """
     data = request.json
-    members = JapEventService.add_members_to_jap_event(jap_event_id, set(data['members']))
+    members = JapEventService.add_members_to_jap_event(
+        jap_event_id, set(data['members']))
     return jsonify(members)
 
 

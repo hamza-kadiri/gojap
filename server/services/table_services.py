@@ -146,14 +146,14 @@ class TableService:
             table_id = db.session.query(table_members).filter(
                 and_(table_members.c.user_id == user_id,
                      table_members.c.table_id.in_(table_ids))
-            ).one().table_id
+            ).first().table_id
             table = Table.query.filter_by(id=table_id).first()
         except sqlalchemy.orm.exc.NoResultFound:
             table = None
         return table
 
     @staticmethod
-    def is_emperor(user_id, table_id) -> bool:
+    def is_emperor(user_id: int, table_id: int) -> bool:
         """Check if a user is emperor."""
         table = Table.query.get(table_id)
         return True

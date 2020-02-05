@@ -10,3 +10,4 @@ export const LOGIN_ERROR = 'app/User/LOAD_ERROR';
 
 export const CHANGE_JAP_ID = 'app/User/CHANGE_JAP_ID';
 export const CHANGE_TABLE_ID = 'app/User/CHANGE_TABLE_ID';
+export const LOGOUT = 'app/User/LOGOUT';
