@@ -4,6 +4,7 @@ from flask import Blueprint, request, abort, jsonify, Response
 # from sqlalchemy import or
 from typing import Dict, Optional, List
 from services.user_services import UserService
+from services.jap_event_services import JapEventService
 from helpers import json_abort
 from models.model import db, User
 from sqlalchemy import or_
@@ -69,6 +70,12 @@ def get_all_users() -> Response:
     users = UserService.get_all_users()
     return jsonify({"users": users})
 
+@user_blueprint.route('/not_in_jap_event/<int:jap_event_id>', methods=['GET'])
+def get_all_users_not_in_jap_event(jap_event_id: int):
+    """Display all users that are not in the related jap event."""
+    users = UserService.get_all_users()
+    jap_event = JapEventService.get_jap_event(jap_event_id)
+    return jsonify({"users": [user for user in users if user.id not in [member.id for member in jap_event.members]]})
 
 @user_blueprint.route('/stats/<int:user_id>', methods=['GET'])
 def get_users_stats(user_id: int) -> Response:
