@@ -43,8 +43,8 @@ export function JapListItem(props) {
           </Grid>
         </Grid>
       ) : (
-        <ListItemText primary="" secondary="" />
-      )}
+          <ListItemText primary="" secondary="" />
+        )}
     </ListItem>
   );
 }
