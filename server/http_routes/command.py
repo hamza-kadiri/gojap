@@ -88,3 +88,17 @@ def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
         return json_abort(404, f"Command not found")
 
     return jsonify(command)
+
+
+@command_blueprint.route('table/<int:table_id>/user/<int:user_id>', methods=['GET'])
+def get_command_by_user_and_table(table_id: int, user_id: int):
+    """Get commands for a user.
+
+    Returns :
+        {command: id, user_id, table_id}
+    """
+    command = CommandService.get_command_by_user_and_table(table_id, user_id)
+    if not command:
+        return json_abort(404, f"Command not found")
+
+    return jsonify({"command": command})
