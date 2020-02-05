@@ -11,6 +11,7 @@ import {
   CHANGE_CURRENT_ITEM_SUCCESS,
   JOINED_TABLE,
   CHANGE_ORDER_QUANTITY_SUCCESS,
+  INITIALIZE_ORDER_QUANTITIES,
 } from './constants';
 
 export function toggleRecap(boolean) {
@@ -70,16 +71,9 @@ export function changedOrderQuantity(
   };
 }
 
-export function initializeOrderQuantity({
-  current_command,
-  accumulated,
-  individual,
-}) {
+export function initializeOrderQuantity(commandSummary) {
   return {
-    type: CHANGE_ORDER_QUANTITY_SUCCESS,
-    itemId: current_command.item_id,
-    accumulated,
-    individual,
-    commandId: current_command.id,
+    type: INITIALIZE_ORDER_QUANTITIES,
+    commandSummary,
   };
 }

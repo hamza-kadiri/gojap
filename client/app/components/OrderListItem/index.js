@@ -32,8 +32,8 @@ function OrderListItem(props) {
           </Grid>
           <Grid item>
             <ListItemText
-              primary={`Cumulé : ${8}`}
-              secondary={`Individuel : ${8}`}
+              primary={`Cumulé : ${item.accumulated || 0}`}
+              secondary={`Individuel : ${item.individual || 0}`}
             />
           </Grid>
         </Grid>

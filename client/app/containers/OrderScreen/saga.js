@@ -8,13 +8,15 @@ import {
   makeSelectTableId,
 } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
+import request, { api } from 'utils/request';
+
 import { makeSelectCurrentCommandId } from './selectors';
 import { START_ORDER } from './constants';
 import {
   changedCurrentItem,
   joinedTable,
-  initializeOrderQuantity,
   changedOrderQuantity,
+  initializeOrderQuantity,
 } from './actions';
 
 function connect(username, userId, japId, tableId) {
@@ -110,7 +112,6 @@ export function* subscribe(socket) {
       emit(changedOrderQuantity(data, userId));
     };
     const userJoinedTable = data => {
-      console.log(data);
       emit(joinedTable(data));
       emit(changedOrderQuantity(data, userId));
     };
@@ -127,9 +128,27 @@ export function* OrderScreenSaga() {
   const japId = yield select(makeSelectJapId());
   const tableId = yield select(makeSelectTableId());
   const socket = yield call(connect, username, userId, japId, tableId);
+
   yield fork(read, socket);
   yield fork(writeNextItem, socket);
   yield fork(writeChangeQuantity, socket);
+
+  const requestUrl = `command/table/${tableId}`;
+  const response = yield call(request, api, requestUrl);
+  if (response && response.command) {
+    const summary = {};
+    response.command.forEach(comm => {
+      summary[comm.item_id] = {};
+      summary[comm.item_id].itemId = comm.item_id;
+      summary[comm.item_id].accumulated = 0;
+      comm.users.forEach(user => {
+        summary[comm.item_id].accumulated += user.order_amount;
+        summary[comm.item_id].individual =
+          user.user && user.user.id === userId ? user.order_amount : 0;
+      });
+    });
+    yield put(initializeOrderQuantity(summary));
+  }
 }
 
 export default function* watchOrderScreen() {
