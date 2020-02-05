@@ -15,13 +15,34 @@ import Chip from '@material-ui/core/Chip';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 function MembersListItem(props) {
-  const { item, index, onClickItem } = props;
+  const { item, index, onClickItem, stats, tableId } = props;
   const [isSelected, setIsSelected] = React.useState(false);
 
   const handleClickItem = () => {
     setIsSelected(!isSelected);
     onClickItem(item);
   };
+
+  let children = tableId && !stats && (
+    <Chip
+      size="small"
+      color="primary"
+      variant="outlined"
+      component="span"
+      label={`table : ${tableId}`}
+    />
+  );
+  if (stats) {
+    children = (
+      <Chip
+        size="small"
+        color="primary"
+        variant="outlined"
+        component="span"
+        label={`${item.calories || '0'} calories`}
+      />
+    );
+  }
 
   return (
     <ListItem selected={isSelected} button={onClickItem} divider={onClickItem} onClick={() => (onClickItem ? handleClickItem() : null)}>
@@ -32,18 +53,35 @@ function MembersListItem(props) {
           </ListItemAvatar>
         </Grid>
         <Grid item>
-          <ListItemText
-            primary={item.username}
-            secondary={
-              <Chip
-                size="small"
-                color="primary"
-                variant="outlined"
-                component="span"
-                label={`${item.calories || '0'} calories`}
-              />
-            }
-          />
+          <ListItemText primary={item.username} secondary={children} />
+          {/* {tableId && !stats && (
+            <ListItemText
+              primary={item.username}
+              secondary={
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  component="span"
+                  label={`table : ${tableId}`}
+                />
+              }
+            />
+          )}
+          {stats && (
+            <ListItemText
+              primary={item.username}
+              secondary={
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  component="span"
+                  label={`${item.calories || '0'} calories`}
+                />
+              }
+            />
+          )} */}
         </Grid>
       </Grid>
     </ListItem>
