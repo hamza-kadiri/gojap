@@ -8,6 +8,7 @@ import { japsLoaded, japLoadingError } from './actions';
  * Japs request/response handler
  */
 export function* getJaps() {
+  console.log('in saga');
   // Select username from store
   const userId = yield select(makeSelectUserId());
   const requestURL = `jap_event/user/${userId}`;
