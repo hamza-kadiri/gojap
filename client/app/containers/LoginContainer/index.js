@@ -26,7 +26,7 @@ export function LoginContainer({ dispatch, user }) {
   useInjectReducer({ key: 'loginContainer', reducer });
   useInjectSaga({ key: 'loginContainer', saga });
 
-  const [name, setName] = React.useState();
+  const [name, setName] = React.useState('');
 
   const handleClick = () => {
     // Call back to create jap
