@@ -29,7 +29,7 @@ const AppWrapper = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 `;
 
 const SwitchWrapper = styled.div`
