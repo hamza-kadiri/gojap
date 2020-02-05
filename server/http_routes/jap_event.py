@@ -1,6 +1,8 @@
 """JapEvent blueprint."""
+from dataclasses import asdict
 
 from flask import Blueprint, request, jsonify, Response
+from services import TableService
 from services.jap_event_services import JapEventService
 
 jap_event_blueprint = Blueprint(
@@ -121,3 +123,40 @@ def get_tables_jap_event(jap_event_id: int) -> Response:
     """
     tables = JapEventService.get_tables_for_a_jap(jap_event_id)
     return jsonify(tables)
+
+
+@jap_event_blueprint.route('past/<int:user_id>', methods=['GET'])
+def get_jap_event_by_status(user_id: int):
+    """Get past jap events for a user.
+
+    Args :
+        user_id
+
+    Returns :
+        jap_events: list
+    """
+    jap_events = JapEventService.get_past_jap_events_for_user(user_id)
+    return jsonify(jap_events)
+
+
+@jap_event_blueprint.route('/table/<int:jap_event_id>/<int:user_id>', methods=['GET'])
+def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
+    """Get table a user is in Jap Event.
+
+    Args :
+        jap_event_id
+
+    Returns :
+        {
+            jap_event: JapEvent,
+            table: Table (contains is_emperor field, letting you know if user is emperor or not)
+        }
+    """
+    jap_event = JapEventService.get_jap_event(jap_event_id)
+    table = TableService.get_user_table(user_id, jap_event_id)
+    is_user_emperor = table.emperor == user_id
+
+    table = asdict(table)
+    table['is_emperor'] = is_user_emperor
+
+    return jsonify({"table": table, "jap_event": jap_event})

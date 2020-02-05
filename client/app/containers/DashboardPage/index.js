@@ -81,7 +81,9 @@ export function DashboardPage() {
     component: MembersListItem,
     multiline: true,
     classeName: classes.root,
+    stats: true,
   };
+  console.log(membersListProps)
 
   return (
     <StyledContainerWrapper>

@@ -23,7 +23,7 @@ const VirtualizedList = styled(VList)`
 
 const List = memo(function List(props) {
   const ComponentToRender = props.component;
-  const { onClickItem, isWindowScroller } = props;
+  const { onClickItem, isWindowScroller, ...rest } = props;
   const [showMore, setShowMore] = useState(false);
   function rowRenderer({ key, index, style }) {
     if (props.items) {
@@ -34,6 +34,7 @@ const List = memo(function List(props) {
             item={item}
             index={index}
             onClickItem={onClickItem}
+            {...rest}
           />
         </div>
       );
@@ -59,7 +60,7 @@ const List = memo(function List(props) {
                 onScroll={onChildScroll}
                 scrollTop={scrollTop}
                 height={height}
-                rowCount={(props.items.length > 6) ? (showMore ? props.items.length : 6) : props.items.length }
+                rowCount={(props.items.length > 6) ? (showMore ? props.items.length : 6) : props.items.length}
                 rowHeight={props.multiline ? 72 : 49}
                 rowRenderer={rowRenderer}
               />
@@ -70,18 +71,18 @@ const List = memo(function List(props) {
           )}
         </WindowScroller>
       ) : (
-        <AutoSizer>
-          {({ height, width }) => (
-            <VirtualizedList
-              width={width}
-              height={height}
-              rowCount={props.items.length}
-              rowHeight={props.multiline ? 72 : 49}
-              rowRenderer={rowRenderer}
-            />
-          )}
-        </AutoSizer>
-      )}
+          <AutoSizer>
+            {({ height, width }) => (
+              <VirtualizedList
+                width={width}
+                height={height}
+                rowCount={props.items.length}
+                rowHeight={props.multiline ? 72 : 49}
+                rowRenderer={rowRenderer}
+              />
+            )}
+          </AutoSizer>
+        )}
     </AutoSizerWrapper>
   );
 });

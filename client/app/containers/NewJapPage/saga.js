@@ -1,6 +1,7 @@
 import { takeLatest, call, put, select } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 import moment from 'moment';
+import history from 'utils/history';
 
 import { makeSelectUserId } from 'containers/User/selectors';
 import { CREATE_JAP_EVENT, GET_JAP_PLACES } from './constants';
@@ -18,11 +19,8 @@ import {
 export function* createJap(action) {
   // Select username from store
   const { name, description, date, japPlace } = action.payload;
-  console.log(action);
   const requestURL = 'jap_event';
   const userId = yield select(makeSelectUserId());
-  console.log('SAGA');
-  console.log(userId);
   const body = {
     event_name: name,
     description,
@@ -34,6 +32,7 @@ export function* createJap(action) {
   try {
     yield call(request, api.post, requestURL, { json: body });
     yield put(createJapEventSuccess());
+    history.goBack();
   } catch (err) {
     yield put(createJapEventError(err));
   }
@@ -44,7 +43,6 @@ export function* getJapPlaces() {
 
   try {
     const japPlaces = yield call(request, api, requestURL);
-    console.log(japPlaces);
     yield put(getJapPlacesSuccess(japPlaces));
   } catch (err) {
     yield put(getJapPlacesError(err));

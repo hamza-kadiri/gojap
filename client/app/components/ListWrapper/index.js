@@ -38,7 +38,7 @@ const ListWrapper = memo(function ListWrapper({
     );
   }
 
-  return null;
+  return <h1>Nothing here yet...</h1>;
 });
 
 ListWrapper.propTypes = {
