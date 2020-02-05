@@ -12,7 +12,7 @@ import {
 } from './constants';
 
 export const initialState = {
-  users: [],
+  users: { users: [] },
   loading: false,
   error: false,
 };
@@ -24,6 +24,7 @@ const addMembersPageReducer = (state = initialState, action) =>
       case LOAD_USERS:
         draft.error = false;
         draft.loading = true;
+        draft.users = { users: [] };
         break;
       case LOAD_USERS_SUCCESS:
         draft.users = action.payload;
@@ -33,7 +34,6 @@ const addMembersPageReducer = (state = initialState, action) =>
       case LOAD_USERS_ERROR:
         draft.error = action.payload;
         draft.loading = false;
-        draft.users = [];
         break;
       case DEFAULT_ACTION:
         break;

@@ -28,10 +28,26 @@ import reducer from './reducer';
 import { loadUsers, addMembersToJap } from './actions';
 import saga from './saga';
 
-export function AddMembersPage({ dispatch, users, japId, addMembersPage }) {
+const customIncludes = (array, item) => {
+  for (let i = 0; i < array.length; i += 1) {
+    if (array[i].id === item.id) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export function AddMembersPage({
+  dispatch,
+  users,
+  japId,
+  members,
+  addMembersPage,
+}) {
   useInjectReducer({ key: 'addMembersPage', reducer });
   useInjectSaga({ key: 'addMembersPage', saga });
   const [membersList, setMembersList] = React.useState([]);
+  const [usersNotInMembers, setUserNotInMembers] = React.useState([]);
 
   const Wrapper = styled.div`
     width: 100%;
@@ -44,6 +60,12 @@ export function AddMembersPage({ dispatch, users, japId, addMembersPage }) {
     dispatch(loadUsers());
     dispatch(changeTitle('Ajouter des membres'));
   }, []);
+
+  useEffect(() => {
+    console.log(users);
+    const filteredUsers = users.filter(user => !customIncludes(members, user));
+    setUserNotInMembers(filteredUsers);
+  }, [users, members]);
 
   const handleClickOnUser = item => {
     const list = membersList;
@@ -65,7 +87,7 @@ export function AddMembersPage({ dispatch, users, japId, addMembersPage }) {
   const membersListProps = {
     loading: addMembersPage.loading,
     error: addMembersPage.error,
-    items: users,
+    items: usersNotInMembers,
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,
@@ -91,12 +113,14 @@ AddMembersPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   users: PropTypes.array,
   japId: PropTypes.number,
+  members: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   addMembersPage: makeSelectAddMembersPage(),
   users: makeSelectUsers(),
   japId: makeSelectJapId(),
+  members: makeSelectMembers(),
 });
 
 function mapDispatchToProps(dispatch) {

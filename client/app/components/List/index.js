@@ -23,7 +23,7 @@ const VirtualizedList = styled(VList)`
 
 const List = memo(function List(props) {
   const ComponentToRender = props.component;
-  const { onClickItem, isWindowScroller } = props;
+  const { onClickItem, isWindowScroller, ...rest } = props;
   const [showMore, setShowMore] = useState(false);
   function rowRenderer({ key, index, style }) {
     if (props.items) {
@@ -34,6 +34,7 @@ const List = memo(function List(props) {
             item={item}
             index={index}
             onClickItem={onClickItem}
+            {...rest}
           />
         </div>
       );

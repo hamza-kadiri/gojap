@@ -34,12 +34,12 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_command_by_table_id(table_id):
+    def get_command_by_table_id(table_id: int):
         """
         Get command by table id.
 
         Args :
-            data = {table_id}
+            table_id: int
         """
         commands = CommandItem.query.filter_by(table_id=table_id).all()
         return commands
@@ -78,7 +78,8 @@ class CommandService():
             accumulated: integer
         """
         accumulated = db.session.query(
-            db.func.sum(UserCommand.order_amount).label("accumulated")).group_by(UserCommand.command_id).filter_by(command_id=command_id).first()
+            db.func.sum(UserCommand.order_amount).label("accumulated")).group_by(UserCommand.command_id).filter_by(
+            command_id=command_id).first()
         if accumulated:
             return accumulated[0]
         else:
@@ -123,3 +124,17 @@ class CommandService():
             return user_command.order_amount
         else:
             return 0
+
+    @staticmethod
+    def get_command_by_user_and_table(user_id, table_id):
+        """
+        Get command by table id.
+
+        Args :
+            data = {table_id}
+        """
+        query = db.session.query(UserCommand.order_amount, CommandItem.item_id). \
+            filter(UserCommand.command_id == CommandItem.id). \
+            filter(UserCommand.user_id == user_id). \
+            filter(CommandItem.table_id == table_id).all()
+        return query

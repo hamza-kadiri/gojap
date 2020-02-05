@@ -16,7 +16,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { createStructuredSelector } from 'reselect';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import history from 'utils/history';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -59,7 +58,6 @@ export function NewJapPage({ dispatch, japPlaces }) {
   const handleClick = () => {
     // Call back to create jap
     dispatch(createJapEvent(name, description, date, selectedJapPlace));
-    history.goBack();
   };
 
   return (
