@@ -8,7 +8,7 @@ table_blueprint = Blueprint('table_blueprint', __name__, url_prefix='/table')
 
 
 @table_blueprint.route('', methods=['POST'])
-def create_table():
+def create_table() -> Response:
     """Create a new table.
 
      Body args :
@@ -24,7 +24,7 @@ def create_table():
 
 
 @table_blueprint.route('<int:table_id>', methods=['GET'])
-def get_table(table_id):
+def get_table(table_id: int) -> Response:
     """Get a given table.
 
     Args :
@@ -39,7 +39,7 @@ def get_table(table_id):
 
 
 @table_blueprint.route('', methods=['DELETE'])
-def remove_table():
+def remove_table() -> Response:
     """Delete a table.
 
     Args :
@@ -57,7 +57,7 @@ def remove_table():
 
 
 @table_blueprint.route('add_members/<int:table_id>', methods=['POST'])
-def add_user_to_table(table_id: int):
+def add_user_to_table(table_id: int) -> Response:
     """Create a new table.
 
     Returns :
@@ -70,7 +70,7 @@ def add_user_to_table(table_id: int):
 
 
 @table_blueprint.route('/<int:table_id>/status/<int:status>', methods=['PUT'])
-def set_table_status(table_id, status):
+def set_table_status(table_id: int, status: int) -> Response:
     """Update status of a table.
 
     Arg :
@@ -86,7 +86,7 @@ def set_table_status(table_id, status):
 
 
 @table_blueprint.route('/user/<int:user_id>/<int:jap_event_id>', methods=['GET'])
-def get_user_table(user_id, jap_event_id):
+def get_user_table(user_id: int, jap_event_id: int) -> Response:
     """Create a new table.
 
     Args :
