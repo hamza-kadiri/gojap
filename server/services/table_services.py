@@ -158,3 +158,16 @@ class TableService:
         table = Table.query.get(table_id)
         return True
         return table.emperor == user_id
+
+    @staticmethod
+    def get_table_stats(table_id: int) -> List:
+        """Generate statistic for the desired table
+
+        Arg :
+            table_id : id de la table à get.
+
+        Return:
+            {Stats}
+        """
+        table = Table.query.filter_by(id=table_id).first()
+

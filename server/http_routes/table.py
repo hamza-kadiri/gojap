@@ -98,3 +98,18 @@ def get_user_table(user_id, jap_event_id):
     table = TableService.get_user_table(user_id, jap_event_id)
 
     return jsonify(table)
+
+
+@table_blueprint.route('/stats/<int:table_id>', methods=['GET'])
+def get_user_table(table_id: int, jap_event_id: int) -> Response:
+    """Get all stats for a jap.
+
+    Args :
+        id_table : id de la table à get.
+
+    Returns :
+        {table}
+    """
+    stats = TableService.get_table_stats(table_id)
+
+    return jsonify(stats)
