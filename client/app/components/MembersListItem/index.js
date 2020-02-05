@@ -29,15 +29,26 @@ const Dot = styled.div`
 `;
 
 function MembersListItem(props) {
-  const { item, index, onClickItem, stats, tableId, onlineMembers } = props;
+  const { item, index, onClickItem, stats, onlineMembers, jap } = props;
   const [isSelected, setIsSelected] = React.useState(false);
 
   const handleClickItem = () => {
     setIsSelected(!isSelected);
     onClickItem(item);
   };
-  console.log(onlineMembers);
+
   const isOnline = onlineMembers ? onlineMembers.map(member => member.id).includes(item.id) : false;
+
+  let tableId = null;
+  if (jap) {
+    for (const table of jap.tables) {
+      for (const member of table.members) {
+        if (member.id === item.id) {
+          tableId = table.id;
+        }
+      }
+    }
+  }
 
   let children = tableId && !stats && (
     <Chip
