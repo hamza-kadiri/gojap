@@ -77,9 +77,10 @@ class CommandService():
         Returns :
             accumulated: integer
         """
-        accumulated = db.session.query(
-            db.func.sum(UserCommand.order_amount).label("accumulated")).group_by(UserCommand.command_id).filter_by(
-            command_id=command_id).first()
+        accumulated = db.session.\
+            query(db.func.sum(UserCommand.order_amount).label("accumulated")).\
+            group_by(UserCommand.command_id).\
+            filter_by(command_id=command_id).first()
         if accumulated:
             return accumulated[0]
         else:
