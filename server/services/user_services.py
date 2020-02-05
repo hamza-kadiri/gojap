@@ -1,7 +1,7 @@
 """Building services for user management."""
 from typing import Dict, Optional, List
 from flask import abort
-from models.model import db, User
+from models.model import db, User, UserCommand, CommandItem, Table, JapEvent
 from sqlalchemy import or_
 from helpers import json_abort
 
@@ -76,3 +76,39 @@ class UserService():
         """Display all users."""
         users = User.query.all()
         return users
+
+    @staticmethod
+    def get_user_stats(user_id: int) -> dict:
+        """Get stats for a given user.
+
+        Arg :
+            - user_id : user for whom we need the stats
+
+        Return :
+            - {stat : value}
+        """
+        nbr_of_japs = db.session.query(JapEvent).join(JapEvent.members).filter(User.id == user_id).count()
+
+        pneu_id = 12
+        pneu = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
+            filter(UserCommand.command_id == CommandItem.id). \
+            filter(UserCommand.user_id == user_id). \
+            filter(CommandItem.item_id == pneu_id).first()[0]
+
+        if pneu is None:
+            pneu = 0
+
+        items = (db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).
+                 filter(UserCommand.command_id == CommandItem.id).
+                 filter(UserCommand.user_id == user_id).first())[0]
+
+        if items is None:
+            items = 0
+
+        stats = {
+            'nbr_of_items': items,
+            'nbr_of_japs': nbr_of_japs,
+            'nbr_of_cals': items * 60,
+            'nbr_of_pneu': pneu
+        }
+        return stats

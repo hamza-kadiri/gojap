@@ -1,6 +1,6 @@
 """User blueprint."""
 
-from flask import Blueprint, request, abort, jsonify
+from flask import Blueprint, request, abort, jsonify, Response
 # from sqlalchemy import or
 from services.user_services import UserService
 from helpers import json_abort
@@ -67,3 +67,14 @@ def get_all_users():
     """
     users = UserService.get_all_users()
     return jsonify({"users": users})
+
+
+@user_blueprint.route('/stats/<int:user_id>', methods=['GET'])
+def get_users_stats(user_id: int) -> Response:
+    """Display all users.
+
+    Returns :
+        list of serialized users
+    """
+    stats = UserService.get_user_stats(user_id)
+    return jsonify({"stats": stats})
