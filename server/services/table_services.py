@@ -1,7 +1,7 @@
 """Building services for table management."""
 import sqlalchemy
 
-from models.model import Table, User, db, JapEvent, table_members
+from models.model import Table, User, db, JapEvent, table_members, CommandItem, UserCommand
 from sqlalchemy import and_
 from services.command_service import CommandService
 
@@ -160,8 +160,8 @@ class TableService:
         return table.emperor == user_id
 
     @staticmethod
-    def get_table_stats(table_id: int) -> List:
-        """Generate statistic for the desired table
+    def get_table_stats(table_id: int) -> dict:
+        """Generate statistics for the desired table.
 
         Arg :
             table_id : id de la table à get.
@@ -169,5 +169,31 @@ class TableService:
         Return:
             {Stats}
         """
-        table = Table.query.filter_by(id=table_id).first()
+        pneu_id = 12
+        sushi_id = 15
 
+        pneu = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
+            filter(UserCommand.command_id == CommandItem.id). \
+            filter(CommandItem.table_id == table_id). \
+            filter(CommandItem.item_id == pneu_id).first()
+
+        sushi = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
+            filter(UserCommand.command_id == CommandItem.id). \
+            filter(CommandItem.table_id == table_id). \
+            filter(CommandItem.item_id == pneu_id).first()
+
+        montant = (db.session.query(db.func.count(Table.members).label("number_of_members")).
+                   filter(Table.table_id == table_id).first()) * 12
+
+        calories = (db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).
+                    filter(UserCommand.command_id == CommandItem.id).
+                    filter(CommandItem.table_id == table_id).first()) * 60
+
+        stats = {
+            'nbre_de_sushi': sushi,
+            'nbre_pneu': pneu,
+            'montant': montant,
+            'calories': calories
+        }
+
+        return stats
