@@ -49,6 +49,14 @@ const makeSelectOrdersList = () =>
     selectOrdersListDomain,
     substate => substate
   );
+const makeSelectOrderSummary = () =>
+  createSelector(
+    selectRecapDomain,
+    substate => {
+      console.log({ substate });
+      return substate.summary;
+    }
+  );
 
 export default makeSelectOrderScreen;
 export {
@@ -57,4 +65,5 @@ export {
   makeSelectCurrentItem,
   makeSelectOrdersList,
   makeSelectCurrentCommandId,
+  makeSelectOrderSummary,
 };

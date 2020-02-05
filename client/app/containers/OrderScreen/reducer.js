@@ -14,13 +14,13 @@ import {
   CHANGE_CURRENT_ITEM_SUCCESS,
   START_ORDER,
   JOINED_TABLE,
-  CHANGE_ORDER_QUANTITY_SUCCESS,
+  CHANGE_ORDER_QUANTITY_SUCCESS, INITIALIZE_ORDER_QUANTITIES,
 } from './constants';
 
 export const initialState = {
   order: { currentItem: { index: 1 } },
   ordersList: ordersListInitialState,
-  recap: { recapOpen: false },
+  recap: { recapOpen: false, summary: {} },
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -56,6 +56,18 @@ const recapOpenReducer = (state = initialState.recap, action) =>
     switch (action.type) {
       case TOGGLE_RECAP:
         draft.recapOpen = action.payload;
+        break;
+      case CHANGE_ORDER_QUANTITY_SUCCESS:
+        draft.summary[action.itemId] = {
+          itemId: action.itemId,
+          index: action.index,
+          individual: action.individual,
+          accumulated: action.accumulated,
+        };
+        break;
+      case INITIALIZE_ORDER_QUANTITIES:
+        console.log({ action });
+        draft.summary = action.commandSummary;
         break;
     }
   });

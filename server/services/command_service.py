@@ -34,12 +34,12 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_command_by_table_id(table_id):
+    def get_command_by_table_id(table_id: int):
         """
         Get command by table id.
 
         Args :
-            data = {table_id}
+            table_id: int
         """
         commands = CommandItem.query.filter_by(table_id=table_id).all()
         return commands
