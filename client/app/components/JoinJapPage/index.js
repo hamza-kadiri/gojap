@@ -19,20 +19,9 @@ const Wrapper = styled.div`
 `;
 
 function JoinJapPage() {
-  const japEvents = [{ name: 'Gros jap' }];
-
-  const japsToJoin = {
-    loading: false,
-    error: false,
-    items: japEvents,
-    component: JapListItem,
-    multiline: true,
-  };
-
   return (
     <Wrapper>
-      <H1>Envie de rejoindre un jap ?</H1>
-      <ListWrapper {...japsToJoin} />
+      <H1>Work in progress ...</H1>
     </Wrapper>
   );
 }
