@@ -175,25 +175,34 @@ class TableService:
         pneu = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
             filter(UserCommand.command_id == CommandItem.id). \
             filter(CommandItem.table_id == table_id). \
-            filter(CommandItem.item_id == pneu_id).first()
+            filter(CommandItem.item_id == pneu_id).first()[0]
+
+        if pneu is None:
+            pneu = 0
 
         sushi = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
             filter(UserCommand.command_id == CommandItem.id). \
             filter(CommandItem.table_id == table_id). \
-            filter(CommandItem.item_id == pneu_id).first()
+            filter(CommandItem.item_id == sushi_id).first()[0]
 
-        montant = (db.session.query(db.func.count(Table.members).label("number_of_members")).
-                   filter(Table.table_id == table_id).first()) * 12
+        if sushi is None:
+            sushi = 0
 
-        calories = (db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).
-                    filter(UserCommand.command_id == CommandItem.id).
-                    filter(CommandItem.table_id == table_id).first()) * 60
+        participants = db.session.query(Table).join(Table.members).filter(Table.id == table_id).count()
+
+        items = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).\
+            filter(UserCommand.command_id == CommandItem.id).\
+            filter(CommandItem.table_id == table_id).first()[0]
+
+        if items is None:
+            items = 0
 
         stats = {
+            'nbr_of_items': items,
             'nbre_de_sushi': sushi,
             'nbre_pneu': pneu,
-            'montant': montant,
-            'calories': calories
+            'montant': participants * 12,
+            'calories': items * 60
         }
 
         return stats

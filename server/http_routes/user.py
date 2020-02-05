@@ -68,3 +68,14 @@ def get_all_users() -> Response:
     """
     users = UserService.get_all_users()
     return jsonify({"users": users})
+
+
+@user_blueprint.route('/stats/<int:user_id>', methods=['GET'])
+def get_users_stats(user_id: int) -> Response:
+    """Display all users.
+
+    Returns :
+        list of serialized users
+    """
+    stats = UserService.get_user_stats(user_id)
+    return jsonify({"stats": stats})
