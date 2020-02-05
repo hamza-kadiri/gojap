@@ -15,14 +15,13 @@ import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
 import Wrapper from 'components/FlexHeightWrapper';
 import { makeSelectTableId } from '../User/selectors';
+import { makeSelectOnlineMembers } from '../JapScreen/selectors';
 
 import makeSelectMembersList from './selectors';
 import reducer from './reducer';
 
-export function MembersList({ dispatch, members, tableId }) {
+export function MembersList({ dispatch, members, tableId, onlineMembers }) {
   useInjectReducer({ key: 'membersList', reducer });
-  console.log("TABLE ID")
-  console.log(tableId)
   const membersListProps = {
     error: false,
     loading: false,
@@ -31,6 +30,7 @@ export function MembersList({ dispatch, members, tableId }) {
     multiline: true,
     isWindowScroller: true,
     tableId,
+    onlineMembers,
   };
 
   return <ListWrapper {...membersListProps} />;
@@ -44,6 +44,7 @@ MembersList.propTypes = {
 const mapStateToProps = createStructuredSelector({
   membersList: makeSelectMembersList(),
   tableId: makeSelectTableId(),
+  onlineMembers: makeSelectOnlineMembers(),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -15,6 +15,8 @@ import {
 export const initialState = {
   error: null,
   jap: null,
+  onlineMembers: null,
+  lastMember: null,
 };
 
 /* eslint-disable default-case, no-param-reassign */
