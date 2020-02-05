@@ -10,6 +10,7 @@ import {
   GET_JAP_SUCCESS,
   GET_JAP_ERROR,
   CHANGE_JAP_MEMBERS,
+  REDIRECT_TO_ORDER_SCREEN,
 } from './constants';
 
 export function defaultAction() {
@@ -41,4 +42,8 @@ export function changeJapMembers(jap) {
     type: CHANGE_JAP_MEMBERS,
     payload: jap,
   };
+}
+
+export function startCommand() {
+  return { type: REDIRECT_TO_ORDER_SCREEN };
 }

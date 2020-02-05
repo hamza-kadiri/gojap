@@ -8,12 +8,10 @@ import userReducer from 'containers/User/reducer';
 import { persistReducer } from 'redux-persist';
 import history from 'utils/history';
 import storage from 'redux-persist/lib/storage';
-import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 
 const userPersistConfig = {
   key: 'user',
   storage,
-  whitelist: ['user'],
 };
 
 /**
