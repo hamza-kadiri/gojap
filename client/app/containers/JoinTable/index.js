@@ -13,6 +13,7 @@ import H1 from 'components/H1';
 import { changeTitle } from 'containers/Header/actions';
 import ListWrapper from 'components/ListWrapper';
 import TablesListItem from 'components/TablesListItem';
+import StyledButton from 'components/Button';
 import history from 'utils/history';
 
 import { useInjectSaga } from 'utils/injectSaga';
@@ -21,6 +22,7 @@ import makeSelectJoinTable, { makeSelectTables } from './selectors';
 import reducer from './reducer';
 import { getTables, joinTable } from './actions';
 import saga from './saga';
+import { addTable } from '../AddTablePage/actions';
 
 export function JoinTable({ dispatch, tables }) {
   useInjectReducer({ key: 'joinTable', reducer });
@@ -45,10 +47,21 @@ export function JoinTable({ dispatch, tables }) {
     onClickItem: handleCickOnTable,
   };
 
+  const handleClickValidate = () => {
+    dispatch(addTable());
+    history.goBack();
+  };
+
   return (
     <ContainerWrapper>
       <H1>Rejoindre une table:</H1>
       <ListWrapper {...tablesListProps} />
+      <ContainerWrapper>
+        <H1>Ajouter une Nouvelle table:</H1>
+        <StyledButton onClick={handleClickValidate}>
+          Créer une table et la rejoindre.
+        </StyledButton>
+      </ContainerWrapper>
     </ContainerWrapper>
   );
 }

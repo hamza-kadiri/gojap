@@ -102,18 +102,16 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
       onClick: () => history.push('/addmembers'),
     },
     {
-      name: 'Ajouter une table',
-      onClick: () => history.push('/addtable'),
-    },
-    {
-      name: 'Rejoindre une table',
-      onClick: () => history.push('/jointable'),
-    },
-    {
       name: 'Commencer la commande',
       onClick: () => dispatch(startCommand()),
     },
   ];
+  if (!tableId) {
+    moreMenu.push({
+      name: 'Rejoindre une table',
+      onClick: () => history.push('/jointable'),
+    });
+  }
 
   useEffect(() => {
     const japEventId = history.location.pathname.split('/jap/')[1];
@@ -128,7 +126,7 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
         jap.created_by
           ? `Créé par ${jap.created_by.username}, ${moment(jap.date).format('L')}`
           : ''
-      }`;
+        }`;
       dispatch(changeSubtitle(createdBy));
       dispatch(changeMoreMenu(moreMenu));
     }
@@ -160,8 +158,8 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
                 component="span"
               />
             ) : (
-              <span>{loremIpsum}</span>
-            )}
+                <span>{loremIpsum}</span>
+              )}
           </Typography>
         </StyledCardContent>
       </CardFluid>

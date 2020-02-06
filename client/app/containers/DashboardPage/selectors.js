@@ -18,8 +18,14 @@ const selectDashboardPageDomain = state => state.dashboardPage || initialState;
 const makeSelectDashboardPage = () =>
   createSelector(
     selectDashboardPageDomain,
-    substate => substate,
+    substate => substate
+  );
+
+const makeSelectStats = () =>
+  createSelector(
+    selectDashboardPageDomain,
+    substate => substate.stats
   );
 
 export default makeSelectDashboardPage;
-export { selectDashboardPageDomain };
+export { selectDashboardPageDomain, makeSelectStats };
