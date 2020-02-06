@@ -38,7 +38,7 @@ import { changeJapId } from 'containers/User/actions';
 import makeSelectJapScreen, { makeSelectJap } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { getJap, startCommand } from './actions';
+import { getJap, leaveJap, startCommand } from './actions';
 
 moment.locale('fr');
 
@@ -126,12 +126,13 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
         jap.created_by
           ? `Créé par ${jap.created_by.username}, ${moment(jap.date).format('L')}`
           : ''
-        }`;
+      }`;
       dispatch(changeSubtitle(createdBy));
       dispatch(changeMoreMenu(moreMenu));
     }
   }, [jap]);
   const loremIpsum = jap ? jap.description : '';
+  const onLeaveJap = () => dispatch(leaveJap());
 
   return (
     <div>
@@ -158,8 +159,8 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
                 component="span"
               />
             ) : (
-                <span>{loremIpsum}</span>
-              )}
+              <span>{loremIpsum}</span>
+            )}
           </Typography>
         </StyledCardContent>
       </CardFluid>
@@ -209,7 +210,7 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
         </StyledCardButton>
       </CardFluid>
       <CardFluid>
-        <StyledCardButton startIcon={<ExitToAppIcon color="error" />}>
+        <StyledCardButton startIcon={<ExitToAppIcon color="error" />} onClick={onLeaveJap}>
           <Typography variant="subtitle2" component="p" color="error">
             Quitter le jap
           </Typography>
