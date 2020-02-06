@@ -27,10 +27,14 @@ import {
   changeSubtitle,
   changeMoreMenu,
 } from 'containers/Header/actions';
-import { makeSelectTableId } from 'containers/User/selectors';
+import {
+  makeSelectTableId,
+  makeSelectIsEmperor,
+} from 'containers/User/selectors';
 import OrderNumber from 'components/OrderNumber';
 import menuSaga from 'containers/OrdersList/saga';
 import { changeOrderQuantity } from 'containers/OrdersList/actions';
+import makeSelectJapScreen from 'containers/JapScreen/selectors';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -72,6 +76,8 @@ function OrderScreen({
   currentItem,
   tableId,
   japPlaceId,
+  isEmperor,
+  japScreen,
 }) {
   useInjectReducer({ key: 'orderScreen', reducer });
   useInjectSaga({ key: 'orderScreen', saga });
@@ -82,11 +88,12 @@ function OrderScreen({
   const moreMenu = [
     { name: 'Commandes', onClick: () => dispatch(toggleRecap(true)) },
   ];
-  const members = ['Member 1', 'Member 2', 'Member 3', 'Member 4', 'Member 5'];
+  const { members } = japScreen.table;
+  const membersUsername = members.map(member => member.username);
 
   useEffect(() => {
     dispatch(changeTitle(`Table ${tableId}`));
-    dispatch(changeSubtitle(members.join(', ')));
+    dispatch(changeSubtitle(membersUsername.join(', ')));
     dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder(japPlaceId));
   }, []);
@@ -119,6 +126,7 @@ function OrderScreen({
               <NextJapaneseItemIcon
                 size="medium"
                 src={items[currentItem.index + 1].icon.thumbnail_url}
+                disabled={!isEmperor}
                 onClick={() => {
                   dispatch(
                     changeCurrentItem((currentItem.index + 1) % items.length)
@@ -178,6 +186,8 @@ const mapStateToProps = createStructuredSelector({
   currentItem: makeSelectCurrentItem(),
   tableId: makeSelectTableId(),
   japPlaceId: makeSelectJapPlaceId(),
+  isEmperor: makeSelectIsEmperor(),
+  japScreen: makeSelectJapScreen(),
 });
 
 function mapDispatchToProps(dispatch) {

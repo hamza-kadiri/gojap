@@ -6,6 +6,7 @@ import {
   makeSelectUsername,
   makeSelectUserId,
   makeSelectTableId,
+  makeSelectIsEmperor,
 } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
 import request, { api } from 'utils/request';
@@ -60,20 +61,24 @@ function* read(socket) {
 export function* writeNextItem(socket) {
   while (true) {
     const { payload } = yield take(MESSAGES.NEXT_ITEM);
+    const isEmperor = yield select(makeSelectIsEmperor());
     const username = yield select(makeSelectUsername());
     const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
     const tableId = yield select(makeSelectTableId());
     const commandId = yield select(makeSelectCurrentCommandId());
-    socket.emit(MESSAGES.NEXT_ITEM, {
-      username,
-      user_id: userId,
-      command_id: commandId,
-      jap_id: japId,
-      table_id: tableId,
-      is_jap_master: true,
-      index: payload,
-    });
+    if (isEmperor) {
+      socket.emit(MESSAGES.NEXT_ITEM, {
+        username,
+        user_id: userId,
+        isEmperor,
+        command_id: commandId,
+        jap_id: japId,
+        table_id: tableId,
+        is_jap_master: true,
+        index: payload,
+      });
+    }
   }
 }
 

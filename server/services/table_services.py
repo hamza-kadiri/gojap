@@ -158,7 +158,6 @@ class TableService:
     def is_emperor(user_id: int, table_id: int) -> bool:
         """Check if a user is emperor."""
         table = Table.query.get(table_id)
-        return True
         return table.emperor == user_id
 
     @staticmethod
@@ -190,7 +189,8 @@ class TableService:
         if sushi is None:
             sushi = 0
 
-        participants = db.session.query(Table).join(Table.members).filter(Table.id == table_id).count()
+        participants = db.session.query(Table).join(
+            Table.members).filter(Table.id == table_id).count()
 
         items = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).\
             filter(UserCommand.command_id == CommandItem.id).\

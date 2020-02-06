@@ -28,10 +28,15 @@ import {
   GET_JAP_SUCCESS,
   REDIRECT_TO_ORDER_SCREEN,
 } from './constants';
-import { getJapSuccess, getJapError, changeJapMembers } from './actions';
-import { CHANGE_JAP_ID } from '../User/constants';
+import {
+  getJapSuccess,
+  getJapError,
+  changeJapMembers,
+  changeTableMembers,
+  getJap as refreshJap,
+} from './actions';
 
-function connect(userId, japId) {
+function connect() {
   const socket = io(process.env.SOCKET_URL);
   return new Promise(resolve => {
     socket.on('connect', () => {
@@ -50,12 +55,13 @@ function* read(socket) {
 
 export function* subscribe(socket) {
   const userId = yield select(makeSelectUserId());
-  return eventChannel(dispatch => {
+  return eventChannel(emit => {
     const userJoinedJap = data => {
-      dispatch(changeJapMembers(data));
+      emit(changeJapMembers(data));
     };
     const userJoinedTable = data => {
-      dispatch(changeTableId(data.table_id));
+      emit(changeTableMembers(data));
+      emit(changeTableId(data.table_id));
     };
     const redirectUser = data => {
       if (history.location.pathname.split('/order').length === 1) {
@@ -84,8 +90,8 @@ export function* getJap({ japId }) {
     const jap = yield call(request, api, requestURL);
     yield put(getJapSuccess(jap));
     yield put(changeJapId(jap.jap_event.id));
-    yield put(changeTableId(jap.table.id));
-    yield put(changeIsEmperor(jap.table.is_emperor));
+    yield put(changeTableId(jap.table ? jap.table.id : null));
+    yield put(changeIsEmperor(jap.table ? jap.table.is_emperor : false));
   } catch (err) {
     yield put(getJapError(err));
   }
@@ -133,9 +139,7 @@ export function* startCommand(socket) {
 }
 
 export function* japEventFlow() {
-  const userId = yield select(makeSelectUserId());
-  const japId = yield select(makeSelectJapId());
-  const socket = yield call(connect, userId, japId);
+  const socket = yield call(connect);
 
   yield fork(read, socket);
   yield fork(joinJapEventAndTable, socket);

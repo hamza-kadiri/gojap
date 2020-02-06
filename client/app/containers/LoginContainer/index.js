@@ -33,18 +33,22 @@ export function LoginContainer({ dispatch, user }) {
     dispatch(login(name));
   };
 
-  if (user.id !== null) {
-    history.push('/');
-  }
-
   return (
     <ContainerWrapper>
-      <div style={{ display: "flex", alignItems: "center", flexDirection: "column", margin: "5 %" }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          margin: '5 %',
+        }}
+      >
         <H1>Pseudo</H1>
         <TextField
           label="Entrez votre pseudo"
           value={name}
           onChange={event => setName(event.target.value)}
+          onKeyPress={e => e.key === 'Enter' && handleClick()}
         />
         <StyledButton onClick={handleClick}>Login</StyledButton>
       </div>

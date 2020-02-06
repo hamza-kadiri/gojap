@@ -14,6 +14,8 @@ import MediumAvatar from 'components/MediumAvatar';
 import Chip from '@material-ui/core/Chip';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import styled from 'styled-components';
+import _ from 'lodash';
+import EventSeatIcon from '@material-ui/icons/EventSeat';
 
 const Dot = styled.div`
   position: absolute;
@@ -32,6 +34,8 @@ function MembersListItem(props) {
   const { item, index, onClickItem, stats, onlineMembers, jap } = props;
   const [isSelected, setIsSelected] = React.useState(false);
   const [isOnline, setIsOnline] = React.useState(false);
+  const [tableId, setTableId] = React.useState(null);
+  const [emperor, setIsEmperor] = React.useState(false);
 
   const handleClickItem = () => {
     setIsSelected(!isSelected);
@@ -42,40 +46,31 @@ function MembersListItem(props) {
     if (onlineMembers) {
       setIsOnline(onlineMembers.map(member => member.id).includes(item.id));
     }
-  }, [onlineMembers]);
-
-  let tableId = null;
-
-  if (jap) {
-    for (const table of jap.tables) {
-      for (const member of table.members) {
-        if (member.id === item.id) {
-          tableId = table.id;
-        }
+    if (jap) {
+      const currentTable = jap.tables.filter(table =>
+        _.find(table.members, member => member.id === item.id)
+      )[0];
+      if (currentTable) {
+        setTableId(currentTable.id);
+        setIsEmperor(currentTable.emperor == item.id);
       }
     }
-  }
+  }, [jap, onlineMembers]);
 
-  let children = tableId && !stats && (
-    <Chip
-      size="small"
-      color="primary"
-      variant="outlined"
-      component="span"
-      label={`Table ${tableId}`}
-    />
-  );
-  if (stats) {
-    children = (
+  const children =
+    stats || tableId ? (
       <Chip
         size="small"
         color="primary"
+        icon={emperor ? <EventSeatIcon /> : null}
         variant="outlined"
         component="span"
-        label={`${item.calories || '0'} calories`}
+        label={
+          // eslint-disable-next-line no-nested-ternary
+          stats ? `${item.calories || '0'} calories` : `Table ${tableId}`
+        }
       />
-    );
-  }
+    ) : null;
 
   return (
     <ListItem

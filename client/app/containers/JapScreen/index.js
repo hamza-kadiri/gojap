@@ -124,9 +124,15 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
           onClick: () => history.push('/jointable'),
         });
       }
-      if (table && isEmperor) {
+      if (table && table.status == 0 && isEmperor) {
         moreMenu.push({
           name: 'Commencer la commande',
+          onClick: () => dispatch(startCommand()),
+        });
+      }
+      if (table && table.status == 1) {
+        moreMenu.push({
+          name: 'Rejoindre la commande',
           onClick: () => dispatch(startCommand()),
         });
       }

@@ -3,6 +3,8 @@ import request, { api } from 'utils/request';
 import { makeSelectJapId, makeSelectUserId } from 'containers/User/selectors';
 
 import history from 'utils/history';
+import { addTable } from 'containers/AddTablePage/saga';
+import { ADD_TABLE } from 'containers/AddTablePage/constants';
 import { GET_TABLES, JOIN_TABLE } from './constants';
 import {
   getTablesSuccess,
@@ -43,5 +45,6 @@ export function* joinTable(action) {
 // Individual exports for testing
 export default function* membersListSaga() {
   yield takeLatest(GET_TABLES, getTables);
+  yield takeLatest(ADD_TABLE, addTable);
   yield takeLatest(JOIN_TABLE, joinTable);
 }

@@ -10,6 +10,7 @@ import {
   GET_JAP_SUCCESS,
   GET_JAP_ERROR,
   CHANGE_JAP_MEMBERS,
+  CHANGE_TABLE_MEMBERS,
   REDIRECT_TO_ORDER_SCREEN,
 } from './constants';
 import MESSAGES from '../../utils/socketMessages';
@@ -43,6 +44,13 @@ export function changeJapMembers(jap) {
   return {
     type: CHANGE_JAP_MEMBERS,
     payload: jap,
+  };
+}
+
+export function changeTableMembers(table) {
+  return {
+    type: CHANGE_TABLE_MEMBERS,
+    payload: table,
   };
 }
 

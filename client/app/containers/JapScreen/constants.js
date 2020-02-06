@@ -10,5 +10,8 @@ export const GET_JAP_SUCCESS = 'app/JapScreen/GET_JAP_SUCCESS';
 export const GET_JAP_ERROR = 'app/JapScreen/GET_JAP_ERROR';
 
 export const CHANGE_JAP_MEMBERS = 'app/JapScreen/CHANGE_JAP_MEMBERS';
+export const CHANGE_TABLE_MEMBERS = 'app/JapScreen/CHANGE_TABLE_MEMBERS';
+
 export const REDIRECT_TO_ORDER_SCREEN =
   'app/JapScreen/REDIRECT_TO_ORDER_SCREEN';
+export const LEAVE_JAP_EVENT = '@socket/LEAVE_JAP_EVENT';
