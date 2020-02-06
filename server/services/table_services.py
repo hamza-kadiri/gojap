@@ -1,6 +1,8 @@
 """Building services for table management."""
 import sqlalchemy
 from typing import Dict, Optional, List
+
+from helpers import json_abort
 from models.model import Table, User, db, JapEvent, table_members, CommandItem, UserCommand
 from sqlalchemy import and_
 from services.command_service import CommandService
@@ -79,7 +81,7 @@ class TableService:
             return None
 
     @staticmethod
-    def add_user_to_table(table_id: int, user_ids: list) -> Table:
+    def add_user_to_table(table_id: int, user_ids: list):
         """
         Add a user to a table.
 
@@ -90,15 +92,20 @@ class TableService:
         Return :
             {Table}
         """
-        table = Table.query.filter_by(id=table_id).first()
+        for user_id in user_ids:
+            table_active = db.session.query(Table, User). \
+                filter(User.id == user_id). \
+                filter(Table.status == 1). \
+                all()
+            if table_active:
+                return [f"User {user_id} already has a table. Users can only be active on one table"]
 
-        members = User.query.filter(
+        table = Table.query.filter_by(id=table_id).first()
+        users = User.query.filter(
             User.id.in_(user_ids)
         ).all()
 
-        for member in members:
-            if member not in table.members:
-                table.members += members
+        table.members += users
 
         db.session.add(table)
         db.session.commit()
