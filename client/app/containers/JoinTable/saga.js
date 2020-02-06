@@ -2,6 +2,7 @@ import { takeLatest, call, put, select } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 import { makeSelectJapId, makeSelectUserId } from 'containers/User/selectors';
 
+import history from 'utils/history';
 import { GET_TABLES, JOIN_TABLE } from './constants';
 import {
   getTablesSuccess,
@@ -33,6 +34,7 @@ export function* joinTable(action) {
   try {
     const response = yield call(request, api.post, requestUrl, { json: body });
     yield put(joinTableSuccess(response));
+    history.goBack();
   } catch (err) {
     yield put(joinTableError(err));
   }

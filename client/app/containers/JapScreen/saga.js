@@ -17,7 +17,11 @@ import {
 } from 'containers/User/selectors';
 import MESSAGES from 'utils/socketMessages';
 import { JOIN_TABLE_SUCCESS } from 'containers/JoinTable/constants';
-import { changeTableId, changeJapId } from 'containers/User/actions';
+import {
+  changeTableId,
+  changeJapId,
+  changeIsEmperor,
+} from 'containers/User/actions';
 import history from 'utils/history';
 import {
   GET_JAP,
@@ -25,6 +29,7 @@ import {
   REDIRECT_TO_ORDER_SCREEN,
 } from './constants';
 import { getJapSuccess, getJapError, changeJapMembers } from './actions';
+import { CHANGE_JAP_ID } from '../User/constants';
 
 function connect(userId, japId) {
   const socket = io(process.env.SOCKET_URL);
@@ -68,14 +73,16 @@ export function* subscribe(socket) {
 }
 
 export function* getJap({ japId }) {
-  const requestURL = `jap_event/event/${japId}`;
+  const userId = yield select(makeSelectUserId());
+  const requestURL = `jap_event/table/${japId}/${userId}`;
 
   try {
     // Call our request helper (see 'utils/request')
     const jap = yield call(request, api, requestURL);
     yield put(getJapSuccess(jap));
-    yield put(changeJapId(jap.id));
-    // yield put(changeTableId(jap.jap_event_id))
+    yield put(changeJapId(jap.jap_event.id));
+    yield put(changeTableId(jap.table.id));
+    yield put(changeIsEmperor(jap.table.is_emperor));
   } catch (err) {
     yield put(getJapError(err));
   }
@@ -83,10 +90,10 @@ export function* getJap({ japId }) {
 
 export function* joinJapTableOnTableSuccess(socket) {
   while (true) {
-    const { payload } = yield take(JOIN_TABLE_SUCCESS);
+    const { table } = yield take(JOIN_TABLE_SUCCESS);
+    const tableId = table.id;
     const userId = yield select(makeSelectUserId());
     const japId = yield select(makeSelectJapId());
-    const tableId = yield select(makeSelectTableId());
     socket.emit(MESSAGES.JOIN_TABLE, {
       user_id: userId,
       jap_event_id: japId,
@@ -97,21 +104,13 @@ export function* joinJapTableOnTableSuccess(socket) {
 
 export function* joinJapEventAndTable(socket) {
   while (true) {
-    const { payload } = yield take(GET_JAP_SUCCESS);
+    const { jap_event } = yield take(GET_JAP_SUCCESS);
+    const japId = jap_event.id;
     const userId = yield select(makeSelectUserId());
-    const japId = yield select(makeSelectJapId());
-    const tableId = yield select(makeSelectTableId());
     socket.emit(MESSAGES.JOIN_JAP, {
       user_id: userId,
       jap_event_id: japId,
     });
-    if (tableId) {
-      socket.emit(MESSAGES.JOIN_TABLE, {
-        user_id: userId,
-        jap_event_id: japId,
-        table_id: tableId,
-      });
-    }
   }
 }
 

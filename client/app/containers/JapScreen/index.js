@@ -127,16 +127,16 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
       const createdBy = `${
         jap.created_by ? `Créé par ${creatorName}, ${formattedDate}` : ''
       }`;
+      if (table && isEmperor) {
+        moreMenu.push({
+          name: 'Commencer la commande',
+          onClick: () => dispatch(startCommand()),
+        });
+      }
       dispatch(changeSubtitle(createdBy));
       dispatch(changeMoreMenu(moreMenu));
     }
-    if (table && isEmperor) {
-      moreMenu.push({
-        name: 'Commencer la commande',
-        onClick: () => dispatch(startCommand()),
-      });
-    }
-  }, [jap, table]);
+  }, [jap, table, isEmperor]);
   const loremIpsum = jap ? jap.description : '';
 
   return (

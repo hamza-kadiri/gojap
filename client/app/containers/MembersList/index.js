@@ -21,8 +21,6 @@ import reducer from './reducer';
 
 export function MembersList({ dispatch, members, tableId }) {
   useInjectReducer({ key: 'membersList', reducer });
-  console.log("TABLE ID")
-  console.log(tableId)
   const membersListProps = {
     error: false,
     loading: false,

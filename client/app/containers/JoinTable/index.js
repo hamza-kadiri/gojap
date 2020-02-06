@@ -33,7 +33,6 @@ export function JoinTable({ dispatch, tables }) {
 
   const handleCickOnTable = table => {
     dispatch(joinTable(table.id));
-    history.goBack();
   };
 
   const tablesListProps = {

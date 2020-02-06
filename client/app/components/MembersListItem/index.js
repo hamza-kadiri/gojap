@@ -29,7 +29,7 @@ function MembersListItem(props) {
       color="primary"
       variant="outlined"
       component="span"
-      label={`table : ${tableId}`}
+      label={`Table ${tableId}`}
     />
   );
   if (stats) {

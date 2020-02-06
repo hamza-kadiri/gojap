@@ -136,6 +136,8 @@ class TableService:
         Return :
             {Table}
         """
+        return Table.query.filter_by(jap_event_id=jap_event_id).filter(Table.members.any(User.id.in_([user_id]))).first()
+
         tables = JapEvent.query.filter(
             JapEvent.id.__eq__(jap_event_id)
         ).first().tables
