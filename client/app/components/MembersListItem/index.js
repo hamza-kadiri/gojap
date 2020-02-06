@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import ListItem from '@material-ui/core/ListItem';
@@ -31,17 +31,21 @@ const Dot = styled.div`
 function MembersListItem(props) {
   const { item, index, onClickItem, stats, onlineMembers, jap } = props;
   const [isSelected, setIsSelected] = React.useState(false);
+  const [isOnline, setIsOnline] = React.useState(false);
 
   const handleClickItem = () => {
     setIsSelected(!isSelected);
     onClickItem(item);
   };
 
-  const isOnline = onlineMembers
-    ? onlineMembers.map(member => member.id).includes(item.id)
-    : false;
+  useEffect(() => {
+    if (onlineMembers) {
+      setIsOnline(onlineMembers.map(member => member.id).includes(item.id));
+    }
+  }, [onlineMembers]);
 
   let tableId = null;
+
   if (jap) {
     for (const table of jap.tables) {
       for (const member of table.members) {
@@ -87,8 +91,8 @@ function MembersListItem(props) {
               src={item.avatar_url && item.picture.medium}
               alt={item.username}
             />
-            {isOnline && <Dot />}
           </ListItemAvatar>
+          {isOnline && <Dot />}
         </Grid>
         <Grid item>
           <ListItemText primary={item.username} secondary={children} />
