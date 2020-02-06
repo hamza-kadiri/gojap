@@ -4,7 +4,14 @@
  *
  */
 import produce from 'immer';
-import { LOAD_JAPS, LOAD_JAPS_ERROR, LOAD_JAPS_SUCCESS } from './constants';
+import {
+  LOAD_JAPS,
+  LOAD_JAPS_ERROR,
+  LOAD_JAPS_SUCCESS,
+  LOAD_PAST_JAPS,
+  LOAD_PAST_JAPS_ERROR,
+  LOAD_PAST_JAPS_SUCCESS,
+} from './constants';
 
 export const initialState = {
   loading: false,
@@ -28,6 +35,22 @@ const homePageReducer = (state = initialState, action) =>
         break;
 
       case LOAD_JAPS_ERROR:
+        draft.error = action.error;
+        draft.loading = false;
+        break;
+
+      case LOAD_PAST_JAPS:
+        draft.loading = true;
+        draft.error = false;
+        draft.pastJaps = [];
+        break;
+
+      case LOAD_PAST_JAPS_SUCCESS:
+        draft.pastJaps = action.pastJaps;
+        draft.loading = false;
+        break;
+
+      case LOAD_PAST_JAPS_ERROR:
         draft.error = action.error;
         draft.loading = false;
         break;

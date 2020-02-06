@@ -13,13 +13,13 @@ import { compose } from 'redux';
 import { useInjectReducer } from 'utils/injectReducer';
 import MembersListItem from 'components/MembersListItem';
 import ListWrapper from 'components/ListWrapper';
-import Wrapper from 'components/FlexHeightWrapper';
 import { makeSelectTableId } from '../User/selectors';
+import { makeSelectOnlineMembers, makeSelectJap } from '../JapScreen/selectors';
 
 import makeSelectMembersList from './selectors';
 import reducer from './reducer';
 
-export function MembersList({ dispatch, members, tableId }) {
+export function MembersList({ dispatch, members, onlineMembers, jap }) {
   useInjectReducer({ key: 'membersList', reducer });
   const membersListProps = {
     error: false,
@@ -28,7 +28,8 @@ export function MembersList({ dispatch, members, tableId }) {
     component: MembersListItem,
     multiline: true,
     isWindowScroller: true,
-    tableId,
+    onlineMembers,
+    jap,
   };
 
   return <ListWrapper {...membersListProps} />;
@@ -41,7 +42,8 @@ MembersList.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   membersList: makeSelectMembersList(),
-  tableId: makeSelectTableId(),
+  onlineMembers: makeSelectOnlineMembers(),
+  jap: makeSelectJap(),
 });
 
 function mapDispatchToProps(dispatch) {

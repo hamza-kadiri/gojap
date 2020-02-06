@@ -12,7 +12,6 @@ import { compose } from 'redux';
 import ListWrapper from 'components/ListWrapper';
 import MembersListItem from 'components/MembersListItem';
 import StyledButton from 'components/Button';
-import history from 'utils/history';
 import { changeTitle } from 'containers/Header/actions';
 import { makeSelectJapId } from 'containers/User/selectors';
 

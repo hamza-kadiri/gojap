@@ -39,10 +39,17 @@ const makeSelectJaps = () =>
     globalState => globalState.japs
   );
 
+const makeSelectPastJaps = () =>
+  createSelector(
+    selectHomePageDomain,
+    globalState => globalState.pastJaps
+  );
+
 export default makeSelectHomePage;
 export {
   selectHomePageDomain,
   makeSelectLoading,
   makeSelectError,
   makeSelectJaps,
+  makeSelectPastJaps,
 };

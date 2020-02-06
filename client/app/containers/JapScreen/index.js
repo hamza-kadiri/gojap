@@ -99,21 +99,6 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
 
   const [isDescriptionClamped, setIsDescriptionClamped] = useState(true);
 
-  const moreMenu = [
-    {
-      name: 'Ajouter des participants',
-      onClick: () => history.push('/addmembers'),
-    },
-    {
-      name: 'Ajouter une table',
-      onClick: () => history.push('/addtable'),
-    },
-    {
-      name: 'Rejoindre une table',
-      onClick: () => history.push('/jointable'),
-    },
-  ];
-
   useEffect(() => {
     const japEventId = history.location.pathname.split('/jap/')[1];
     dispatch(getJap(japEventId));
@@ -127,6 +112,18 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
       const createdBy = `${
         jap.created_by ? `Créé par ${creatorName}, ${formattedDate}` : ''
       }`;
+      const moreMenu = [
+        {
+          name: 'Ajouter des participants',
+          onClick: () => history.push('/addmembers'),
+        },
+      ];
+      if (!table) {
+        moreMenu.push({
+          name: 'Rejoindre une table',
+          onClick: () => history.push('/jointable'),
+        });
+      }
       if (table && isEmperor) {
         moreMenu.push({
           name: 'Commencer la commande',

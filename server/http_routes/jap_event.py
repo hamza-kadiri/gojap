@@ -1,8 +1,7 @@
 """JapEvent blueprint."""
 from dataclasses import asdict
 
-from flask import Blueprint, request, jsonify
-
+from flask import Blueprint, request, jsonify, Response
 from services import TableService
 from services.jap_event_services import JapEventService
 
@@ -11,7 +10,7 @@ jap_event_blueprint = Blueprint(
 
 
 @jap_event_blueprint.route('event/<int:jap_event_id>', methods=['GET'])
-def get_jap_event(jap_event_id):
+def get_jap_event(jap_event_id: int) -> Response:
     """Get jap event for a given event id.
 
     Returns :
@@ -22,7 +21,7 @@ def get_jap_event(jap_event_id):
 
 
 @jap_event_blueprint.route('/all', methods=['GET'])
-def get_all_jap_events():
+def get_all_jap_events() -> Response:
     """Get all jap events.
 
     Returns :
@@ -33,7 +32,7 @@ def get_all_jap_events():
 
 
 @jap_event_blueprint.route('', methods=['POST'])
-def create_jap_event():
+def create_jap_event() -> Response:
     """Create a new jap_event.
 
     Body args : 
@@ -55,7 +54,7 @@ def create_jap_event():
 
 
 @jap_event_blueprint.route('user/<int:user_id>', methods=['GET'])
-def get_events_for_user(user_id):
+def get_events_for_user(user_id: int) -> Response:
     """Get all jap_events for a given user.
 
     Args :
@@ -69,7 +68,7 @@ def get_events_for_user(user_id):
 
 
 @jap_event_blueprint.route('/upcoming/<int:user_id>', methods=['GET'])
-def get_upcoming_events_for_user(user_id):
+def get_upcoming_events_for_user(user_id: int) -> Response:
     """Get all upcoming jap_events for a given user.
 
     Args :
@@ -83,7 +82,7 @@ def get_upcoming_events_for_user(user_id):
 
 
 @jap_event_blueprint.route('/add_members/<int:jap_event_id>', methods=['POST'])
-def add_members(jap_event_id: int):
+def add_members(jap_event_id: int) -> Response:
     """Add members to a jap event.
 
     Args :
@@ -99,7 +98,7 @@ def add_members(jap_event_id: int):
 
 
 @jap_event_blueprint.route('<int:jap_event_id>/status/<int:status>', methods=['PUT'])
-def update_status(jap_event_id: int, status: int):
+def update_status(jap_event_id: int, status: int) -> Response:
     """Update status of a jap event.
 
     Args :
@@ -113,8 +112,8 @@ def update_status(jap_event_id: int, status: int):
 
 
 @jap_event_blueprint.route('/table/<int:jap_event_id>', methods=['GET'])
-def get_tables_jap_event(jap_event_id: int):
-    """Get tables in Jap Event.
+def get_tables_jap_event(jap_event_id: int) -> Response:
+    """Get tables for a jap event.
 
     Args :
         jap_event_id
@@ -124,6 +123,20 @@ def get_tables_jap_event(jap_event_id: int):
     """
     tables = JapEventService.get_tables_for_a_jap(jap_event_id)
     return jsonify(tables)
+
+
+@jap_event_blueprint.route('past/<int:user_id>', methods=['GET'])
+def get_jap_event_by_status(user_id: int):
+    """Get past jap events for a user.
+
+    Args :
+        user_id
+
+    Returns :
+        jap_events: list
+    """
+    jap_events = JapEventService.get_past_jap_events_for_user(user_id)
+    return jsonify(jap_events)
 
 
 @jap_event_blueprint.route('/table/<int:jap_event_id>/<int:user_id>', methods=['GET'])

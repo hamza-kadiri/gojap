@@ -15,6 +15,8 @@ import {
 export const initialState = {
   error: null,
   jap: null,
+  onlineMembers: null,
+  lastMember: null,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -34,6 +36,7 @@ const japScreenReducer = (state = initialState, action) =>
         break;
       case GET_JAP_ERROR:
         draft.error = action.error;
+        console.error(action.error);
         break;
       case CHANGE_JAP_MEMBERS:
         draft.onlineMembers = action.payload.members;

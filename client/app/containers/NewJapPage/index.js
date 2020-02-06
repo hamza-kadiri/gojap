@@ -78,7 +78,7 @@ export function NewJapPage({ dispatch, japPlaces }) {
         <StyledKeyboardDateTimePicker
           variant="inline"
           ampm={false}
-          label="With keyboard"
+          label="Date"
           value={date}
           onChange={event => setDate(event)}
           disablePast

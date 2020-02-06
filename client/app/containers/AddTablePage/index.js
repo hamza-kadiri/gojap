@@ -32,7 +32,6 @@ export function AddTablePage({ dispatch }) {
 
   const handleClickValidate = () => {
     dispatch(addTable());
-    history.goBack();
   };
 
   return (

@@ -1,6 +1,6 @@
 """Command blueprint."""
 
-from flask import Blueprint, request, abort, jsonify
+from flask import Blueprint, request, abort, jsonify, Response
 from services.command_service import CommandService
 from helpers import json_abort
 from models.model import db
@@ -11,7 +11,7 @@ command_blueprint = Blueprint(
 
 
 @command_blueprint.route('<int:command_id>', methods=['GET'])
-def get_command(command_id: int):
+def get_command(command_id: int) -> Response:
     """Find a given command.
 
     Returns :
@@ -25,7 +25,7 @@ def get_command(command_id: int):
 
 
 @command_blueprint.route('', methods=['POST'])
-def create_command():
+def create_command() -> Response:
     """Create a new command.
 
     Args :
@@ -43,7 +43,7 @@ def create_command():
 
 
 @command_blueprint.route('<int:command_id>/add', methods=['POST'])
-def add_user_order_to_command(command_id):
+def add_user_order_to_command(command_id: int) -> Response:
     """Add a user to a command with an item and an order amount.
 
     Args :
@@ -62,7 +62,7 @@ def add_user_order_to_command(command_id):
 
 
 @command_blueprint.route('table/<int:table_id>', methods=['GET'])
-def get_command_by_table_id(table_id: int):
+def get_command_by_table_id(table_id: int) -> Response:
     """Get commands for a table.
 
     Returns :
@@ -76,7 +76,7 @@ def get_command_by_table_id(table_id: int):
 
 
 @command_blueprint.route('table/<int:table_id>/item/<int:item_id>', methods=['GET'])
-def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
+def get_unique_command_by_table_id_and_item(table_id: int, item_id: int) -> Response:
     """Get a unique command for a table_id and item_id.
 
     Returns :
@@ -91,7 +91,7 @@ def get_unique_command_by_table_id_and_item(table_id: int, item_id: int):
 
 
 @command_blueprint.route('table/<int:table_id>/user/<int:user_id>', methods=['GET'])
-def get_command_by_user_and_table(table_id: int, user_id: int):
+def get_command_by_user_and_table(table_id: int, user_id: int) -> Response:
     """Get commands for a user.
 
     Returns :
