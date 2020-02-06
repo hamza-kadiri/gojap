@@ -45,7 +45,7 @@ import makeSelectJapScreen, {
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
-import { getJap, startCommand } from './actions';
+import { getJap, leaveJap, startCommand } from './actions';
 
 moment.locale('fr');
 
@@ -135,6 +135,7 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
     }
   }, [jap, table, isEmperor]);
   const loremIpsum = jap ? jap.description : '';
+  const onLeaveJap = () => dispatch(leaveJap());
 
   return (
     <div>
@@ -212,7 +213,10 @@ export function JapScreen({ dispatch, table, isEmperor, jap }) {
         </StyledCardButton>
       </CardFluid>
       <CardFluid>
-        <StyledCardButton startIcon={<ExitToAppIcon color="error" />}>
+        <StyledCardButton
+          startIcon={<ExitToAppIcon color="error" />}
+          onClick={onLeaveJap}
+        >
           <Typography variant="subtitle2" component="p" color="error">
             Quitter le jap
           </Typography>
