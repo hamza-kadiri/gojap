@@ -53,7 +53,6 @@ const makeSelectOrderSummary = () =>
   createSelector(
     selectRecapDomain,
     substate => {
-      console.log({ substate });
       return substate.summary;
     }
   );

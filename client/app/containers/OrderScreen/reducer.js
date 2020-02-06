@@ -66,7 +66,6 @@ const recapOpenReducer = (state = initialState.recap, action) =>
         };
         break;
       case INITIALIZE_ORDER_QUANTITIES:
-        console.log({ action });
         draft.summary = action.commandSummary;
         break;
     }
