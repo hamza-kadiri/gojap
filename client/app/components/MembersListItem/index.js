@@ -76,8 +76,10 @@ function MembersListItem(props) {
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemAvatar>
-            <MediumAvatar src={item.avatar_url && item.picture.medium} alt={item.username} />
-            {isOnline && <Dot />}
+            <div>
+              <MediumAvatar src={item.avatar_url && item.picture.medium} alt={item.username} />
+              {isOnline && <Dot />}
+            </div>
           </ListItemAvatar>
         </Grid>
         <Grid item>
