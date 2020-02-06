@@ -12,7 +12,6 @@ import { compose } from 'redux';
 import ListWrapper from 'components/ListWrapper';
 import MembersListItem from 'components/MembersListItem';
 import StyledButton from 'components/Button';
-import history from 'utils/history';
 import { changeTitle } from 'containers/Header/actions';
 import { makeSelectJapId } from 'containers/User/selectors';
 
@@ -28,10 +27,26 @@ import reducer from './reducer';
 import { loadUsers, addMembersToJap } from './actions';
 import saga from './saga';
 
-export function AddMembersPage({ dispatch, users, japId, members }) {
+const customIncludes = (array, item) => {
+  for (let i = 0; i < array.length; i += 1) {
+    if (array[i].id === item.id) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export function AddMembersPage({
+  dispatch,
+  users,
+  japId,
+  members,
+  addMembersPage,
+}) {
   useInjectReducer({ key: 'addMembersPage', reducer });
   useInjectSaga({ key: 'addMembersPage', saga });
   const [membersList, setMembersList] = React.useState([]);
+  const [usersNotInMembers, setUserNotInMembers] = React.useState([]);
 
   const Wrapper = styled.div`
     width: 100%;
@@ -44,6 +59,12 @@ export function AddMembersPage({ dispatch, users, japId, members }) {
     dispatch(loadUsers());
     dispatch(changeTitle('Ajouter des membres'));
   }, []);
+
+  useEffect(() => {
+    console.log(users);
+    const filteredUsers = users.filter(user => !customIncludes(members, user));
+    setUserNotInMembers(filteredUsers);
+  }, [users, members]);
 
   const handleClickOnUser = item => {
     const list = membersList;
@@ -60,23 +81,11 @@ export function AddMembersPage({ dispatch, users, japId, members }) {
     if (membersList.length !== 0) {
       dispatch(addMembersToJap(membersList, japId));
     }
-    history.goBack();
   };
-
-  const customIncludes = (array, item) => {
-    for (var i = 0; i < array.length; i++) {
-      if (array[i].id === item.id) {
-        return true;
-      }
-    };
-    return false;
-  };
-
-  const usersNotInMembers = users && users.filter(user => !customIncludes(members, user));
 
   const membersListProps = {
-    loading: false,
-    error: false,
+    loading: addMembersPage.loading,
+    error: addMembersPage.error,
     items: usersNotInMembers,
     component: MembersListItem,
     multiline: true,
@@ -87,13 +96,14 @@ export function AddMembersPage({ dispatch, users, japId, members }) {
     <Wrapper>
       <H1>Ajouter un membre:</H1>
       <ListWrapper {...membersListProps} />
-      <StyledButton
-        disable={membersList.length === 0 ? 'true' : 'false'}
-        onClick={handleClickValidate}
-      >
-        {' '}
-        Valider{' '}
-      </StyledButton>
+      {!addMembersPage.loading && (
+        <StyledButton
+          disable={membersList.length === 0 ? 'true' : 'false'}
+          onClick={handleClickValidate}
+        >
+          Valider
+        </StyledButton>
+      )}
     </Wrapper>
   );
 }

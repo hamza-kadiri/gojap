@@ -35,7 +35,6 @@ export function JoinTable({ dispatch, tables }) {
 
   const handleCickOnTable = table => {
     dispatch(joinTable(table.id));
-    history.goBack();
   };
 
   const tablesListProps = {
@@ -57,7 +56,6 @@ export function JoinTable({ dispatch, tables }) {
       <H1>Rejoindre une table:</H1>
       <ListWrapper {...tablesListProps} />
       <ContainerWrapper>
-        <H1>Ajouter une Nouvelle table:</H1>
         <StyledButton onClick={handleClickValidate}>
           Créer une table et la rejoindre.
         </StyledButton>

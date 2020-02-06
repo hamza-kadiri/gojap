@@ -28,12 +28,15 @@ const japScreenReducer = (state = initialState, action) =>
       case GET_JAP:
         draft.error = null;
         draft.jap = null;
+        draft.table = null;
         break;
       case GET_JAP_SUCCESS:
-        draft.jap = action.jap;
+        draft.jap = action.jap_event;
+        draft.table = action.table;
         break;
       case GET_JAP_ERROR:
         draft.error = action.error;
+        console.error(action.error);
         break;
       case CHANGE_JAP_MEMBERS:
         draft.onlineMembers = action.payload.members;

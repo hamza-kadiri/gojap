@@ -46,6 +46,7 @@ const List = memo(function List(props) {
     key: PropTypes.string,
     index: PropTypes.number,
     style: PropTypes.object,
+    isWindowScroller: PropTypes.bool,
   };
   return (
     <AutoSizerWrapper>
@@ -60,7 +61,13 @@ const List = memo(function List(props) {
                 onScroll={onChildScroll}
                 scrollTop={scrollTop}
                 height={height}
-                rowCount={(props.items.length > 6) ? (showMore ? props.items.length : 6) : props.items.length}
+                rowCount={
+                  props.items.length > 6
+                    ? showMore
+                      ? props.items.length
+                      : 6
+                    : props.items.length
+                }
                 rowHeight={props.multiline ? 72 : 49}
                 rowRenderer={rowRenderer}
               />
@@ -71,18 +78,18 @@ const List = memo(function List(props) {
           )}
         </WindowScroller>
       ) : (
-          <AutoSizer>
-            {({ height, width }) => (
-              <VirtualizedList
-                width={width}
-                height={height}
-                rowCount={props.items.length}
-                rowHeight={props.multiline ? 72 : 49}
-                rowRenderer={rowRenderer}
-              />
-            )}
-          </AutoSizer>
-        )}
+        <AutoSizer>
+          {({ height, width }) => (
+            <VirtualizedList
+              width={width}
+              height={height}
+              rowCount={props.items.length}
+              rowHeight={props.multiline ? 72 : 49}
+              rowRenderer={rowRenderer}
+            />
+          )}
+        </AutoSizer>
+      )}
     </AutoSizerWrapper>
   );
 });

@@ -59,7 +59,6 @@ export function HomePage({ dispatch, loading, error, japs, pastJaps }) {
   }, []);
 
   const handleJapClick = japId => {
-    // dispatch(changeTableId(`${japId}-table1`));
     history.push(`/jap/${japId}`);
   };
 

@@ -25,10 +25,11 @@ export function getJap(japId) {
     japId,
   };
 }
-export function getJapSuccess(jap) {
+export function getJapSuccess({ jap_event, table }) {
   return {
     type: GET_JAP_SUCCESS,
-    jap,
+    jap_event,
+    table,
   };
 }
 export function getJapError(error) {

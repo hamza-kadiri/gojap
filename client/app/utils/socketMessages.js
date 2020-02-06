@@ -26,6 +26,7 @@ const MESSAGES = {
   NEW_EVENT: 'new_event',
   USER_JOINED_TABLE: 'user_joined_table',
   USER_JOINED_JAP: 'user_joined_jap',
+  DISCONECT: 'disconnect',
 };
 
 export default MESSAGES;

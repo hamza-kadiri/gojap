@@ -33,9 +33,16 @@ import GoJap from 'images/gojap.png';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MembersList from 'containers/MembersList';
 import { makeSelectMembers } from 'containers/AddTablePage/selectors';
-import { makeSelectJapId, makeSelectTableId } from 'containers/User/selectors';
+import {
+  makeSelectJapId,
+  makeSelectTableId,
+  makeSelectIsEmperor,
+} from 'containers/User/selectors';
 import { changeJapId } from 'containers/User/actions';
-import makeSelectJapScreen, { makeSelectJap } from './selectors';
+import makeSelectJapScreen, {
+  makeSelectJap,
+  makeSelectTable,
+} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import { getJap, leaveJap, startCommand } from './actions';
@@ -86,51 +93,47 @@ const Ellipsis = ({ setIsClamped }) => (
     </ButtonBase>
   </React.Fragment>
 );
-export function JapScreen({ dispatch, japId, tableId, members, jap }) {
+export function JapScreen({ dispatch, table, isEmperor, jap }) {
   useInjectReducer({ key: 'japScreen', reducer });
   useInjectSaga({ key: 'japScreen', saga });
 
   const [isDescriptionClamped, setIsDescriptionClamped] = useState(true);
 
-  const moreMenu = [
-    /* {
-      name: 'Modifier le jap',
-      onClick: () => console.log('add-users'),
-    }, */
-    {
-      name: 'Ajouter des participants',
-      onClick: () => history.push('/addmembers'),
-    },
-    {
-      name: 'Commencer la commande',
-      onClick: () => dispatch(startCommand()),
-    },
-  ];
-  if (!tableId) {
-    moreMenu.push({
-      name: 'Rejoindre une table',
-      onClick: () => history.push('/jointable'),
-    });
-  }
-
   useEffect(() => {
     const japEventId = history.location.pathname.split('/jap/')[1];
-    dispatch(changeJapId(japEventId));
     dispatch(getJap(japEventId));
   }, []);
 
   useEffect(() => {
     if (jap) {
       dispatch(changeTitle(jap.event_name));
+      const formattedDate = moment(jap.date).format('L');
+      const creatorName = jap.created_by && jap.created_by.username;
       const createdBy = `${
-        jap.created_by
-          ? `Créé par ${jap.created_by.username}, ${moment(jap.date).format('L')}`
-          : ''
+        jap.created_by ? `Créé par ${creatorName}, ${formattedDate}` : ''
       }`;
+      const moreMenu = [
+        {
+          name: 'Ajouter des participants',
+          onClick: () => history.push('/addmembers'),
+        },
+      ];
+      if (!table) {
+        moreMenu.push({
+          name: 'Rejoindre une table',
+          onClick: () => history.push('/jointable'),
+        });
+      }
+      if (table && isEmperor) {
+        moreMenu.push({
+          name: 'Commencer la commande',
+          onClick: () => dispatch(startCommand()),
+        });
+      }
       dispatch(changeSubtitle(createdBy));
       dispatch(changeMoreMenu(moreMenu));
     }
-  }, [jap]);
+  }, [jap, table, isEmperor]);
   const loremIpsum = jap ? jap.description : '';
   const onLeaveJap = () => dispatch(leaveJap());
 
@@ -210,7 +213,10 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
         </StyledCardButton>
       </CardFluid>
       <CardFluid>
-        <StyledCardButton startIcon={<ExitToAppIcon color="error" />} onClick={onLeaveJap}>
+        <StyledCardButton
+          startIcon={<ExitToAppIcon color="error" />}
+          onClick={onLeaveJap}
+        >
           <Typography variant="subtitle2" component="p" color="error">
             Quitter le jap
           </Typography>
@@ -230,7 +236,9 @@ const mapStateToProps = createStructuredSelector({
   members: makeSelectMembers(),
   japId: makeSelectJapId(),
   tableId: makeSelectTableId(),
+  isEmperor: makeSelectIsEmperor(),
   jap: makeSelectJap(),
+  table: makeSelectTable(),
 });
 
 function mapDispatchToProps(dispatch) {

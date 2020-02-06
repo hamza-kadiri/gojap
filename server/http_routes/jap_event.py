@@ -154,8 +154,9 @@ def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
     """
     jap_event = JapEventService.get_jap_event(jap_event_id)
     table = TableService.get_user_table(user_id, jap_event_id)
+    if table is None:
+        return jsonify({"table": table, "jap_event": jap_event})
     is_user_emperor = table.emperor == user_id
-
     table = asdict(table)
     table['is_emperor'] = is_user_emperor
 

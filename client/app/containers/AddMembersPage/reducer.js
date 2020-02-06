@@ -12,7 +12,9 @@ import {
 } from './constants';
 
 export const initialState = {
-  users: [],
+  users: { users: [] },
+  loading: false,
+  error: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -20,13 +22,18 @@ const addMembersPageReducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
       case LOAD_USERS:
-        draft.error = null;
+        draft.error = false;
+        draft.loading = true;
+        draft.users = { users: [] };
         break;
       case LOAD_USERS_SUCCESS:
         draft.users = action.payload;
+        draft.loading = false;
+        draft.error = false;
         break;
       case LOAD_USERS_ERROR:
         draft.error = action.payload;
+        draft.loading = false;
         break;
       case DEFAULT_ACTION:
         break;

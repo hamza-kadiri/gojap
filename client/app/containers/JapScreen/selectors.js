@@ -27,10 +27,20 @@ const makeSelectJap = () =>
     substate => substate.jap
   );
 
+const makeSelectTable = () =>
+  createSelector(
+    selectJapScreenDomain,
+    substate => substate.table
+  );
 const makeSelectOnlineMembers = () =>
   createSelector(
     selectJapScreenDomain,
     substate => substate.onlineMembers
   );
 export default makeSelectJapScreen;
-export { selectJapScreenDomain, makeSelectJap, makeSelectOnlineMembers };
+export {
+  selectJapScreenDomain,
+  makeSelectJap,
+  makeSelectOnlineMembers,
+  makeSelectTable,
+};

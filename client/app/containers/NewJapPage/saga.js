@@ -2,7 +2,6 @@ import { takeLatest, call, put, select } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 import moment from 'moment';
 import history from 'utils/history';
-
 import { makeSelectUserId } from 'containers/User/selectors';
 import { CREATE_JAP_EVENT, GET_JAP_PLACES } from './constants';
 

@@ -16,7 +16,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { createStructuredSelector } from 'reselect';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import history from 'utils/history';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -79,7 +78,7 @@ export function NewJapPage({ dispatch, japPlaces }) {
         <StyledKeyboardDateTimePicker
           variant="inline"
           ampm={false}
-          label="With keyboard"
+          label="Date"
           value={date}
           onChange={event => setDate(event)}
           disablePast

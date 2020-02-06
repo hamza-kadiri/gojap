@@ -44,6 +44,11 @@ const makeSelectTableId = () =>
     selectUserDomain,
     substate => substate.tableId
   );
+const makeSelectIsEmperor = () =>
+  createSelector(
+    selectUserDomain,
+    substate => substate.isEmperor
+  );
 
 export default makeSelectUser;
 export {
@@ -52,4 +57,5 @@ export {
   makeSelectUserId,
   makeSelectJapId,
   makeSelectTableId,
+  makeSelectIsEmperor,
 };

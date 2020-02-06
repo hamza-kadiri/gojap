@@ -17,7 +17,7 @@ import styled from 'styled-components';
 
 const Dot = styled.div`
   position: absolute;
-  background-color: #00AF33;
+  background-color: #00af33;
   width: 20px;
   height: 20px;
   top: 10px;
@@ -37,7 +37,9 @@ function MembersListItem(props) {
     onClickItem(item);
   };
 
-  const isOnline = onlineMembers ? onlineMembers.map(member => member.id).includes(item.id) : false;
+  const isOnline = onlineMembers
+    ? onlineMembers.map(member => member.id).includes(item.id)
+    : false;
 
   let tableId = null;
   if (jap) {
@@ -56,7 +58,7 @@ function MembersListItem(props) {
       color="primary"
       variant="outlined"
       component="span"
-      label={`table : ${tableId}`}
+      label={`Table ${tableId}`}
     />
   );
   if (stats) {
@@ -72,14 +74,20 @@ function MembersListItem(props) {
   }
 
   return (
-    <ListItem selected={isSelected} button={onClickItem} divider={onClickItem} onClick={() => (onClickItem ? handleClickItem() : null)}>
+    <ListItem
+      selected={isSelected}
+      button={onClickItem != null}
+      divider={onClickItem != null}
+      onClick={() => (onClickItem ? handleClickItem() : null)}
+    >
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemAvatar>
-            <div>
-              <MediumAvatar src={item.avatar_url && item.picture.medium} alt={item.username} />
-              {isOnline && <Dot />}
-            </div>
+            <MediumAvatar
+              src={item.avatar_url && item.picture.medium}
+              alt={item.username}
+            />
+            {isOnline && <Dot />}
           </ListItemAvatar>
         </Grid>
         <Grid item>

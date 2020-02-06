@@ -9,6 +9,7 @@ import {
   LOGIN_ERROR,
   CHANGE_TABLE_ID,
   CHANGE_JAP_ID,
+  CHANGE_IS_EMPEROR,
   LOGOUT,
 } from './constants';
 
@@ -43,10 +44,14 @@ const userReducer = (state = initialState, action) =>
       case CHANGE_TABLE_ID:
         draft.tableId = action.id;
         break;
+      case CHANGE_IS_EMPEROR:
+        draft.isEmperor = action.boolean;
+        break;
       case LOGOUT:
         draft.user = initialState.user;
         draft.japId = initialState.japId;
         draft.tableId = initialState.ustableIder;
+        draft.isEmperor = false;
         break;
     }
   });
