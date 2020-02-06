@@ -106,12 +106,7 @@ export function JapScreen({ dispatch, japId, tableId, members, jap }) {
       onClick: () => dispatch(startCommand()),
     },
   ];
-
   if (!tableId) {
-    moreMenu.push({
-      name: 'Ajouter une table',
-      onClick: () => history.push('/addtable'),
-    });
     moreMenu.push({
       name: 'Rejoindre une table',
       onClick: () => history.push('/jointable'),
