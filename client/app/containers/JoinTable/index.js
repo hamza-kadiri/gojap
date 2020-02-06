@@ -48,7 +48,6 @@ export function JoinTable({ dispatch, tables }) {
 
   const handleClickValidate = () => {
     dispatch(addTable());
-    history.goBack();
   };
 
   return (

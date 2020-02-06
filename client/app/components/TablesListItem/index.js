@@ -23,15 +23,17 @@ function TablesListItem(props) {
   return (
     <ListItem
       selected={isSelected}
-      button={onClickItem}
-      divider={onClickItem}
+      button={onClickItem != null}
+      divider={onClickItem != null}
       onClick={() => (onClickItem ? handleClickItem() : null)}
     >
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ListItemText
             primary={`Table n° ${item.id}`}
-            secondary={`${item.members ? 'Avec' : 'Pas de membres'} ${item.members &&
+            secondary={`${
+              item.members ? 'Avec' : 'Pas de membres'
+            } ${item.members &&
               item.members.map(member => ` ${member.username}`)}`}
           />
         </Grid>

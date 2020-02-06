@@ -14,10 +14,10 @@ import IconButton from '@material-ui/core/IconButton';
 const MediumItemIcon = styled(MediumAvatar)`
   opacity: 0.3;
 `;
-function JapaneseItemIcon({ src, size, className, ...rest }) {
+function JapaneseItemIcon({ src, size, className, disabled, ...rest }) {
   return size === 'medium' ? (
     <div className={className}>
-      <IconButton size="small" {...rest}>
+      <IconButton disabled={disabled} size="small" {...rest}>
         <MediumItemIcon src={src} />
       </IconButton>
     </div>
@@ -32,6 +32,7 @@ JapaneseItemIcon.propTypes = {
   src: PropTypes.string,
   size: PropTypes.string,
   className: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default JapaneseItemIcon;

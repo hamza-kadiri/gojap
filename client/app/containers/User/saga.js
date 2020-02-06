@@ -1,6 +1,7 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import request, { api } from 'utils/request';
 
+import history from 'utils/history';
 import { loginSuccess, loginError } from './actions';
 import { LOGIN } from './constants';
 /**
@@ -15,6 +16,7 @@ export function* login(action) {
   try {
     const user = yield call(request, api.post, requestURL, { json: body });
     yield put(loginSuccess(user));
+    history.push('/');
   } catch (err) {
     yield put(loginError(err));
   }

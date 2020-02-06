@@ -261,6 +261,7 @@ class SocketServer(Namespace):
                     "members": self.connected_at_table[table.id],
                     "new_member": new_member,
                     "table_id": table.id,
+                    "jap_event_id": data['jap_event_id'],
                     "is_emperor": data["user_id"] == table.emperor
                 },
                 room=jap_event_room
