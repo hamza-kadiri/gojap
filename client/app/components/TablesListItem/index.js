@@ -31,7 +31,7 @@ function TablesListItem(props) {
         <Grid item>
           <ListItemText
             primary={`Table n° ${item.id}`}
-            secondary={`Avec ${item.members &&
+            secondary={`${item.members ? 'Avec' : 'Pas de membres'} ${item.members &&
               item.members.map(member => ` ${member.username}`)}`}
           />
         </Grid>
