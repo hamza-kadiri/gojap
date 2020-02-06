@@ -111,11 +111,11 @@ function OrderScreen({
         <LoadingIndicator />
       ) : (
         <React.Fragment>
-          <H1>{items[currentItem.index].name}</H1>
+          <H1>{items[currentItem.index] && items[currentItem.index].name}</H1>
           <CenteredDiv flex="2 1 0">
             {items[currentItem.index + 1] && <OffsetDiv />}
             <CurrentJapaneseItemIcon
-              src={items[currentItem.index].icon.thumbnail_url}
+              src={items[currentItem.index] && items[currentItem.index].icon.thumbnail_url}
             />
             {items[currentItem.index + 1] && (
               <NextJapaneseItemIcon
