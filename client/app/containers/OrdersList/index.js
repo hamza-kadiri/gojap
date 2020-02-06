@@ -37,8 +37,6 @@ const OrdersList = memo(
       dispatch(loadMenu(japPlaceId));
     }, []);
 
-    console.log({ orderSummary });
-
     const ordersListProps = {
       ...ordersList,
       items:

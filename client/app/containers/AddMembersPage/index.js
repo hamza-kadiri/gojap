@@ -61,7 +61,6 @@ export function AddMembersPage({
   }, []);
 
   useEffect(() => {
-    console.log(users);
     const filteredUsers = users.filter(user => !customIncludes(members, user));
     setUserNotInMembers(filteredUsers);
   }, [users, members]);

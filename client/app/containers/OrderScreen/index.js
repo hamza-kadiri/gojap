@@ -78,8 +78,6 @@ function OrderScreen({
   useInjectSaga({ key: 'ordersList', saga: menuSaga });
 
   const { loading, menu } = ordersList;
-  const [number, setNumber] = useState(0);
-  const [array, setArray] = useState([0, 1, 2, 3, 4]);
 
   const moreMenu = [
     { name: 'Commandes', onClick: () => dispatch(toggleRecap(true)) },

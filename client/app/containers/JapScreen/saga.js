@@ -52,17 +52,12 @@ export function* subscribe(socket) {
   const userId = yield select(makeSelectUserId());
   return eventChannel(dispatch => {
     const userJoinedJap = data => {
-      console.log('joinedJap');
-      console.log(data);
       dispatch(changeJapMembers(data));
     };
     const userJoinedTable = data => {
-      console.log('joinedTable');
-      console.log(data);
       dispatch(changeTableId(data.table_id));
     };
     const redirectUser = data => {
-      console.log(history.location.pathname.split('/order'));
       if (history.location.pathname.split('/order').length === 1) {
         history.push(`/order/${data.table_id}`);
       }
@@ -141,7 +136,7 @@ export function* japEventFlow() {
   const userId = yield select(makeSelectUserId());
   const japId = yield select(makeSelectJapId());
   const socket = yield call(connect, userId, japId);
-  console.log('YAHOOOOOO', { userId });
+
   yield fork(read, socket);
   yield fork(joinJapEventAndTable, socket);
   yield fork(joinJapTableOnTableSuccess, socket);
@@ -150,10 +145,7 @@ export function* japEventFlow() {
 }
 
 export function* leaveJap(socket) {
-  console.log('LEAAAVE');
-
   yield take(MESSAGES.LEAVE_JAP);
-  console.log('JAP ?');
 
   const userId = yield select(makeSelectUserId());
   const tableId = yield select(makeSelectTableId());
