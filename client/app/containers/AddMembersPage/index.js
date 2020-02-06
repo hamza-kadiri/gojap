@@ -72,7 +72,7 @@ export function AddMembersPage({ dispatch, users, japId, members }) {
     return false;
   };
 
-  const usersNotInMembers = users && users.filter(user => !customIncludes(members, user));
+  const usersNotInMembers = users && users.filter(user => !customIncludes(members ? members : [], user));
 
   const membersListProps = {
     loading: false,
