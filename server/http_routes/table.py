@@ -113,3 +113,15 @@ def get_table_stats(table_id: int) -> Response:
     stats = TableService.get_table_stats(table_id)
 
     return jsonify(stats)
+
+@table_blueprint.route('remove_member', methods=['POST'])
+def remove_user_from_table() -> Response:
+    """Remove a member from a table.
+
+    Returns :
+        member
+    """
+    data = request.json
+    member = TableService.remove_member_of_table(data['user_id'], data['table_id'])
+
+    return jsonify(member)

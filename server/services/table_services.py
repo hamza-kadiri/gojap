@@ -137,22 +137,25 @@ class TableService:
             {Table}
         """
         return Table.query.filter_by(jap_event_id=jap_event_id).filter(Table.members.any(User.id.in_([user_id]))).first()
+    
 
-        tables = JapEvent.query.filter(
-            JapEvent.id.__eq__(jap_event_id)
-        ).first().tables
-        table_ids = []
-        for table in tables:
-            table_ids.append(table.id)
-        try:
-            table_id = db.session.query(table_members).filter(
-                and_(table_members.c.user_id == user_id,
-                     table_members.c.table_id.in_(table_ids))
-            ).first().table_id
-            table = Table.query.filter_by(id=table_id).first()
-        except sqlalchemy.orm.exc.NoResultFound:
-            table = None
-        return table
+    @staticmethod
+    def remove_member_of_table(user_id: int, table_id: int) -> Optional[Table]:
+        """
+        Remove a member of his table.
+
+        Arg :
+            user_id : id of the user
+            table_id
+        """
+
+        table_member = db.session.query(table_members).filter_by(table_id=table_id, user_id=user_id).first()
+        #table_member = session.query(table_members).get((table_id, table_id))
+        if table_member:
+            print('----------', table_member)
+            db.session.delete(table_member)
+            #db.session.commit()
+        return table_member
 
     @staticmethod
     def is_emperor(user_id: int, table_id: int) -> bool:
