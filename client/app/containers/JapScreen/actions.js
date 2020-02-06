@@ -12,6 +12,7 @@ import {
   CHANGE_JAP_MEMBERS,
   REDIRECT_TO_ORDER_SCREEN,
 } from './constants';
+import MESSAGES from '../../utils/socketMessages';
 
 export function defaultAction() {
   return {
@@ -41,6 +42,12 @@ export function changeJapMembers(jap) {
   return {
     type: CHANGE_JAP_MEMBERS,
     payload: jap,
+  };
+}
+
+export function leaveJap() {
+  return {
+    type: MESSAGES.LEAVE_JAP,
   };
 }
 
