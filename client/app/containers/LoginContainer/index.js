@@ -40,9 +40,9 @@ export function LoginContainer({ dispatch, user }) {
   return (
     <ContainerWrapper>
       <div style={{ display: "flex", alignItems: "center", flexDirection: "column", margin: "5 %" }}>
-        <H1>Login</H1>
+        <H1>Pseudo</H1>
         <TextField
-          label="Your name"
+          label="Entrez votre pseudo"
           value={name}
           onChange={event => setName(event.target.value)}
         />
