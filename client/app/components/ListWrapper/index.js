@@ -3,6 +3,15 @@ import PropTypes from 'prop-types';
 
 import List from 'components/List';
 import LoadingIndicator from 'components/LoadingIndicator';
+import Typography from '@material-ui/core/Typography';
+import styled from 'styled-components';
+
+const NotFoundComponent = styled(Typography)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
 
 const ListWrapper = memo(function ListWrapper({
   loading,
@@ -38,7 +47,11 @@ const ListWrapper = memo(function ListWrapper({
     );
   }
 
-  return <h1>Nothing here yet...</h1>;
+  return (
+    <NotFoundComponent variant="subtitle1">
+      Aucune donnée à afficher.
+    </NotFoundComponent>
+  );
 });
 
 ListWrapper.propTypes = {
