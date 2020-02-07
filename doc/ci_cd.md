@@ -1,0 +1,1 @@
+Modèle de ci cd, méthode agile et pr
