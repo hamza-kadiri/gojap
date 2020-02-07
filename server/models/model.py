@@ -241,6 +241,10 @@ class Item(db.Model):
         'icon.id'), nullable=False)
     icon = db.relationship('Icon', backref='items', uselist=False)
 
+    def __hash__(self):
+        """Hash function to fix test errors."""
+        return hash(self.name + str(id))
+
 
 @dataclass
 class Icon(db.Model):

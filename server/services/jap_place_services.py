@@ -51,6 +51,7 @@ class JapPlaceService():
     @staticmethod
     def create_menu(items: list) -> Menu:
         """Create menu."""
+        print(items)
         menu = Menu(items=items)
         db.session.add(menu)
         db.session.commit()

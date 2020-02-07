@@ -16,7 +16,7 @@ class TestClassWithClient:
 
     @classmethod
     def setup_class(cls):
-        """Create the client."""
+        """Create the client and set up a test environment."""
         cls.client = socketio.test_client(app)
 
         cls.jap_creator = UserService.get_user_by_name("jap_creator")
@@ -53,7 +53,6 @@ class TestSocketServer(TestClassWithClient):
     def test_socket_connection(self):
         """Test socket connection is working properly."""
         assert self.client.is_connected()
-        received = self.client.get_received()
 
     def test_join_jap_user(self):
         """Test join jap."""
