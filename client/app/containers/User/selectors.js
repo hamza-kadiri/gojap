@@ -50,6 +50,12 @@ const makeSelectIsEmperor = () =>
     substate => substate.isEmperor
   );
 
+const makeSelectLoginLoading = () =>
+  createSelector(
+    selectUserDomain,
+    substate => substate.loginLoading
+  );
+
 export default makeSelectUser;
 export {
   selectUserDomain,
@@ -58,4 +64,5 @@ export {
   makeSelectJapId,
   makeSelectTableId,
   makeSelectIsEmperor,
+  makeSelectLoginLoading,
 };
