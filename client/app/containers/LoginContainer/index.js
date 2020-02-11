@@ -17,12 +17,18 @@ import TextField from '@material-ui/core/TextField';
 import history from 'utils/history';
 import H1 from 'components/H1';
 import StyledButton from 'components/Button';
-import makeSelectUser from '../User/selectors';
+import LoadingIndicator from 'components/LoadingIndicator';
+import styled from 'styled-components';
+import makeSelectUser, { makeSelectLoginLoading } from '../User/selectors';
 import { login } from '../User/actions';
 import reducer from '../User/reducer';
 import saga from '../User/saga';
 
-export function LoginContainer({ dispatch, user }) {
+const LoginButton = styled(StyledButton)`
+  width: 100px;
+`;
+
+export function LoginContainer({ dispatch, loading }) {
   useInjectReducer({ key: 'loginContainer', reducer });
   useInjectSaga({ key: 'loginContainer', saga });
 
@@ -50,7 +56,13 @@ export function LoginContainer({ dispatch, user }) {
           onChange={event => setName(event.target.value)}
           onKeyPress={e => e.key === 'Enter' && handleClick()}
         />
-        <StyledButton onClick={handleClick}>Login</StyledButton>
+        {loading ? (
+          <LoginButton>
+            <LoadingIndicator size={24} />
+          </LoginButton>
+        ) : (
+          <LoginButton onClick={handleClick}>Login</LoginButton>
+        )}
       </div>
     </ContainerWrapper>
   );
@@ -63,6 +75,7 @@ LoginContainer.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   user: makeSelectUser(),
+  loading: makeSelectLoginLoading(),
 });
 
 function mapDispatchToProps(dispatch) {

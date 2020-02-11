@@ -5,6 +5,7 @@
  */
 import produce from 'immer';
 import {
+  LOGIN,
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   CHANGE_TABLE_ID,
@@ -26,16 +27,25 @@ export const initialState = {
   japId: '',
   tableId: '',
   error: false,
+  loginLoading: false,
+  loginError: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
 const userReducer = (state = initialState, action) =>
   produce(state, draft => {
     switch (action.type) {
+      case LOGIN:
+        draft.loginLoading = true;
+        draft.loginError = false;
+        break;
       case LOGIN_SUCCESS:
         draft.user = action.user;
+        draft.loginLoading = false;
+        draft.loginError = false;
         break;
       case LOGIN_ERROR:
+        draft.loginLoading = false;
         draft.error = action.error;
         break;
       case CHANGE_JAP_ID:
