@@ -15,7 +15,7 @@ import {
 } from './constants';
 
 export const initialState = {
-  user: {
+  user: JSON.parse(localStorage.getItem('user')) || {
     username: null,
     id: null,
     achievements: null,
@@ -43,6 +43,7 @@ const userReducer = (state = initialState, action) =>
         draft.user = action.user;
         draft.loginLoading = false;
         draft.loginError = false;
+        localStorage.setItem('user', JSON.stringify(action.user));
         break;
       case LOGIN_ERROR:
         draft.loginLoading = false;
