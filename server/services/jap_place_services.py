@@ -3,11 +3,14 @@
 from models.model import JapPlace, db, Item, Menu, Icon
 from typing import Dict, Optional, List
 
-class JapPlaceService():
+
+class JapPlaceService:
     """JapPlaceService Class."""
 
     @staticmethod
-    def create_jap_place(name: str, address: str, phone: str, opening_hours: str, menu_id: int) -> JapPlace:
+    def create_jap_place(
+        name: str, address: str, phone: str, opening_hours: str, menu_id: int
+    ) -> JapPlace:
         """
         Create a new jap_place.
 
@@ -16,11 +19,13 @@ class JapPlaceService():
         Returns :
             jap_place
         """
-        jap_place = JapPlace(name=name,
-                            address=address,
-                            phone=phone,
-                            opening_hours=opening_hours,
-                            menu_id=menu_id)
+        jap_place = JapPlace(
+            name=name,
+            address=address,
+            phone=phone,
+            opening_hours=opening_hours,
+            menu_id=menu_id,
+        )
         db.session.add(jap_place)
         db.session.commit()
         return jap_place

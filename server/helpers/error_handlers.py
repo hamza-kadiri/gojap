@@ -5,6 +5,7 @@ from .response_formaters import json_abort
 
 def init_error_handlers(app):
     """Initialize eroor handlers."""
+
     @app.errorhandler(400)
     def bad_request_error(error):
         return json_abort(400, "Bad Request")
@@ -19,15 +20,15 @@ def init_error_handlers(app):
 
     @app.errorhandler(404)
     def not_found_error(error):
-        return json_abort(404, 'The ressource you have requested could not be found')
+        return json_abort(404, "The ressource you have requested could not be found")
 
     @app.errorhandler(405)
     def not_allowed_error(error):
-        return json_abort(405, 'The method is not allowed for the requested URL')
+        return json_abort(405, "The method is not allowed for the requested URL")
 
     @app.errorhandler(500)
     def internal_server_error(error):
-        return json_abort(500, 'Internal Server Error')
+        return json_abort(500, "Internal Server Error")
 
     # @app.errorhandler(Exception)
     # def unhandled_exception(error: Exception):

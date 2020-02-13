@@ -33,13 +33,9 @@ class JapEventService:
         Returns :
             User[] // Array of User objects in the Jap Event
         """
-        jap_event = JapEvent.query.filter(
-            JapEvent.id.__eq__(jap_event_id)
-        ).first()
+        jap_event = JapEvent.query.filter(JapEvent.id.__eq__(jap_event_id)).first()
 
-        members = User.query.filter(
-            User.id.in_(user_ids)
-        ).all()
+        members = User.query.filter(User.id.in_(user_ids)).all()
 
         jap_event.members += members
         db.session.add(jap_event)
@@ -66,7 +62,13 @@ class JapEventService:
         return jap_event, new_member
 
     @staticmethod
-    def create_jap_event(event_name: str, description: str, jap_place_id: int, creator_id: int, date: datetime.datetime) -> JapEvent:
+    def create_jap_event(
+        event_name: str,
+        description: str,
+        jap_place_id: int,
+        creator_id: int,
+        date: datetime.datetime,
+    ) -> JapEvent:
         """
         Create a new jap event. And add a default table to this jap event with the creator as emperor.
 
@@ -75,11 +77,13 @@ class JapEventService:
         Returns :
             jap_event
         """
-        jap_event = JapEvent(event_name=event_name,
-                             description=description,
-                             jap_place_id=jap_place_id,
-                             creator_id=creator_id,
-                             date=date)
+        jap_event = JapEvent(
+            event_name=event_name,
+            description=description,
+            jap_place_id=jap_place_id,
+            creator_id=creator_id,
+            date=date,
+        )
 
         db.session.add(jap_event)
         db.session.commit()
@@ -116,8 +120,7 @@ class JapEventService:
         """
         current_time = datetime.date.today()
         jap_events = JapEvent.query.filter(
-            JapEvent.members.any(User.id.__eq__(user_id)),
-            JapEvent.date >= current_time
+            JapEvent.members.any(User.id.__eq__(user_id)), JapEvent.date >= current_time
         ).all()
         return jap_events
 
@@ -133,8 +136,7 @@ class JapEventService:
         """
         current_time = datetime.date.today()
         jap_events = JapEvent.query.filter(
-            JapEvent.members.any(User.id.__eq__(user_id)),
-            JapEvent.date <= current_time
+            JapEvent.members.any(User.id.__eq__(user_id)), JapEvent.date <= current_time
         ).all()
         return jap_events
 
@@ -149,9 +151,7 @@ class JapEventService:
         Returns :
             jap_event
         """
-        jap_event = JapEvent.query.filter(
-            JapEvent.id.__eq__(jap_event_id)
-        ).first()
+        jap_event = JapEvent.query.filter(JapEvent.id.__eq__(jap_event_id)).first()
 
         jap_event.status = status
         db.session.add(jap_event)
@@ -168,8 +168,6 @@ class JapEventService:
         Returns :
             list of tables
         """
-        tables = Table.query.filter(
-            Table.jap_event_id.__eq__(jap_event_id)
-        ).all()
+        tables = Table.query.filter(Table.jap_event_id.__eq__(jap_event_id)).all()
 
         return tables

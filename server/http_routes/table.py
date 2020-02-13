@@ -4,10 +4,10 @@ from flask import Blueprint, request, abort, jsonify, Response
 from services.table_services import TableService
 import json
 
-table_blueprint = Blueprint('table_blueprint', __name__, url_prefix='/table')
+table_blueprint = Blueprint("table_blueprint", __name__, url_prefix="/table")
 
 
-@table_blueprint.route('', methods=['POST'])
+@table_blueprint.route("", methods=["POST"])
 def create_table() -> Response:
     """Create a new table.
 
@@ -23,7 +23,7 @@ def create_table() -> Response:
     return jsonify(table)
 
 
-@table_blueprint.route('<int:table_id>', methods=['GET'])
+@table_blueprint.route("<int:table_id>", methods=["GET"])
 def get_table(table_id: int) -> Response:
     """Get a given table.
 
@@ -38,7 +38,7 @@ def get_table(table_id: int) -> Response:
     return jsonify(table)
 
 
-@table_blueprint.route('', methods=['DELETE'])
+@table_blueprint.route("", methods=["DELETE"])
 def remove_table() -> Response:
     """Delete a table.
 
@@ -56,7 +56,7 @@ def remove_table() -> Response:
     return jsonify(table)
 
 
-@table_blueprint.route('add_members/<int:table_id>', methods=['POST'])
+@table_blueprint.route("add_members/<int:table_id>", methods=["POST"])
 def add_user_to_table(table_id: int) -> Response:
     """Create a new table.
 
@@ -64,12 +64,12 @@ def add_user_to_table(table_id: int) -> Response:
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
-    table = TableService.add_user_to_table(table_id, data['user_ids'])
+    table = TableService.add_user_to_table(table_id, data["user_ids"])
 
     return jsonify(table)
 
 
-@table_blueprint.route('/<int:table_id>/status/<int:status>', methods=['PUT'])
+@table_blueprint.route("/<int:table_id>/status/<int:status>", methods=["PUT"])
 def set_table_status(table_id: int, status: int) -> Response:
     """Update status of a table.
 
@@ -85,7 +85,7 @@ def set_table_status(table_id: int, status: int) -> Response:
     return jsonify(table)
 
 
-@table_blueprint.route('/user/<int:user_id>/<int:jap_event_id>', methods=['GET'])
+@table_blueprint.route("/user/<int:user_id>/<int:jap_event_id>", methods=["GET"])
 def get_user_table(user_id: int, jap_event_id: int) -> Response:
     """Create a new table.
 
@@ -100,7 +100,7 @@ def get_user_table(user_id: int, jap_event_id: int) -> Response:
     return jsonify(table)
 
 
-@table_blueprint.route('/stats/<int:table_id>', methods=['GET'])
+@table_blueprint.route("/stats/<int:table_id>", methods=["GET"])
 def get_table_stats(table_id: int) -> Response:
     """Get all stats for a jap.
 

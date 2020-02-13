@@ -6,10 +6,11 @@ from services import TableService
 from services.jap_event_services import JapEventService
 
 jap_event_blueprint = Blueprint(
-    'jap_event_blueprint', __name__, url_prefix='/jap_event')
+    "jap_event_blueprint", __name__, url_prefix="/jap_event"
+)
 
 
-@jap_event_blueprint.route('event/<int:jap_event_id>', methods=['GET'])
+@jap_event_blueprint.route("event/<int:jap_event_id>", methods=["GET"])
 def get_jap_event(jap_event_id: int) -> Response:
     """Get jap event for a given event id.
 
@@ -20,7 +21,7 @@ def get_jap_event(jap_event_id: int) -> Response:
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('/all', methods=['GET'])
+@jap_event_blueprint.route("/all", methods=["GET"])
 def get_all_jap_events() -> Response:
     """Get all jap events.
 
@@ -31,7 +32,7 @@ def get_all_jap_events() -> Response:
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('', methods=['POST'])
+@jap_event_blueprint.route("", methods=["POST"])
 def create_jap_event() -> Response:
     """Create a new jap_event.
 
@@ -47,13 +48,13 @@ def create_jap_event() -> Response:
         data["description"],
         data["jap_place_id"],
         data["creator_id"],
-        data["date"]
+        data["date"],
     )
 
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('user/<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route("user/<int:user_id>", methods=["GET"])
 def get_events_for_user(user_id: int) -> Response:
     """Get all jap_events for a given user.
 
@@ -67,7 +68,7 @@ def get_events_for_user(user_id: int) -> Response:
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('/upcoming/<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route("/upcoming/<int:user_id>", methods=["GET"])
 def get_upcoming_events_for_user(user_id: int) -> Response:
     """Get all upcoming jap_events for a given user.
 
@@ -81,7 +82,7 @@ def get_upcoming_events_for_user(user_id: int) -> Response:
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('/add_members/<int:jap_event_id>', methods=['POST'])
+@jap_event_blueprint.route("/add_members/<int:jap_event_id>", methods=["POST"])
 def add_members(jap_event_id: int) -> Response:
     """Add members to a jap event.
 
@@ -93,11 +94,12 @@ def add_members(jap_event_id: int) -> Response:
     """
     data = request.json
     members = JapEventService.add_members_to_jap_event(
-        jap_event_id, set(data['members']))
+        jap_event_id, set(data["members"])
+    )
     return jsonify(members)
 
 
-@jap_event_blueprint.route('<int:jap_event_id>/status/<int:status>', methods=['PUT'])
+@jap_event_blueprint.route("<int:jap_event_id>/status/<int:status>", methods=["PUT"])
 def update_status(jap_event_id: int, status: int) -> Response:
     """Update status of a jap event.
 
@@ -111,7 +113,7 @@ def update_status(jap_event_id: int, status: int) -> Response:
     return jsonify(jap_event)
 
 
-@jap_event_blueprint.route('/table/<int:jap_event_id>', methods=['GET'])
+@jap_event_blueprint.route("/table/<int:jap_event_id>", methods=["GET"])
 def get_tables_jap_event(jap_event_id: int) -> Response:
     """Get tables for a jap event.
 
@@ -125,7 +127,7 @@ def get_tables_jap_event(jap_event_id: int) -> Response:
     return jsonify(tables)
 
 
-@jap_event_blueprint.route('past/<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route("past/<int:user_id>", methods=["GET"])
 def get_jap_event_by_status(user_id: int):
     """Get past jap events for a user.
 
@@ -139,7 +141,7 @@ def get_jap_event_by_status(user_id: int):
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route('/table/<int:jap_event_id>/<int:user_id>', methods=['GET'])
+@jap_event_blueprint.route("/table/<int:jap_event_id>/<int:user_id>", methods=["GET"])
 def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
     """Get table a user is in Jap Event.
 
@@ -158,6 +160,6 @@ def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
         return jsonify({"table": table, "jap_event": jap_event})
     is_user_emperor = table.emperor == user_id
     table = asdict(table)
-    table['is_emperor'] = is_user_emperor
+    table["is_emperor"] = is_user_emperor
 
     return jsonify({"table": table, "jap_event": jap_event})

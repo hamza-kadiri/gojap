@@ -25,6 +25,7 @@ psycopg2-binary = "~=2.8.4"
 
 [dev-packages]
 pylint = "*"
+black = "*"
 
 [requires]
 python_version = "3.7"
@@ -37,3 +38,6 @@ migrate="python -m flask db migrate"
 upgrade="python -m flask db upgrade"
 downgrade="python -m flask db downgrade"
 flask-dev="gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --reload --log-level DEBUG"
+
+[pipenv]
+allow_prereleases = true
