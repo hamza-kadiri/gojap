@@ -1,7 +1,15 @@
 """Building services for table management."""
 import sqlalchemy
 from typing import Dict, Optional, List
-from models.model import Table, User, db, JapEvent, table_members, CommandItem, UserCommand
+from models.model import (
+    Table,
+    User,
+    db,
+    JapEvent,
+    table_members,
+    CommandItem,
+    UserCommand,
+)
 from sqlalchemy import and_
 from services.command_service import CommandService
 
@@ -17,12 +25,8 @@ class TableService:
         Args :
             data = {user_id, jap_event_id}
         """
-        table = Table(emperor=user_id,
-                      jap_event_id=jap_event_id,
-                      status=0)
-        member = User.query.filter(
-            User.id.__eq__(user_id)
-        ).first()
+        table = Table(emperor=user_id, jap_event_id=jap_event_id, status=0)
+        member = User.query.filter(User.id.__eq__(user_id)).first()
         table.members.append(member)
         db.session.add(table)
         db.session.commit()
@@ -92,9 +96,7 @@ class TableService:
         """
         table = Table.query.filter_by(id=table_id).first()
 
-        members = User.query.filter(
-            User.id.in_(user_ids)
-        ).all()
+        members = User.query.filter(User.id.in_(user_ids)).all()
 
         for member in members:
             if member not in table.members:
@@ -136,19 +138,28 @@ class TableService:
         Return :
             {Table}
         """
-        return Table.query.filter_by(jap_event_id=jap_event_id).filter(Table.members.any(User.id.in_([user_id]))).first()
+        return (
+            Table.query.filter_by(jap_event_id=jap_event_id)
+            .filter(Table.members.any(User.id.in_([user_id])))
+            .first()
+        )
 
-        tables = JapEvent.query.filter(
-            JapEvent.id.__eq__(jap_event_id)
-        ).first().tables
+        tables = JapEvent.query.filter(JapEvent.id.__eq__(jap_event_id)).first().tables
         table_ids = []
         for table in tables:
             table_ids.append(table.id)
         try:
-            table_id = db.session.query(table_members).filter(
-                and_(table_members.c.user_id == user_id,
-                     table_members.c.table_id.in_(table_ids))
-            ).first().table_id
+            table_id = (
+                db.session.query(table_members)
+                .filter(
+                    and_(
+                        table_members.c.user_id == user_id,
+                        table_members.c.table_id.in_(table_ids),
+                    )
+                )
+                .first()
+                .table_id
+            )
             table = Table.query.filter_by(id=table_id).first()
         except sqlalchemy.orm.exc.NoResultFound:
             table = None
@@ -173,38 +184,51 @@ class TableService:
         pneu_id = 12
         sushi_id = 15
 
-        pneu = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
-            filter(UserCommand.command_id == CommandItem.id). \
-            filter(CommandItem.table_id == table_id). \
-            filter(CommandItem.item_id == pneu_id).first()[0]
+        pneu = (
+            db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated"))
+            .filter(UserCommand.command_id == CommandItem.id)
+            .filter(CommandItem.table_id == table_id)
+            .filter(CommandItem.item_id == pneu_id)
+            .first()[0]
+        )
 
         if pneu is None:
             pneu = 0
 
-        sushi = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")). \
-            filter(UserCommand.command_id == CommandItem.id). \
-            filter(CommandItem.table_id == table_id). \
-            filter(CommandItem.item_id == sushi_id).first()[0]
+        sushi = (
+            db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated"))
+            .filter(UserCommand.command_id == CommandItem.id)
+            .filter(CommandItem.table_id == table_id)
+            .filter(CommandItem.item_id == sushi_id)
+            .first()[0]
+        )
 
         if sushi is None:
             sushi = 0
 
-        participants = db.session.query(Table).join(
-            Table.members).filter(Table.id == table_id).count()
+        participants = (
+            db.session.query(Table)
+            .join(Table.members)
+            .filter(Table.id == table_id)
+            .count()
+        )
 
-        items = db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated")).\
-            filter(UserCommand.command_id == CommandItem.id).\
-            filter(CommandItem.table_id == table_id).first()[0]
+        items = (
+            db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated"))
+            .filter(UserCommand.command_id == CommandItem.id)
+            .filter(CommandItem.table_id == table_id)
+            .first()[0]
+        )
 
         if items is None:
             items = 0
 
         stats = {
-            'nbr_of_items': items,
-            'nbre_de_sushi': sushi,
-            'nbre_pneu': pneu,
-            'montant': participants * 12,
-            'calories': items * 60
+            "nbr_of_items": items,
+            "nbre_de_sushi": sushi,
+            "nbre_pneu": pneu,
+            "montant": participants * 12,
+            "calories": items * 60,
         }
 
         return stats

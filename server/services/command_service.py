@@ -5,7 +5,7 @@ from typing import Dict, Optional, List, Tuple
 from sqlalchemy.exc import IntegrityError
 
 
-class CommandService():
+class CommandService:
     """Command service."""
 
     @staticmethod
@@ -16,7 +16,9 @@ class CommandService():
         Args :
             data = {item_id, table_id}
         """
-        command = CommandItem.query.filter_by(table_id=table_id, item_id=item_id).first()
+        command = CommandItem.query.filter_by(
+            table_id=table_id, item_id=item_id
+        ).first()
         if not command:
             command = CommandItem(item_id=item_id, table_id=table_id)
             db.session.add(command)
@@ -46,7 +48,9 @@ class CommandService():
         return commands
 
     @staticmethod
-    def add_user_order_to_command(command_id: int, user_id: int, order_amount: int) -> CommandItem:
+    def add_user_order_to_command(
+        command_id: int, user_id: int, order_amount: int
+    ) -> CommandItem:
         """
         Add a new item for a user on the command of a table.
 
@@ -55,8 +59,9 @@ class CommandService():
         """
         user = db.session.query(User).get(user_id)
         user_command = UserCommand.query.filter_by(
-            user_id=user_id, command_id=command_id).first()
-        if (user_command):
+            user_id=user_id, command_id=command_id
+        ).first()
+        if user_command:
             user_command.order_amount = order_amount
             command = CommandItem.query.filter_by(id=command_id).first()
         else:
@@ -78,10 +83,12 @@ class CommandService():
         Returns :
             accumulated: integer
         """
-        accumulated = db.session.\
-            query(db.func.sum(UserCommand.order_amount).label("accumulated")).\
-            group_by(UserCommand.command_id).\
-            filter_by(command_id=command_id).first()
+        accumulated = (
+            db.session.query(db.func.sum(UserCommand.order_amount).label("accumulated"))
+            .group_by(UserCommand.command_id)
+            .filter_by(command_id=command_id)
+            .first()
+        )
         if accumulated:
             return accumulated[0]
         else:
@@ -99,7 +106,9 @@ class CommandService():
         return command
 
     @staticmethod
-    def get_unique_command_by_table_id_and_item_id(table_id: int, item_id: int) -> CommandItem:
+    def get_unique_command_by_table_id_and_item_id(
+        table_id: int, item_id: int
+    ) -> CommandItem:
         """
         Get unique command for a table and an item.
 
@@ -107,7 +116,8 @@ class CommandService():
             data = {table_id, item_id}
         """
         command = CommandItem.query.filter_by(
-            table_id=table_id, item_id=item_id).first()
+            table_id=table_id, item_id=item_id
+        ).first()
         return command
 
     @staticmethod
@@ -121,7 +131,8 @@ class CommandService():
             individual: integer
         """
         user_command = UserCommand.query.filter_by(
-            command_id=command_id, user_id=user_id).first()
+            command_id=command_id, user_id=user_id
+        ).first()
         if user_command:
             return user_command.order_amount
         else:
@@ -135,8 +146,11 @@ class CommandService():
         Args :
             data = {table_id}
         """
-        query = db.session.query(UserCommand.order_amount, CommandItem.item_id). \
-            filter(UserCommand.command_id == CommandItem.id). \
-            filter(UserCommand.user_id == user_id). \
-            filter(CommandItem.table_id == table_id).all()
+        query = (
+            db.session.query(UserCommand.order_amount, CommandItem.item_id)
+            .filter(UserCommand.command_id == CommandItem.id)
+            .filter(UserCommand.user_id == user_id)
+            .filter(CommandItem.table_id == table_id)
+            .all()
+        )
         return query

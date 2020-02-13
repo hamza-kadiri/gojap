@@ -8,12 +8,7 @@ def json_abort(status_code, message):
 
     return formated json with status_code and message.
     """
-    data = {
-        'error': {
-            'code': status_code,
-            'message': message
-        }
-    }
+    data = {"error": {"code": status_code, "message": message}}
     response = jsonify(data)
     response.status_code = status_code
     return response
