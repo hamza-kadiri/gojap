@@ -17,7 +17,7 @@ You should execute all tests at the same time as they are dependant (a user shou
 
 Tests are written in `server/test/test_socket_server.py`. They are testing some socket messages messages all in the same way.
 
-First we set up an environment with two users, one create a specific jap event.
+First we set up an environment with two users, one create a specific jap event. A "fake" socket client is intanciated to send messages with `socketio.test_client`.
 
 In each test function :
 - We send a specific message

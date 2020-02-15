@@ -24,28 +24,28 @@
     - [POST `/`](#post-2)
     - [POST `/add`](#post-add)
     - [GET `/all/<int:table_id>`](#get-allinttableid)
-    - [Socket messages and payload](#socket-messages-and-payload)
-    - [Emperor to table members](#emperor-to-table-members)
-        - [START_COMMAND](#startcommand)
-        - [END_COMMAND](#endcommand)
-        - [NEXT_ITEM](#nextitem)
-    - [User to table members](#user-to-table-members)
-        - [CHOOSE_ITEM](#chooseitem)
-    - [User to jap event members](#user-to-jap-event-members)
-        - [JOIN_JAP](#joinjap)
-        - [LEAVE_JAP](#leavejap)
-        - [SEND_EVENT](#sendevent)
-        - [JOIN_TABLE](#jointable)
-    - [Server to table members](#server-to-table-members)
-        - [COMMAND_STARTED](#commandstarted)
-        - [ITEM_CHANGED](#itemchanged)
-        - [COMMAND_ENDED](#commandended)
-        - [ITEM_CHOSEN](#itemchosen)
-    - [Server to jap event members](#server-to-jap-event-members)
-        - [USER_LEFT_JAP](#userleftjap)
-        - [NEW_EVENT](#newevent)
-        - [USER_JOINED_TABLE](#userjoinedtable)
-        - [USER_JOINED_JAP](#userjoinedjap)
+- [Socket messages and payload](#socket-messages-and-payload)
+  - [Emperor to table members](#emperor-to-table-members)
+      - [START_COMMAND](#startcommand)
+      - [END_COMMAND](#endcommand)
+      - [NEXT_ITEM](#nextitem)
+  - [User to table members](#user-to-table-members)
+      - [CHOOSE_ITEM](#chooseitem)
+  - [User to jap event members](#user-to-jap-event-members)
+      - [JOIN_JAP](#joinjap)
+      - [LEAVE_JAP](#leavejap)
+      - [SEND_EVENT](#sendevent)
+      - [JOIN_TABLE](#jointable)
+  - [Server to table members](#server-to-table-members)
+      - [COMMAND_STARTED](#commandstarted)
+      - [ITEM_CHANGED](#itemchanged)
+      - [COMMAND_ENDED](#commandended)
+      - [ITEM_CHOSEN](#itemchosen)
+  - [Server to jap event members](#server-to-jap-event-members)
+      - [USER_LEFT_JAP](#userleftjap)
+      - [NEW_EVENT](#newevent)
+      - [USER_JOINED_TABLE](#userjoinedtable)
+      - [USER_JOINED_JAP](#userjoinedjap)
 
 ## API
 
@@ -375,6 +375,8 @@ Server response : (Array of serialized command objects)
 
 #### Socket messages and payload
 
+Here is defined for each message the shape of the payload. If you want more informations look at the file `/server/socket_module/socket_server.py`.
+
 ##### Emperor to table members
 Message sent by the emperor to the table members (through the server)
 ###### START_COMMAND
@@ -401,9 +403,8 @@ Payload :
 ```json
 {
   user_id,
-  jap_event_id,
   table_id,
-  current_item_id
+  index
 }
 ```
 
@@ -413,12 +414,11 @@ Payload :
 ```json
 {
   user_id,
-  jap_event_id,
   table_id,
-  item : {
-    item_id,
-    amount,
-  }
+  item_id,
+  username,
+  individual,
+  command_id
 }
 ```
 
@@ -429,6 +429,7 @@ Payload :
 {
   user_id,
   jap_event_id,
+  ?table_id
 }
 ```
 ###### LEAVE_JAP
@@ -437,9 +438,12 @@ Payload :
 {
   user_id,
   jap_event_id,
+  ?table_id
 }
 ```
 ###### SEND_EVENT
+NOT IMPLEMENTED YET
+
 Payload :
 ```json
 {
@@ -462,59 +466,63 @@ Payload :
 }
 ```
 
+###### JOIN_COMMAND
+Payload :
+```json
+{
+  user_id,
+  table_id,
+}
+```
+
 ##### Server to table members
 ###### COMMAND_STARTED
 Payload :
 ```json
 {
-  jap_event_id,
   table_id,
-  command : {
-    command_id,
-    command_status,
-    command_number
-  }
+  current_command,
+  command_id,
+  item_id,
+  index,
+  accumulated,
+  summary
 }
 ```
 ###### ITEM_CHANGED
 Payload :
 ```json
 {
-  jap_event_id,
   table_id,
-  item : {
-    item_id,
-    name, 
-    icon_url,
-  }
+  current_command,
+  command_id,
+  item_id,
+  index,
+  accumulated,
+  summary
 }
 ```
 ###### COMMAND_ENDED
 Payload :
 ```json
 {
+  user_id,
   jap_event_id,
   table_id,
-  command : {
-    command_id,
-    command_status,
-    command_number,
-    summary : [ item_id : {name, amount, icon_url}, ...]
-  }
 }
 ```
 ###### ITEM_CHOSEN
 Payload :
 ```json
 {
-  jap_event_id,
   table_id,
-  command : {
-    command_id,
-    command_status,
-    command_number,
-    summary : { item_id : {name, amount, icon_url}, ... }
-  }
+  current_command,
+  command_id,
+  item_id,
+  index,
+  accumulated,
+  summary,
+  username,
 }
 ```
 
@@ -524,48 +532,29 @@ Payload :
 ```json
 {
   jap_event_id,
-  members : [
-    {
-      user_id,
-      name,
-    },
-    ...
-  ]
+  user_id, 
+  ?table_id,
+  members,
+  ?table_members,
 }
 ```
 ###### NEW_EVENT
+NOT IMPLEMENTED YET
+
 Payload :
 ```json
 {
-  jap_event_id,
-  event : {
-    event_id,
-    despcription,
-    ...
-  }
 }
 ```
 ###### USER_JOINED_TABLE
 Payload :
 ```json
 {
+  members,
+  new_members,
+  table_id, 
   jap_event_id,
-  table_id,
-  members : [
-    {
-      user_id,
-      name,
-    },
-    ...
-  ],
-  command : {
-    command_status,
-    current_item : {
-      item_id,
-      name,
-      icon_url
-    }
-  }
+  is_emeperor,
 }
 ```
 ###### USER_JOINED_JAP
@@ -573,21 +562,7 @@ Payload :
 ```json
 {
   jap_event_id,
-  members : [
-    {
-      user_id,
-      name,
-    },
-    ...
-  ],
-  jap_event_status,
-  current_command : {
-    command_status,
-    current_item : {
-      item_id,
-      name,
-      icon_url
-    }
-  }
+  new_member,
+  members,
 }
 ```
