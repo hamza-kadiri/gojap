@@ -8,6 +8,7 @@ from helpers.db_selectors import (
     get_item_index_from_table_id_and_id,
 )
 from services import UserService
+from models.model import User, Table
 from .socket_messages import socket_messages
 from services.jap_event_services import JapEventService
 from services.command_service import CommandService
@@ -16,7 +17,7 @@ from dataclasses import asdict
 
 
 class SocketServer(Namespace):
-    """Socket server class to use flask io Namespace.
+    """Socket server class extending flask socket io Namespace.
 
     Deals with those messages :
         - connect
@@ -38,22 +39,35 @@ class SocketServer(Namespace):
         super().__init__()
 
     @staticmethod
-    def _get_table_room(table_id):
-        """Generate table room route."""
+    def __get_table_room(table_id: int):
+        """Generate table room route.
+        
+        Args:
+            table_id: unique id of a table
+        """
         return "table/" + str(table_id)
 
     @staticmethod
-    def _get_user_room(user_id):
-        """Generate user room route."""
+    def __get_user_room(user_id: int):
+        """Generate user room route.
+        
+        Args:
+            user_id: unique id of a user
+        """
         return "user/" + str(user_id)
 
     @staticmethod
-    def _get_jap_event_room(jap_event_id):
+    def __get_jap_event_room(jap_event_id: int):
         """Generate jap event room route."""
         return "jap_event/" + str(jap_event_id)
 
-    def add_to_event(self, user, room):
-        """Add a user to list of people in jap_event."""
+    def __add_to_event(self, user: User, room: str):
+        """Add a user to list of people in jap_event.
+        
+        Args:
+            user: a User
+            room: jap event room that the user joined
+        """
         if room in self.connected_by_jap_event.keys():
             dict_user = asdict(user)
             event_members = self.connected_by_jap_event[room]
@@ -62,8 +76,13 @@ class SocketServer(Namespace):
         else:
             self.connected_by_jap_event[room] = [asdict(user)]
 
-    def remove_from_event(self, user_id, room):
-        """Remove a user from list of people in jap_event."""
+    def __remove_from_event(self, user_id: int, room: str):
+        """Remove a user from list of people in jap_event.
+        
+        Args:
+            user_id: a user id
+            room: jap event room that the user left
+        """
         if room in self.connected_by_jap_event.keys():
             self.connected_by_jap_event[room] = [
                 user
@@ -73,8 +92,13 @@ class SocketServer(Namespace):
         else:
             app.logger.info("Should not happen: User left jap_event but was not on it")
 
-    def add_to_table(self, user, table):
-        """Add a user to list of people on a given table."""
+    def __add_to_table(self, user: User, table: Table):
+        """Add a user to list of people on a given table.
+        
+        Args:
+            user: a User
+            table: table that the user joined
+        """
         if table.id in self.connected_at_table.keys():
             dict_user = asdict(user)
             table_members = self.connected_at_table[table.id]
@@ -83,8 +107,13 @@ class SocketServer(Namespace):
         else:
             self.connected_at_table[table.id] = [asdict(user)]
 
-    def remove_from_table(self, user_id, table_id):
-        """Remove a user from list of people on a given table."""
+    def __remove_from_table(self, user_id: int, table_id: int):
+        """Remove a user from list of people on a given table.
+        
+        Args:
+            user_id: a user id
+            table_id: table id that the user left
+        """
         if table_id in self.connected_at_table.keys():
             self.connected_at_table[table_id] = list(
                 filter(lambda x: x["id"] != user_id, self.connected_at_table[table_id])
@@ -93,8 +122,13 @@ class SocketServer(Namespace):
             app.logger.info("Should not happen: User left table but was not on it")
 
     @staticmethod
-    def emit_command_started(current_command, room):
-        """Emit command started message after START_COMMAND and JOIN_COMMAND."""
+    def __emit_command_started(current_command: dict, room: str):
+        """Emit command started message after START_COMMAND and JOIN_COMMAND.
+
+        Args:
+            current_command: Command object as a dict
+            room: socket room where you want to emit this message
+        """
         app.logger.debug("COMMAND_STARTED")
         item_index = get_item_index_from_table_id_and_id(
             current_command["table_id"], current_command["item_id"]
@@ -123,7 +157,8 @@ class SocketServer(Namespace):
     def on_disconnect(self):
         """Call when a connection socket is lost with a client."""
         app.logger.info("Connection socket lost with a client")
-        app.logger.info("INFO")
+
+        # get the socket session id
         sid = request.sid
         app.logger.info(sid)
         user_data = (
@@ -131,23 +166,24 @@ class SocketServer(Namespace):
         )
         if user_data:
             app.logger.info(user_data)
-            self.remove_from_event(
+            self.__remove_from_event(
                 user_data["user_id"],
-                self._get_jap_event_room(user_data["jap_event_id"]),
+                self.__get_jap_event_room(user_data["jap_event_id"]),
             )
             if "table_id" in user_data:
-                self.remove_from_table(user_data["user_id"], user_data["table_id"])
+                self.__remove_from_table(user_data["user_id"], user_data["table_id"])
+
         app.logger.info(self.connected_by_jap_event)
         app.logger.info(self.session_id_user_id)
         app.logger.info(self.connected_at_table)
 
-    def on_join_jap(self, data):
+    def on_join_jap(self, data: dict):
         """Call on message JOIN_JAP.
 
-        Emit USER_JOINED_JAP in the room 'jap_event/jap_id'.
+        Emit USER_JOINED_JAP in the room 'jap_event/jap_id'. and USER_JOINED_TABLE if the user has one
 
         Args :
-            data = {user_id, jap_event_id} // later user_id
+            data = {user_id, jap_event_id, ?table_id}
         Emit :
             USER_JOINED_JAP = {
                 "jap_event_id": int,
@@ -155,9 +191,9 @@ class SocketServer(Namespace):
                 "members": list(User)
             }
         """
-        # app.logger.debug(data)
         app.logger.info("JOIN_JAP")
         app.logger.info(request.sid)
+
         session_id = request.sid
         user_id = data["user_id"]
         jap_event_id = data["jap_event_id"]
@@ -172,19 +208,20 @@ class SocketServer(Namespace):
         table = TableService.get_user_table(user_id, jap_event_id)
 
         new_member = UserService.get_user(user_id)
-        room = self._get_jap_event_room(data["jap_event_id"])
+        new_member_dict = asdict(new_member)
+        room = self.__get_jap_event_room(data["jap_event_id"])
 
         if (
             room not in self.connected_by_jap_event
-            or asdict(new_member) not in self.connected_by_jap_event[room]
+            or new_member_dict not in self.connected_by_jap_event[room]
         ):
             join_room(room)
-            self.add_to_event(new_member, room)
+            self.__add_to_event(new_member, room)
             emit(
                 socket_messages["USER_JOINED_JAP"],
                 {
                     "jap_event_id": data["jap_event_id"],
-                    "new_member": asdict(new_member),
+                    "new_member": new_member_dict,
                     "members": self.connected_by_jap_event[room],
                 },
                 room=room,
@@ -198,6 +235,7 @@ class SocketServer(Namespace):
                     }
                 )
             else:
+                # checkt that the user is not a jap creator, otherwise it must have a table.
                 if jap_event.creator_id == user_id:
                     raise (
                         Exception(
@@ -205,7 +243,7 @@ class SocketServer(Namespace):
                         )
                     )
 
-    def on_leave_jap(self, data):
+    def on_leave_jap(self, data: dict):
         """Call on message LEAVE_JAP.
 
         Emit USER_LEFT_JAP in the room 'jap_id'.
@@ -213,8 +251,6 @@ class SocketServer(Namespace):
 
         Args :
             data = {user_id, jap_event_id, ?table_id}
-        Emit :
-            USER_LEFT_JAP = { jap_event_id, members : [{user_id, name}, ...]}
         """
         app.logger.info(
             "Leave jap "
@@ -223,38 +259,34 @@ class SocketServer(Namespace):
             + str(data["user_id"])
         )
 
-        room = self._get_jap_event_room(data["jap_event_id"])
-        self.remove_from_event(data["user_id"], room)
+        room = self.__get_jap_event_room(data["jap_event_id"])
+        self.__remove_from_event(data["user_id"], room)
         answer = {**data, "members": self.connected_by_jap_event[room]}
 
         if "table_id" in data:
-            self.remove_from_table(data["user_id"], data["table_id"])
+            self.__remove_from_table(data["user_id"], data["table_id"])
             answer["table_members"] = self.connected_at_table[data["table_id"]]
 
         emit(socket_messages["USER_LEFT_JAP"], answer, room=room)
+
         leave_room(room)
 
         if "table_id" in data:
             leave_room(room)
-            self.remove_from_table(data["user_id"], data["table_id"])
+            self.__remove_from_table(data["user_id"], data["table_id"])
 
-    def on_join_table(self, data):
+    def on_join_table(self, data: dict):
         """Call on message JOIN_TABLE.
 
-        Emit USER_JOINED_TABLE in the room 'table_id'.
+        Emit USER_JOINED_TABLE in the room 'jap_event/jap_event_id'.
 
         Args :
-            data = {user_id, jap_event_id, ?table_id} // later user_id
-        Emit :
-            USER_JOINED_TABLE = {
-                new_member,
-                members
-            }
+            data = {user_id, jap_event_id, ?table_id}
         """
         # get socket rooms
-        jap_event_room = self._get_jap_event_room(data["jap_event_id"])
-        table_room = self._get_table_room(data["table_id"])
-        user_room = self._get_user_room(data["user_id"])
+        jap_event_room = self.__get_jap_event_room(data["jap_event_id"])
+        table_room = self.__get_table_room(data["table_id"])
+        user_room = self.__get_user_room(data["user_id"])
 
         # add user to table if not already in
         table = TableService.add_user_to_table(data["table_id"], [data["user_id"]])
@@ -265,7 +297,7 @@ class SocketServer(Namespace):
         self.session_id_user_id[request.sid]["table_id"] = table.id
 
         # add user to the table dict
-        self.add_to_table(user, table)
+        self.__add_to_table(user, table)
 
         # join the socket rooms
         join_room(table_room)
@@ -287,7 +319,7 @@ class SocketServer(Namespace):
                 room=jap_event_room,
             )
 
-    def on_start_command(self, data):
+    def on_start_command(self, data: dict):
         """Call on message START_COMMAND.
 
         Emit COMMAND_STARTED in the room 'table_id'.
@@ -307,7 +339,7 @@ class SocketServer(Namespace):
         """
         app.logger.debug("START COMMAND")
         app.logger.debug(data)
-        table_room = self._get_table_room(data["table_id"])
+        table_room = self.__get_table_room(data["table_id"])
 
         if (
             TableService.is_emperor(data["user_id"], data["table_id"])
@@ -318,71 +350,53 @@ class SocketServer(Namespace):
 
             table = TableService.get_table(data["table_id"])
             current_command = asdict(table)["current_command"]
-            self.emit_command_started(current_command, table_room)
+            self.__emit_command_started(current_command, table_room)
 
-    def on_join_command(self, data):
+    def on_join_command(self, data: dict):
         """Call on message START_COMMAND.
 
-        Emit COMMAND_STARTED in the room 'table_id'.
+        Emit COMMAND_STARTED in the room 'user/user_id'.
 
         Args :
-            data = {user_id, jap_event_id, table_id} // later user_id
-        Emit :
-            COMMAND_STARTED = {}
+            data = {user_id, table_id}
         """
         app.logger.debug("JOIN COMMAND")
-        user_room = self._get_user_room(data["user_id"])
+        user_room = self.__get_user_room(data["user_id"])
 
         table = TableService.get_table(data["table_id"])
         if table.status == 1:
             current_command = asdict(table)["current_command"]
-            self.emit_command_started(current_command, user_room)
+            self.__emit_command_started(current_command, user_room)
 
-    def on_end_command(self, data):
+    def on_end_command(self, data: dict):
         """Call on message END_COMMAND.
 
-        Emit COMMAND_ENDED in the room 'table_id'.
+        Emit COMMAND_ENDED in the room 'table/table_id'.
 
         Args :
-            data = {user_id, jap_event_id, table_id} // later user_id
-        Emit :
-            COMMAND_ENDED = {
-                jap_event_id,
-                table_id,
-                command : {
-                    command_id,
-                    command_status,
-                    command_number,
-                    summary : [ item_id : {name, amount, icon_url}, ...]
-                }
-            }
+            data = {user_id, jap_event_id, table_id}
         """
-        app.logger.debug("END COMMAND")
+        app.logger.debug("END COMMAND" + str(data["table_id"]))
+
         if TableService.is_emperor(data["user_id"], data["table_id"]):
+
+            # set table status to 2
             _ = TableService.set_table_status(data["table_id"], 2)
+
+            # emit message
             emit(
                 socket_messages["COMMAND_ENDED"],
                 data,
-                room=self._get_table_room(data["table_id"]),
+                room=self.__get_table_room(data["table_id"]),
             )
 
-    def on_next_item(self, data):
+    def on_next_item(self, data: dict):
         """Call on message NEXT_ITEM.
 
-        Emit ITEM_CHANGED in the room 'table_id'.
+        Emit ITEM_CHANGED in the room 'table/table_id'.
 
         Args :
-            data = {user_id, jap_event_id, table_id, current_item_id} // later user_id
-        Emit :
-            ITEM_CHANGED = {
-                jap_event_id,
-                table_id,
-                item : {
-                    item_id,
-                    name,
-                    icon_url,
-                }
-            }
+            data = {user_id, table_id, index}
         """
         app.logger.debug("NEXT ITEM")
 
@@ -401,27 +415,18 @@ class SocketServer(Namespace):
         TableService.set_current_command_id(data["table_id"], data["command_id"])
         data["item_id"] = item_id
         emit(
-            socket_messages["ITEM_CHANGED"], data, room="table/" + str(data["table_id"])
+            socket_messages["ITEM_CHANGED"],
+            data,
+            room=self.__get_table_room(data["table_id"]),
         )
 
-    def on_choose_item(self, data):
+    def on_choose_item(self, data: dict):
         """Call on message CHOOSE_ITEM.
 
         Emit ITEM_CHOSEN in the room 'table_id'.
 
         Args :
-            data = {user_id, jap_event_id, table_id, item : {item_id, amount}} // later user_id
-        Emit :
-            ITEM_CHOSEN = {
-                jap_event_id,
-                table_id,
-                command : {
-                    command_id,
-                    command_status,
-                    command_number,on
-                    summary : { item_id : {name, amount, icon_url}, ... }
-                }
-            }
+            data = {user_id, table_id, item_id, username, individual, command_id}
         """
         app.logger.debug("CHOOSE ITEM")
         app.logger.info(
@@ -439,6 +444,8 @@ class SocketServer(Namespace):
             )
         )
         emit(
-            socket_messages["ITEM_CHOSEN"], data, room="table/" + str(data["table_id"])
+            socket_messages["ITEM_CHOSEN"],
+            data,
+            room=self.__get_table_room(data["table_id"]),
         )
 

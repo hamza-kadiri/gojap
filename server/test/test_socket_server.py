@@ -14,7 +14,7 @@ from models.model import Item
 
 
 class TestClassWithClient:
-    """Base class containing a socket client instance."""
+    """Base class containing a socket client instance and usefull object."""
 
     @classmethod
     def setup_class(cls):
@@ -75,21 +75,27 @@ class TestSocketServer(TestClassWithClient):
         assert self.client.is_connected()
         received = self.client.get_received()
         assert len(received) == 1
+        # check on_connect answer
         assert received[0]["name"] == "my response"
 
     def test_join_jap_user(self):
         """Test join jap for a random user."""
+        # emit join jap for random user
         self.client.emit(
             socket_messages["JOIN_JAP"],
             {"user_id": self.user_id, "jap_event_id": self.jap_event_id},
         )
 
         received = self.client.get_received()
+
+        # check answer message
         assert len(received) == 1
-        received = received[0]
-        assert received["name"] == socket_messages["USER_JOINED_JAP"]
-        assert received["namespace"] == "/"
-        answer = received["args"][0]
+        message = received[0]
+        assert message["name"] == socket_messages["USER_JOINED_JAP"]
+        assert message["namespace"] == "/"
+        answer = message["args"][0]
+
+        # check answer content
         assert list(answer.keys()) == ["jap_event_id", "new_member", "members"]
         assert answer["new_member"]["username"] == "TestUser"
         assert answer["new_member"]["id"] in [
@@ -107,17 +113,17 @@ class TestSocketServer(TestClassWithClient):
         )
         received = self.client.get_received()
         assert len(received) == 2
-        user_joined_jap = (
+        user_joined_jap_message = (
             received[0] if received[0]["name"] == "user_joined_jap" else received[1]
         )
-        user_joined_table = (
+        user_joined_table_message = (
             received[0] if received[0]["name"] == "user_joined_table" else received[1]
         )
 
         # test user_joined_jap message
-        assert user_joined_jap["name"] == socket_messages["USER_JOINED_JAP"]
-        assert user_joined_jap["namespace"] == "/"
-        answer = user_joined_jap["args"][0]
+        assert user_joined_jap_message["name"] == socket_messages["USER_JOINED_JAP"]
+        assert user_joined_jap_message["namespace"] == "/"
+        answer = user_joined_jap_message["args"][0]
         assert list(answer.keys()) == ["jap_event_id", "new_member", "members"]
         assert answer["new_member"]["username"] == "jap_creator"
         assert answer["new_member"]["id"] in [
@@ -125,8 +131,8 @@ class TestSocketServer(TestClassWithClient):
         ]
 
         # test user_joined_table message
-        assert user_joined_table["name"] == socket_messages["USER_JOINED_TABLE"]
-        assert user_joined_table["namespace"] == "/"
+        assert user_joined_table_message["name"] == socket_messages["USER_JOINED_TABLE"]
+        assert user_joined_table_message["namespace"] == "/"
 
     def test_join_table(self):
         """Test join jap table."""
@@ -139,11 +145,15 @@ class TestSocketServer(TestClassWithClient):
             },
         )
         received = self.client.get_received()
+
+        # check message
         assert len(received) == 1
-        received = received[0]
-        assert received["name"] == socket_messages["USER_JOINED_TABLE"]
-        assert received["namespace"] == "/"
-        answer = received["args"][0]
+        message = received[0]
+        assert message["name"] == socket_messages["USER_JOINED_TABLE"]
+        assert message["namespace"] == "/"
+
+        # check message content
+        answer = message["args"][0]
         assert list(answer.keys()) == [
             "members",
             "new_member",
@@ -168,6 +178,8 @@ class TestSocketServer(TestClassWithClient):
             },
         )
         received = self.client.get_received()
+
+        # No message must have been send
         assert len(received) == 0
 
     def test_fail_join_command(self):
@@ -181,6 +193,8 @@ class TestSocketServer(TestClassWithClient):
             },
         )
         received = self.client.get_received()
+
+        # No message must have been send
         assert len(received) == 0
 
     def test_start_command(self):
@@ -195,10 +209,14 @@ class TestSocketServer(TestClassWithClient):
         )
         received = self.client.get_received()
         assert len(received) == 1
-        received = received[0]
-        assert received["name"] == socket_messages["COMMAND_STARTED"]
-        assert received["namespace"] == "/"
-        answer = received["args"][0]
+
+        # check message
+        message = received[0]
+        assert message["name"] == socket_messages["COMMAND_STARTED"]
+        assert message["namespace"] == "/"
+
+        # check content
+        answer = message["args"][0]
         assert list(answer.keys()) == [
             "table_id",
             "current_command",
@@ -222,10 +240,14 @@ class TestSocketServer(TestClassWithClient):
         )
         received = self.client.get_received()
         assert len(received) == 1
-        received = received[0]
-        assert received["name"] == socket_messages["COMMAND_STARTED"]
-        assert received["namespace"] == "/"
-        answer = received["args"][0]
+
+        # check message
+        message = received[0]
+        assert message["name"] == socket_messages["COMMAND_STARTED"]
+        assert message["namespace"] == "/"
+
+        # check content
+        answer = message["args"][0]
         assert list(answer.keys()) == [
             "table_id",
             "current_command",
@@ -243,9 +265,14 @@ class TestSocketServer(TestClassWithClient):
             {"user_id": self.user_id, "jap_event_id": self.jap_event_id},
         )
         received = self.client.get_received()
-        received = received[0]
-        assert received["name"] == socket_messages["USER_LEFT_JAP"]
-        answer = received["args"][0]
+        assert len(received) == 1
+
+        # check message
+        message = received[0]
+        assert message["name"] == socket_messages["USER_LEFT_JAP"]
+
+        # check content
+        answer = message["args"][0]
         assert list(answer.keys()) == ["user_id", "jap_event_id", "members"]
         assert answer["user_id"] == self.user_id
         assert answer["user_id"] not in [member["id"] for member in answer["members"]]
