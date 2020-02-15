@@ -1,8 +1,6 @@
 """Table blueprint."""
-
 from flask import Blueprint, request, abort, jsonify, Response
 from services.table_services import TableService
-import json
 
 table_blueprint = Blueprint("table_blueprint", __name__, url_prefix="/table")
 
@@ -49,7 +47,7 @@ def remove_table() -> Response:
         {table}
     """
     data = request.json
-    table = TableService.remove_table(**data)
+    table = TableService.remove_table(data['id'])
     if not table:
         abort(404, f"Table not found")
 
@@ -58,20 +56,22 @@ def remove_table() -> Response:
 
 @table_blueprint.route("add_members/<int:table_id>", methods=["POST"])
 def add_user_to_table(table_id: int) -> Response:
-    """Create a new table.
+    """
+    Add users to a table referenced by its id.
 
     Returns :
         {nom, description, jap_place_id, user_id, date}
     """
     data = request.json
-    table = TableService.add_user_to_table(table_id, data["user_ids"])
+    table = TableService.add_users_to_table(table_id, data["user_ids"])
 
     return jsonify(table)
 
 
 @table_blueprint.route("/<int:table_id>/status/<int:status>", methods=["PUT"])
 def set_table_status(table_id: int, status: int) -> Response:
-    """Update status of a table.
+    """
+    Update status of a table.
 
     Arg :
         table_id : id_table de la table à changer.
@@ -87,7 +87,8 @@ def set_table_status(table_id: int, status: int) -> Response:
 
 @table_blueprint.route("/user/<int:user_id>/<int:jap_event_id>", methods=["GET"])
 def get_user_table(user_id: int, jap_event_id: int) -> Response:
-    """Create a new table.
+    """
+    Get a user's table associated to a jap event.
 
     Args :
         id_table : id de la table à get.

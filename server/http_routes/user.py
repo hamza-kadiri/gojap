@@ -14,20 +14,6 @@ import json
 user_blueprint = Blueprint("user_blueprint", __name__, url_prefix="/user")
 
 
-@user_blueprint.route("<int:user_id>", methods=["GET"])
-def get_user(user_id: int) -> Response:
-    """Find a given user.
-
-    Returns :
-        {user : id, username, email, phone, calorie}
-    """
-    user = UserService.get_user(user_id)
-
-    if not user:
-        return json_abort(404, f"No user with id {user_id}")
-    return jsonify(user)
-
-
 @user_blueprint.route("", methods=["POST"])
 def create_user() -> Response:
     """Create a new user.
@@ -49,6 +35,21 @@ def create_user() -> Response:
     )
 
     return jsonify({"user": user})
+
+
+@user_blueprint.route("<int:user_id>", methods=["GET"])
+def get_user(user_id: int) -> Response:
+    """
+    Find a given user.
+
+    Returns :
+        {user : id, username, email, phone, calorie}
+    """
+    user = UserService.get_user(user_id)
+
+    if not user:
+        return json_abort(404, f"No user with id {user_id}")
+    return jsonify(user)
 
 
 @user_blueprint.route("<int:user_id>", methods=["DELETE"])
@@ -76,6 +77,17 @@ def get_all_users() -> Response:
     return jsonify({"users": users})
 
 
+@user_blueprint.route("/stats/<int:user_id>", methods=["GET"])
+def get_users_stats(user_id: int) -> Response:
+    """Display all users.
+
+    Returns :
+        list of serialized users
+    """
+    stats = UserService.get_user_stats(user_id)
+    return jsonify({"stats": stats})
+
+
 @user_blueprint.route("/not_in_jap_event/<int:jap_event_id>", methods=["GET"])
 def get_all_users_not_in_jap_event(jap_event_id: int):
     """Display all users that are not in the related jap event."""
@@ -90,14 +102,3 @@ def get_all_users_not_in_jap_event(jap_event_id: int):
             ]
         }
     )
-
-
-@user_blueprint.route("/stats/<int:user_id>", methods=["GET"])
-def get_users_stats(user_id: int) -> Response:
-    """Display all users.
-
-    Returns :
-        list of serialized users
-    """
-    stats = UserService.get_user_stats(user_id)
-    return jsonify({"stats": stats})

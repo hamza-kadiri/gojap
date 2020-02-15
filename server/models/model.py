@@ -243,6 +243,7 @@ class Item(db.Model):
     id: int
     name: str
     points_amount: int
+    icon_id: int
     icon: Icon
 
     _tablename_ = "item"

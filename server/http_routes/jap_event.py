@@ -4,10 +4,35 @@ from dataclasses import asdict
 from flask import Blueprint, request, jsonify, Response
 from services import TableService
 from services.jap_event_services import JapEventService
+from helpers import json_abort
 
 jap_event_blueprint = Blueprint(
     "jap_event_blueprint", __name__, url_prefix="/jap_event"
 )
+
+
+@jap_event_blueprint.route("", methods=["POST"])
+def create_jap_event() -> Response:
+    """Create a new jap_event.
+
+    Body args :
+        {event_name, description, jap_place_id, creator_id, date}
+
+    Returns :
+        {serialized jap_event}
+    """
+    data = request.json
+    if not data["event_name"]:
+        return json_abort(400, f"Empty string not allowed as a event_name")
+    jap_event = JapEventService.create_jap_event(
+        data["event_name"],
+        data["description"],
+        data["jap_place_id"],
+        data["creator_id"],
+        data["date"],
+    )
+
+    return jsonify(jap_event)
 
 
 @jap_event_blueprint.route("event/<int:jap_event_id>", methods=["GET"])
@@ -32,32 +57,8 @@ def get_all_jap_events() -> Response:
     return jsonify(jap_events)
 
 
-@jap_event_blueprint.route("", methods=["POST"])
-def create_jap_event() -> Response:
-    """Create a new jap_event.
-
-    Body args : 
-        {event_name, description, jap_place_id, creator_id, date}
-
-    Returns :
-        {serialized jap_event}
-    """
-    data = request.json
-    if not data["event_name"]:
-        return json_abort(400, f"Empty string not allowed as a event_name")
-    jap_event = JapEventService.create_jap_event(
-        data["event_name"],
-        data["description"],
-        data["jap_place_id"],
-        data["creator_id"],
-        data["date"],
-    )
-
-    return jsonify(jap_event)
-
-
 @jap_event_blueprint.route("user/<int:user_id>", methods=["GET"])
-def get_events_for_user(user_id: int) -> Response:
+def get_jap_events_for_user(user_id: int) -> Response:
     """Get all jap_events for a given user.
 
     Args :
@@ -71,7 +72,7 @@ def get_events_for_user(user_id: int) -> Response:
 
 
 @jap_event_blueprint.route("/upcoming/<int:user_id>", methods=["GET"])
-def get_upcoming_events_for_user(user_id: int) -> Response:
+def get_upcoming_jap_events_for_user(user_id: int) -> Response:
     """Get all upcoming jap_events for a given user.
 
     Args :
@@ -96,7 +97,7 @@ def add_members(jap_event_id: int) -> Response:
     """
     data = request.json
     members = JapEventService.add_members_to_jap_event(
-        jap_event_id, set(data["members"])
+        jap_event_id, list(set(data["members"]))
     )
     return jsonify(members)
 
@@ -130,7 +131,7 @@ def get_tables_jap_event(jap_event_id: int) -> Response:
 
 
 @jap_event_blueprint.route("past/<int:user_id>", methods=["GET"])
-def get_jap_event_by_status(user_id: int):
+def get_past_jap_events_for_user(user_id: int):
     """Get past jap events for a user.
 
     Args :
@@ -145,7 +146,7 @@ def get_jap_event_by_status(user_id: int):
 
 @jap_event_blueprint.route("/table/<int:jap_event_id>/<int:user_id>", methods=["GET"])
 def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
-    """Get table a user is in Jap Event.
+    """Get table for a user that is in a Jap Event.
 
     Args :
         jap_event_id
@@ -157,9 +158,11 @@ def get_table_for_user_jap_event(jap_event_id: int, user_id: int):
         }
     """
     jap_event = JapEventService.get_jap_event(jap_event_id)
+
     table = TableService.get_user_table(user_id, jap_event_id)
     if table is None:
         return jsonify({"table": table, "jap_event": jap_event})
+
     is_user_emperor = table.emperor == user_id
     table = asdict(table)
     table["is_emperor"] = is_user_emperor
