@@ -5,16 +5,6 @@ from flask import Blueprint, abort, jsonify, current_app as app
 base_blueprint = Blueprint("base_blueprint", __name__, url_prefix="/")
 
 
-@base_blueprint.route("", methods=["GET"])
-def hello_world():
-    """Random http route.
-
-    Returns :
-        "Hello world"
-    """
-    return "Hello world"
-
-
 @base_blueprint.route("/japs", methods=["GET"])
 def get_japs():
     """Jap list route.
