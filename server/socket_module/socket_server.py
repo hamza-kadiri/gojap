@@ -288,7 +288,7 @@ class SocketServer(Namespace):
         user_room = self.__get_user_room(data["user_id"])
 
         # add user to table if not already in
-        table = TableService.add_user_to_table(data["table_id"], [data["user_id"]])
+        table = TableService.add_users_to_table(data["table_id"], [data["user_id"]])
         # get user object
         user = UserService.get_user(data["user_id"])
 

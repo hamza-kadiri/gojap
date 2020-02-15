@@ -1,16 +1,12 @@
 """Building services for table management."""
-import sqlalchemy
-from typing import Dict, Optional, List
+from typing import Optional
 from models.model import (
     Table,
     User,
     db,
-    JapEvent,
-    table_members,
     CommandItem,
     UserCommand,
 )
-from sqlalchemy import and_
 from services.command_service import CommandService
 
 
@@ -25,14 +21,20 @@ class TableService:
         Args :
             data = {user_id, jap_event_id}
         """
-        table = Table(emperor=user_id, jap_event_id=jap_event_id, status=0)
+        table = Table(emperor=user_id,
+                      jap_event_id=jap_event_id,
+                      status=0)
+
         member = User.query.filter(User.id.__eq__(user_id)).first()
         table.members.append(member)
+
         db.session.add(table)
         db.session.commit()
+
         table_id = table.id
         command = CommandService.create_command(1, table_id)
         table.current_command_id = command.id
+
         db.session.add(table, command)
         db.session.commit()
         return table
@@ -40,7 +42,7 @@ class TableService:
     @staticmethod
     def get_table(table_id: int) -> Table:
         """
-        Get a table.
+        Get a table by its id.
 
         Args :
             id : table_id .
@@ -49,33 +51,18 @@ class TableService:
         return table
 
     @staticmethod
-    def set_current_command_id(table_id: int, current_command_id: int) -> Table:
-        """
-        Set the new current command ID when the emperor changes the item.
-
-        Args :
-            data = {table_id, current_command_id}
-        """
-        table = TableService.get_table(table_id)
-        table.current_command_id = current_command_id
-        db.session.add(table)
-        db.session.commit()
-        return table
-
-    @staticmethod
-    def remove_table(id: int) -> Optional[Table]:
+    def remove_table(table_id: int) -> Optional[Table]:
         """
         Delete table.
 
         Args :
-            id : table_id.
+            table_id : table_id.
 
         Return :
             {Table}
         """
-        table = Table.query.filter_by(id=id).first()
+        table = Table.query.filter_by(id=table_id).first()
         if table:
-            # solution qui a l'air de marcher : table = Table.query.filter_by(id=id).delete()
             db.session.delete(table)
             db.session.commit()
             return table
@@ -83,7 +70,7 @@ class TableService:
             return None
 
     @staticmethod
-    def add_user_to_table(table_id: int, user_ids: list) -> Table:
+    def add_users_to_table(table_id: int, user_ids: list) -> Table:
         """
         Add a user to a table.
 
@@ -129,7 +116,7 @@ class TableService:
     @staticmethod
     def get_user_table(user_id: int, jap_event_id: int) -> Optional[Table]:
         """
-        Get a user's table.
+        Get a user's table associated to a jap event.
 
         Arg :
             user_id : id of the user
@@ -143,33 +130,6 @@ class TableService:
             .filter(Table.members.any(User.id.in_([user_id])))
             .first()
         )
-
-        tables = JapEvent.query.filter(JapEvent.id.__eq__(jap_event_id)).first().tables
-        table_ids = []
-        for table in tables:
-            table_ids.append(table.id)
-        try:
-            table_id = (
-                db.session.query(table_members)
-                .filter(
-                    and_(
-                        table_members.c.user_id == user_id,
-                        table_members.c.table_id.in_(table_ids),
-                    )
-                )
-                .first()
-                .table_id
-            )
-            table = Table.query.filter_by(id=table_id).first()
-        except sqlalchemy.orm.exc.NoResultFound:
-            table = None
-        return table
-
-    @staticmethod
-    def is_emperor(user_id: int, table_id: int) -> bool:
-        """Check if a user is emperor."""
-        table = Table.query.get(table_id)
-        return table.emperor == user_id
 
     @staticmethod
     def get_table_stats(table_id: int) -> dict:
@@ -232,3 +192,23 @@ class TableService:
         }
 
         return stats
+
+    @staticmethod
+    def is_emperor(user_id: int, table_id: int) -> bool:
+        """Check if a user is emperor."""
+        table = Table.query.get(table_id)
+        return table.emperor == user_id
+
+    @staticmethod
+    def set_current_command_id(table_id: int, current_command_id: int) -> Table:
+        """
+        Set the new current command ID when the emperor changes the item.
+
+        Args :
+            data = {table_id, current_command_id}
+        """
+        table = TableService.get_table(table_id)
+        table.current_command_id = current_command_id
+        db.session.add(table)
+        db.session.commit()
+        return table
