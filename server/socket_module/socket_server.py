@@ -272,8 +272,7 @@ class SocketServer(Namespace):
         leave_room(room)
 
         if "table_id" in data:
-            leave_room(room)
-            self.__remove_from_table(data["user_id"], data["table_id"])
+            leave_room(self.__get_table_room(data["table_id"]))
 
     def on_join_table(self, data: dict):
         """Call on message JOIN_TABLE.

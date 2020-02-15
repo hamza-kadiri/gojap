@@ -43,6 +43,8 @@ def create_jap_event() -> Response:
         {serialized jap_event}
     """
     data = request.json
+    if not data["event_name"]:
+        return json_abort(400, f"Empty string not allowed as a event_name")
     jap_event = JapEventService.create_jap_event(
         data["event_name"],
         data["description"],

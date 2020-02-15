@@ -17,5 +17,7 @@ def login():
         A user object
     """
     data = request.json
+    if not data["username"]:
+        return json_abort(400, f"Empty string not allowed as a username")
     user = AuthService.login(data["username"])
     return jsonify(user)
