@@ -21,7 +21,7 @@ Table of contents
   - [Architecture (different file)](/doc/architecture.md)
   - [Unit test (different file)](/doc/test.md)
   - [API (different file)](/doc/api.md)
-  - [CI/CD (different file)](/doc/ci_cd.md)
+  - [Workflow & CI/CD (different file)](/doc/ci_cd.md)
   
 
 ## Project overview
