@@ -3,7 +3,6 @@
 from flask import Blueprint, request, abort, jsonify, Response
 
 from services.jap_place_services import JapPlaceService
-import json
 
 jap_place_blueprint = Blueprint(
     "jap_place_blueprint", __name__, url_prefix="/jap_place"

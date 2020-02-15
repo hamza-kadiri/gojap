@@ -4,6 +4,7 @@ from dataclasses import asdict
 from flask import Blueprint, request, jsonify, Response
 from services import TableService
 from services.jap_event_services import JapEventService
+from helpers import json_abort
 
 jap_event_blueprint = Blueprint(
     "jap_event_blueprint", __name__, url_prefix="/jap_event"
@@ -96,7 +97,7 @@ def add_members(jap_event_id: int) -> Response:
     """
     data = request.json
     members = JapEventService.add_members_to_jap_event(
-        jap_event_id, set(data["members"])
+        jap_event_id, list(set(data["members"]))
     )
     return jsonify(members)
 
