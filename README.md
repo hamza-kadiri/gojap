@@ -14,6 +14,7 @@ Table of contents
     - [Overview](#overview)
     - [Install back](#install-back)
     - [Run back](#run-back)
+    - [Files structure](#files-structure)
     - [Dependencies](#dependencies)
   - [Database](#database)
     - [Run database](#run-database)
@@ -84,6 +85,33 @@ The backend is a python flask backend. It's dealing with http requests and socke
 - run server : `pipenv run flask-dev`
 - run tests : `pipenv run tests`
 - run check for documentation : `pipenv run pydocstyle`
+
+### Files Structure
+
+```
+server
+  ├── helpers : utils functions
+  ├── http_routes
+  |   └── auth.py : route for authentification
+  |   └── command.py : routes for commands
+  |   └── ...
+  ├── migrations : usefull for migrate the db
+  ├── migration_script : usefull for migrate the db
+  ├── models : usefull for migrate the db
+  |   └── model.py : file containing all the db models
+  ├── services
+  |   └── user_service.py : service for logic on user, user creation, deletion, ...
+  |   └── ...
+  ├── socket_module
+  |   └── socket_messages.py : enum of messages
+  |   └── socket_server.py : entry point for socket
+  ├── test : folder containing pytest tests
+  |   └── test_socket_server.py
+  ├── app.py : main file for flask server
+  ├── config.py
+  ├── Pipfile
+```
+
 
 ### Dependencies
 All the dependencies are written in `/server/Pipfile`.

@@ -41,6 +41,9 @@ def create_user() -> Response:
     data = request.json
     avatar_url = data["avatar_url"] if "avatar_url" in data else ""
 
+    if not data["username"]:
+        return json_abort(400, f"Empty string not allowed as a username")
+
     user = UserService.create_user(
         data["username"], data["email"], data["phone"], avatar_url
     )
