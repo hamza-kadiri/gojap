@@ -43,25 +43,6 @@ class JapEventService:
         return jap_event.members
 
     @staticmethod
-    def join_jap_event(jap_event_id: int, user_id: int) -> Tuple[JapEvent, User]:
-        """Process join jap request.
-
-        Return updated data after changing entries in flash memory or DB
-
-        Args :
-            data = {user_id, jap_event_id}
-
-        Returns :
-            JapEvent, User
-        """
-        jap_event = JapEvent.query.get(jap_event_id)
-        new_member = User.query.get(user_id)
-        jap_event.members.append(new_member)
-        db.session.add(jap_event)
-        db.session.commit()
-        return jap_event, new_member
-
-    @staticmethod
     def create_jap_event(
         event_name: str,
         description: str,
@@ -85,11 +66,13 @@ class JapEventService:
             date=date,
         )
 
+        TableService.create_table(creator_id, jap_event.id)
+
+        creator = User.query.get(creator_id)
+        jap_event.members.append(creator)
+
         db.session.add(jap_event)
         db.session.commit()
-        table = TableService.create_table(creator_id, jap_event.id)
-
-        JapEventService.join_jap_event(jap_event.id, creator_id)
 
         return jap_event
 
