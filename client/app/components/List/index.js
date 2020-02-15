@@ -21,19 +21,27 @@ const VirtualizedList = styled(VList)`
   outline: none;
 `;
 
-const List = memo(function List(props) {
-  const ComponentToRender = props.component;
-  const { onClickItem, isWindowScroller, ...rest } = props;
+const List = ({
+  component: ComponentToRender,
+  onClickItem,
+  isWindowScroller,
+  items,
+  multiline,
+  selectedItems,
+  ...rest
+}) => {
   const [showMore, setShowMore] = useState(false);
+
   function rowRenderer({ key, index, style }) {
-    if (props.items) {
-      const item = props.items[index];
+    if (items) {
+      const item = items[index];
       return (
         <div key={key} style={style}>
           <ComponentToRender
             item={item}
             index={index}
             onClickItem={onClickItem}
+            selectedItems={selectedItems}
             {...rest}
           />
         </div>
@@ -62,17 +70,17 @@ const List = memo(function List(props) {
                 scrollTop={scrollTop}
                 height={height}
                 rowCount={
-                  props.items.length > 6
+                  items.length > 6
                     ? showMore
-                      ? props.items.length
+                      ? items.length
                       : 6
-                    : props.items.length
+                    : items.length
                 }
-                rowHeight={props.multiline ? 72 : 49}
+                rowHeight={multiline ? 72 : 49}
                 rowRenderer={rowRenderer}
               />
-              {props.items.length > 6 && !showMore && (
-                <MoreResults items={props.items} setShowMore={setShowMore} />
+              {items.length > 6 && !showMore && (
+                <MoreResults items={items} setShowMore={setShowMore} />
               )}
             </React.Fragment>
           )}
@@ -83,8 +91,8 @@ const List = memo(function List(props) {
             <VirtualizedList
               width={width}
               height={height}
-              rowCount={props.items.length}
-              rowHeight={props.multiline ? 72 : 49}
+              rowCount={items.length}
+              rowHeight={multiline ? 72 : 49}
               rowRenderer={rowRenderer}
             />
           )}
@@ -92,7 +100,7 @@ const List = memo(function List(props) {
       )}
     </AutoSizerWrapper>
   );
-});
+};
 
 List.propTypes = {
   component: PropTypes.elementType.isRequired,

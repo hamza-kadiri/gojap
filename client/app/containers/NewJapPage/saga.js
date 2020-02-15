@@ -52,6 +52,6 @@ export function* getJapPlaces() {
  * Root saga manages watcher lifecycle
  */
 export default function* watchNewJapPage() {
-  yield takeLatest(CREATE_JAP_EVENT, createJap);
   yield takeLatest(GET_JAP_PLACES, getJapPlaces);
+  yield takeLatest(CREATE_JAP_EVENT, createJap);
 }

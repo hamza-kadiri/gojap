@@ -16,6 +16,7 @@ import {
 
 export const initialState = {
   japPlaces: [],
+  loading: false,
   error: false,
 };
 
@@ -33,12 +34,18 @@ const newJapPageReducer = (state = initialState, action) =>
         draft.error = action.err;
         break;
       case GET_JAP_PLACES:
-        draft.error = null;
+        draft.japPlaces = [];
+        draft.loading = true;
+        draft.error = false;
         break;
       case GET_JAP_PLACES_SUCCESS:
-        draft.japPlaces = action.japPlaces.jap_places;
+        draft.japPlaces = action.japPlaces;
+        draft.loading = false;
+        draft.error = false;
         break;
       case GET_JAP_PLACES_ERROR:
+        draft.japPlaces = [];
+        draft.loading = false;
         draft.error = action.err;
         break;
     }

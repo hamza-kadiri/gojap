@@ -30,11 +30,14 @@ import {
 import {
   makeSelectTableId,
   makeSelectIsEmperor,
+  makeSelectJapId,
 } from 'containers/User/selectors';
 import OrderNumber from 'components/OrderNumber';
 import menuSaga from 'containers/OrdersList/saga';
 import { changeOrderQuantity } from 'containers/OrdersList/actions';
 import makeSelectJapScreen from 'containers/JapScreen/selectors';
+import japScreenReducer from 'containers/JapScreen/reducer';
+import japScreenSaga from 'containers/JapScreen/saga';
 import {
   makeSelectRecapOpen,
   makeSelectCurrentItem,
@@ -44,6 +47,7 @@ import reducer from './reducer';
 import saga from './saga';
 import { toggleRecap, changeCurrentItem, startOrder } from './actions';
 import { makeSelectJapPlaceId } from '../OrdersList/selectors';
+import { getJap } from '../JapScreen/actions';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -74,29 +78,38 @@ function OrderScreen({
   recapOpen,
   ordersList,
   currentItem,
+  japId,
   tableId,
   japPlaceId,
   isEmperor,
   japScreen,
 }) {
   useInjectReducer({ key: 'orderScreen', reducer });
+  useInjectReducer({ key: 'japScreen', reducer: japScreenReducer });
   useInjectSaga({ key: 'orderScreen', saga });
   useInjectSaga({ key: 'ordersList', saga: menuSaga });
+  useInjectSaga({ key: 'japScreen', saga: japScreenSaga });
 
   const { loading, menu } = ordersList;
 
   const moreMenu = [
     { name: 'Commandes', onClick: () => dispatch(toggleRecap(true)) },
   ];
-  const { members } = japScreen.table;
-  const membersUsername = members.map(member => member.username);
 
   useEffect(() => {
+    dispatch(getJap(japId));
     dispatch(changeTitle(`Table ${tableId}`));
-    dispatch(changeSubtitle(membersUsername.join(', ')));
-    dispatch(changeMoreMenu(moreMenu));
     dispatch(startOrder(japPlaceId));
   }, []);
+
+  useEffect(() => {
+    if (japScreen.table) {
+      const { members } = japScreen.table;
+      const membersUsername = members.map(member => member.username);
+      dispatch(changeSubtitle(membersUsername.join(', ')));
+      dispatch(changeMoreMenu(moreMenu));
+    }
+  }, [japScreen]);
 
   const drawerProps = {
     toggleDrawer: bool => dispatch(toggleRecap(bool)),
@@ -187,6 +200,7 @@ const mapStateToProps = createStructuredSelector({
   tableId: makeSelectTableId(),
   japPlaceId: makeSelectJapPlaceId(),
   isEmperor: makeSelectIsEmperor(),
+  japId: makeSelectJapId(),
   japScreen: makeSelectJapScreen(),
 });
 

@@ -197,7 +197,6 @@ class JapPlace(db.Model):
     address: str
     phone: str
     opening_hours: str
-    jap_events: list
     menu_id: int
 
     __tablename__ = "jap_place"

@@ -27,8 +27,10 @@ import styled from 'styled-components';
 import StyledButton from 'components/Button';
 
 import { changeMoreMenu, changeTitle } from 'containers/Header/actions';
-import { makeSelectJapPlaces } from './selectors';
+import LoadingIndicator from 'components/LoadingIndicator';
+import { makeSelectJapPlaces, makeSelectLoading } from './selectors';
 import { getJapPlaces, createJapEvent } from './actions';
+
 import reducer from './reducer';
 import saga from './saga';
 
@@ -40,7 +42,7 @@ const StyledKeyboardDateTimePicker = styled(KeyboardDateTimePicker)`
   margin: 30px 0 0 0;
 `;
 
-export function NewJapPage({ dispatch, japPlaces }) {
+export function NewJapPage({ dispatch, japPlaces, loading }) {
   const [date, setDate] = React.useState(Date.now());
   const [name, setName] = React.useState('');
   const [selectedJapPlace, setJapPlace] = React.useState(1);
@@ -63,45 +65,51 @@ export function NewJapPage({ dispatch, japPlaces }) {
   return (
     <ContainerWrapper>
       <H1>Créer un nouveau Jap</H1>
-      <TextField
-        label="Nom de l'évènement"
-        value={name}
-        onChange={event => setName(event.target.value)}
-      />
-      <TextField
-        label="Description"
-        multiline
-        value={description}
-        onChange={event => setDescription(event.target.value)}
-      />
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <StyledKeyboardDateTimePicker
-          variant="inline"
-          ampm={false}
-          label="Date"
-          value={date}
-          onChange={event => setDate(event)}
-          disablePast
-          format="yyyy/MM/dd HH:mm"
-        />
-      </MuiPickersUtilsProvider>
-      <StyledFormControl>
-        <InputLabel id="restaurant">Choisir le Jap</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={selectedJapPlace}
-          onChange={event => setJapPlace(event.target.value)}
-        >
-          {japPlaces &&
-            japPlaces.map(japPlace => (
-              <MenuItem key={japPlace.id} value={japPlace.id}>
-                {japPlace && japPlace.name}
-              </MenuItem>
-            ))}
-        </Select>
-      </StyledFormControl>
-      <StyledButton onClick={handleClick}>Créer le jap</StyledButton>
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <ContainerWrapper>
+          <TextField
+            label="Nom de l'évènement"
+            value={name}
+            onChange={event => setName(event.target.value)}
+          />
+          <TextField
+            label="Description"
+            multiline
+            value={description}
+            onChange={event => setDescription(event.target.value)}
+          />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <StyledKeyboardDateTimePicker
+              variant="inline"
+              ampm={false}
+              label="Date"
+              value={date}
+              onChange={event => setDate(event)}
+              disablePast
+              format="yyyy/MM/dd HH:mm"
+            />
+          </MuiPickersUtilsProvider>
+          <StyledFormControl>
+            <InputLabel id="restaurant">Choisir le Jap</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectedJapPlace}
+              onChange={event => setJapPlace(event.target.value)}
+            >
+              {japPlaces &&
+                japPlaces.map(japPlace => (
+                  <MenuItem key={japPlace.id} value={japPlace.id}>
+                    {japPlace && japPlace.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </StyledFormControl>
+          <StyledButton onClick={handleClick}>Créer le jap</StyledButton>
+        </ContainerWrapper>
+      )}
     </ContainerWrapper>
   );
 }
@@ -119,6 +127,7 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = createStructuredSelector({
   japPlaces: makeSelectJapPlaces(),
+  loading: makeSelectLoading(),
 });
 
 const withConnect = connect(

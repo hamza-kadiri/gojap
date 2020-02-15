@@ -27,5 +27,11 @@ const makeSelectJapPlaces = () =>
     substate => substate.japPlaces
   );
 
+const makeSelectLoading = () =>
+  createSelector(
+    selectNewJapPageDomain,
+    substate => substate.loading
+  );
+
 export default makeSelectNewJapPage;
-export { selectNewJapPageDomain, makeSelectJapPlaces };
+export { selectNewJapPageDomain, makeSelectJapPlaces, makeSelectLoading };

@@ -31,15 +31,29 @@ const Dot = styled.div`
 `;
 
 function MembersListItem(props) {
-  const { item, index, onClickItem, stats, onlineMembers, jap } = props;
+  const {
+    item,
+    index,
+    onClickItem,
+    stats,
+    onlineMembers,
+    jap,
+    selectedItems,
+  } = props;
   const [isSelected, setIsSelected] = React.useState(false);
   const [isOnline, setIsOnline] = React.useState(false);
   const [tableId, setTableId] = React.useState(null);
   const [emperor, setIsEmperor] = React.useState(false);
 
+  useEffect(() => {
+    if (selectedItems) {
+      setIsSelected(selectedItems.includes(item));
+    }
+  });
+
   const handleClickItem = () => {
-    setIsSelected(!isSelected);
     onClickItem(item);
+    setIsSelected(selectedItems.includes(item));
   };
 
   useEffect(() => {

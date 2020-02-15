@@ -41,20 +41,7 @@ const PrivateRoute = ({ user, component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      user.id !== null ? (
-        <Component {...props} />
-      ) : (
-          <Redirect to="/login" />
-        )
-    }
-  />
-);
-
-const GuestRoute = ({ user, component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      <Component {...props} />
+      user ? <Component {...props} /> : <Redirect to="/login" />
     }
   />
 );
@@ -80,22 +67,18 @@ function App({ router, dispatch, user }) {
             <Header handleOpenDrawer={handleOpenDrawer} />
             <SwitchWrapper>
               <Switch>
-                {routes.map(({ path, Component }) => {
-                  return (
-                    path === '/login' ?
-                      <GuestRoute
-                        key={path}
-                        exact
-                        path={path}
-                        component={Component}
-                        user={user} /> :
-                      <PrivateRoute
-                        key={path}
-                        exact
-                        path={path}
-                        component={Component}
-                        user={user} />)
-                }
+                {routes.map(({ path, Component }) =>
+                  path === '/login' ? (
+                    <Route key={path} exact path={path} component={Component} />
+                  ) : (
+                    <PrivateRoute
+                      key={path}
+                      exact
+                      path={path}
+                      component={Component}
+                      user={user}
+                    />
+                  )
                 )}
                 <Route path="" component={NotFoundPage} />
               </Switch>

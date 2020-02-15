@@ -22,6 +22,9 @@ import { makeSelectMembers } from 'containers/AddTablePage/selectors';
 import styled from 'styled-components';
 import H1 from 'components/H1';
 
+import japScreenReducer from 'containers/JapScreen/reducer';
+import japScreenSaga from 'containers/JapScreen/saga';
+import { getJap } from 'containers/JapScreen/actions';
 import makeSelectAddMembersPage, { makeSelectUsers } from './selectors';
 import reducer from './reducer';
 import { loadUsers, addMembersToJap } from './actions';
@@ -44,8 +47,10 @@ export function AddMembersPage({
   addMembersPage,
 }) {
   useInjectReducer({ key: 'addMembersPage', reducer });
+  useInjectReducer({ key: 'japScreen', reducer: japScreenReducer });
   useInjectSaga({ key: 'addMembersPage', saga });
-  const [membersList, setMembersList] = React.useState([]);
+  useInjectSaga({ key: 'japScreen', saga: japScreenSaga });
+  const [membersToAdd, setMembersToAdd] = React.useState([]);
   const [usersNotInMembers, setUserNotInMembers] = React.useState([]);
 
   const Wrapper = styled.div`
@@ -56,29 +61,34 @@ export function AddMembersPage({
   `;
 
   useEffect(() => {
+    dispatch(getJap(japId));
     dispatch(loadUsers());
     dispatch(changeTitle('Ajouter des membres'));
   }, []);
 
   useEffect(() => {
-    const filteredUsers = users.filter(user => !customIncludes(members, user));
-    setUserNotInMembers(filteredUsers);
+    if (users && members) {
+      const filteredUsers = users.filter(
+        user => !customIncludes(members, user)
+      );
+      setUserNotInMembers(filteredUsers);
+    }
   }, [users, members]);
 
   const handleClickOnUser = item => {
-    const list = membersList;
-    if (membersList.includes(item)) {
-      list.pop(item);
-      setMembersList(list);
+    const newMembersList = membersToAdd;
+    if (newMembersList.includes(item)) {
+      newMembersList.splice(newMembersList.indexOf(item), 1);
+      setMembersToAdd(newMembersList);
     } else {
-      list.push(item);
-      setMembersList(list);
+      newMembersList.push(item);
+      setMembersToAdd(newMembersList);
     }
   };
 
   const handleClickValidate = () => {
-    if (membersList.length !== 0) {
-      dispatch(addMembersToJap(membersList, japId));
+    if (membersToAdd.length !== 0) {
+      dispatch(addMembersToJap(membersToAdd, japId));
     }
   };
 
@@ -89,6 +99,7 @@ export function AddMembersPage({
     component: MembersListItem,
     multiline: true,
     onClickItem: handleClickOnUser,
+    selectedItems: membersToAdd,
   };
 
   return (
@@ -97,7 +108,7 @@ export function AddMembersPage({
       <ListWrapper {...membersListProps} />
       {!addMembersPage.loading && (
         <StyledButton
-          disable={membersList.length === 0 ? 'true' : 'false'}
+          disable={membersToAdd.length === 0 ? 'true' : 'false'}
           onClick={handleClickValidate}
         >
           Valider

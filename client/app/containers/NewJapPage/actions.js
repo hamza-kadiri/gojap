@@ -27,7 +27,7 @@ export function getJapPlaces() {
 export function getJapPlacesSuccess(japPlaces) {
   return {
     type: GET_JAP_PLACES_SUCCESS,
-    japPlaces,
+    japPlaces: japPlaces.jap_places,
   };
 }
 export function getJapPlacesError(err) {
