@@ -52,17 +52,6 @@ class UserService:
         return user
 
     @staticmethod
-    def get_user_by_name(user_name: str) -> User:
-        """
-        Get user infos with the name given.
-
-        Args :
-            user_name : name of the user to get.
-        """
-        user = User.query.filter_by(username=user_name).first()
-        return user
-
-    @staticmethod
     def remove_user(user_id: int) -> Optional[User]:
         """
         Delete user.
@@ -131,3 +120,14 @@ class UserService:
             "nbr_of_pneu": pneu,
         }
         return stats
+
+    @staticmethod
+    def get_user_by_name(user_name: str) -> User:
+        """
+        Get user infos with the name given.
+
+        Args :
+            user_name : name of the user to get.
+        """
+        user = User.query.filter_by(username=user_name).first()
+        return user
