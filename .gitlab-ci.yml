@@ -1,5 +1,7 @@
 # Deploy server and client in different stages because
-# Heroku only allows for 1 concurrent build
+# Heroku only allows for 1 concurrent build.
+# Therefore, could not paralellize deploys.
+
 stages:
   - test
   - migrate_db
