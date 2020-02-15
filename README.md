@@ -11,8 +11,11 @@ Table of contents
     - [Used Libraries :](#used-libraries)
     - [Installation :](#installation)
   - [Backend](#backend)
+    - [Overview](#overview)
     - [Install back](#install-back)
     - [Run back](#run-back)
+    - [Dependencies](#dependencies)
+  - [Database](#database)
     - [Run database](#run-database)
     - [Run migrations (To update your database schema)](#run-migrations-to-update-your-database-schema)
   - [Architecture](/doc/architecture.md)
@@ -22,6 +25,10 @@ Table of contents
   
 
 ## Project overview
+
+Go jap is the social app you need to get the best experience when you are going to **all you can eat** japanese restaurants. It helps you to plan, manage the orders and make some fun with your friends by checking ordered items for instance.
+
+In this repository you will fin the doc describing the project and the code for the front end (`/client`) and the backend (`/server`)
 
 ## Client
 
@@ -50,30 +57,52 @@ It allows to generated a highly scalable, offline-first foundation with the best
 
 ### Overview
 
-### Install back
+The backend is a python flask backend. It's dealing with http requests and socket requests. Everything is written in `/server`.
+
+### Install
 
 - install pipenv with PYTHON 3
+  
   mac : `brew install pipenv`
 
 ### Run back
 
 - `cd server/`
 - run : `pipenv install`
-- run `pipenv shell` if you are asked to do it
+- run : `pipenv shell` if you are asked to do it
 - run server : `pipenv run flask-dev`
-- run tests : `pipenv run pytest`
-- run check documentation : `pipenv run pydocstyle`
+- run tests : `pipenv run tests`
+- run check for documentation : `pipenv run pydocstyle`
 
-### Run database
+### Dependencies
+All the dependencies are written in `/server/pipfile`.
+
+Main dependencies are :
+
+- Gunicorn : a flask runner
+- Flask : the server http framwork
+- Flask-Cors : deal woth cross origins
+- pylint: check code validity
+- requests: make http request
+- pytest: our test frameworks
+- pydocstyle: check doc formatting to be sure to have the cleanest code
+- psycopg2: TODO
+- eventlet: TODO
+- flask_sqlalchemy: flask dependency to make sql requests
+- pydash: TODO
+- pyOpenSSL: TODO
+- flask_jwt_extended: TODO
+- flask-socketio: flask dependency enable socketio way of dealing with socket
+- black: reformat the code on save to have the cleanest code
+
+
+## Database
+
+## Run database
 - `docker-compose up`
 - mac : may be usefull to update volume url to `./docker/postgres/data:/var/lib/postgresql/data`
 
-### Run migrations (To update your database schema)
+## Run migrations (To update your database schema)
 - If you had migrations already, empty `alembic_version` table
 - `pipenv run stamp-head`
 - `pipenv run migrate`
-
-
-
-
-
