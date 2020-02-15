@@ -37,55 +37,79 @@ class JapPlaceService:
         return places
 
     @staticmethod
-    def get_jap_place(id: int) -> JapPlace:
+    def get_jap_place(jap_place_id: int) -> JapPlace:
         """
-        Get jap_place infos.
+        Get jap_place for a given id.
 
         Args :
-            id : jap_id.
+            id : jap_place_id.
         """
-        jap_place = JapPlace.query.filter_by(id=id).first()
+        jap_place = JapPlace.query.filter_by(id=jap_place_id).first()
         return jap_place
 
     @staticmethod
-    def get_jap_place_by_name(name: str) -> JapPlace:
-        """Get jap place."""
-        jap_place = JapPlace.query.filter_by(name=name).first()
-        return jap_place
+    def get_jap_place_menu(jap_place_id: int) -> Optional[JapPlace]:
+        """
+        Find the menu of a jap_place filtered by its id.
+
+        Args :
+            jap_place_id : jap_id.
+        """
+        jap_place = JapPlace.query.filter_by(id=jap_place_id).first()
+
+        return jap_place.menu if jap_place else None
 
     @staticmethod
     def create_menu(items: list) -> Menu:
-        """Create menu."""
-        print(items)
+        """
+        Create a menu.
+
+        Args :
+            items : list of items.
+        """
         menu = Menu(items=items)
+
         db.session.add(menu)
         db.session.commit()
         return menu
 
     @staticmethod
     def create_item(name: str, points_amount: int, icon_id: int) -> Item:
-        """Create item."""
+        """
+        Create an item in db.
+
+        Args :
+            name : name of the item
+            points_amount : points awarded by the item
+            icon_id : id of the icon associated
+        """
         item = Item(name=name, points_amount=points_amount, icon_id=icon_id)
+
         db.session.add(item)
         db.session.commit()
         return item
 
     @staticmethod
     def create_icon(thumbnail_url: int) -> Icon:
-        """Create icon."""
+        """
+        Create an icon in db.
+
+        Args :
+            thumbnail_url : url
+        """
         icon = Icon(thumbnail_url=thumbnail_url)
+
         db.session.add(icon)
         db.session.commit()
         return icon
 
     @staticmethod
-    def get_jap_place_menu(id: int) -> Optional[JapPlace]:
+    def get_jap_place_by_name(name: str) -> JapPlace:
         """
-        Get jap_place menu.
+        Get jap_place for a given name.
 
         Args :
-            id : jap_id.
+            name : jap_place name.
         """
-        jap_place = JapPlace.query.filter_by(id=id).first()
-
-        return jap_place.menu if jap_place else None
+        jap_place = JapPlace.query.filter_by(name=name).first()
+        return jap_place

@@ -55,7 +55,7 @@ def get_jap_place(jap_place_id: int) -> Response:
 
 @jap_place_blueprint.route("/menu/<int:jap_place_id>", methods=["GET"])
 def get_jap_place_menu(jap_place_id: int) -> Response:
-    """Find the menu of a given jap_place.
+    """Find the menu of a jap_place filtered by its id.
 
     Returns :
         {menu}
