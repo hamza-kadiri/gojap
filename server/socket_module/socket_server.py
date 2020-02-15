@@ -281,7 +281,7 @@ class SocketServer(Namespace):
         Emit USER_JOINED_TABLE in the room 'jap_event/jap_event_id'.
 
         Args :
-            data = {user_id, jap_event_id, ?table_id}
+            data = {user_id, jap_event_id, table_id}
         """
         # get socket rooms
         jap_event_room = self.__get_jap_event_room(data["jap_event_id"])
